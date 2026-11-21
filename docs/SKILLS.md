@@ -6,6 +6,8 @@
 
 ## 1. Relevant to this project
 
+> **Noel's standing rule (Phase 0 checkpoint):** every design or motion task loads all four of `frontend-design`, `impeccable`, `motion` and `ui-ux-pro-max`.
+
 | Skill / plugin                                                                                                                                      | Source                                       | Phases           | Use it for                                                                                                                     |
 | --------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------ |
 | `frontend-design:frontend-design`                                                                                                                   | claude.ai plugin                             | 1, 2, 3, 5       | Generating the 3 directions; every new UI surface                                                                              |

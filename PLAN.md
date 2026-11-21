@@ -21,7 +21,7 @@ This plan is the **starting point, not a script**. You (Claude Code) are the lea
 2. **Never invent facts about Noel.** No made-up metrics, titles, employers, dates or results. Anything you don't have becomes a visible placeholder `TODO(noel): …`, and a content check (§6.4) blocks a release while any placeholder remains.
 3. **Mentor mode.** Noel is a 2nd-year Systems & Computer Engineering student (strong in Python; HTML/CSS/JS; React beginner-to-intermediate). Every PR description has a short **"Concepts in this PR"** section: 2–5 bullets naming the concept (e.g. "Server vs Client Components", "design tokens", "hydration") and why it was used. Keep each one to a few sentences and link the official docs.
 4. **Least machinery.** Every dependency must earn its place (use the `ponytail` skill's ladder: platform feature → existing code → small dependency → big dependency). Never cut accessibility, validation or security to save code.
-5. **Stop at checkpoints.** At CP1–CP4, stop, show what changed (screenshots, preview URL), and ask Noel with `AskUserQuestion`. Only Noel merges to `main`.
+5. **Stop at checkpoints.** At CP1–CP4, stop, show what changed (screenshots, preview URL), and ask Noel with `AskUserQuestion`. Claude Code merges branches to `main` itself (`--no-ff`, PR description in the merge commit) **only after CI is green on the branch**; a phase's closing merge waits for Noel's checkpoint approval. *(Amended by Noel 2026-11-20.)*
 
 ---
 
@@ -276,7 +276,7 @@ Noel picks one (or a mix) at **CP1**. Then Claude Code writes `docs/DESIGN.md`: 
 
 - Conventional Commits; small PRs, one concern each; branch per task (`feat/…`, `fix/…`, `chore/…`, `docs/…`).
 - PR template: Summary · Screenshots (light/dark, mobile/desktop) · **Concepts in this PR** · Checklist (a11y, reduced motion, i18n parity, no TODOs added to released content).
-- Branch protection on `main`: CI must pass; Noel merges.
+- `main` only receives `--no-ff` merges of branches whose CI is green (§0 rule 5).
 - Renovate or Dependabot for updates (grouped weekly). Watch Next.js security releases; they've been coming roughly monthly in 2026.
 - No secrets in the repo. Only keys designed to be public (form access key, Turnstile site key) go in `NEXT_PUBLIC_*`, and each is documented.
 - `README.md` (what/why/how to run), `docs/CONTENT-GUIDE.md` (how Noel adds a project/post/skill in 5 minutes), ADRs.
@@ -394,6 +394,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-20 | Base stack: Next 16.4.6, React 19.3, pnpm 12, Node 24; libraries arrive in the phase that first uses them | Claude Code | ADR-0001 |
 | 2026-11-20 | Static export config; `cacheComponents`/`partialPrefetching` off; root layout without `<html>`; no `.nojekyll` | Claude Code | ADR-0002 |
 | 2026-11-20 | Hackathon skills (`chequeo-pre-commit`, `revisar-diff`, `plan-rapido`) not used on this project | Claude Code | docs/SKILLS.md |
+| 2026-11-20 | Phase 0 approved (live at `noelrevotn.github.io/noel-site/`). Merge policy: Claude Code merges after green CI; checkpoints still gate phases. Design work always uses `frontend-design` + `impeccable` + `motion` + `ui-ux-pro-max` | Noel | §0, docs/SKILLS.md |
 
 ---
 
