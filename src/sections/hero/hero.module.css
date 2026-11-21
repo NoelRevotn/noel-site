@@ -337,7 +337,40 @@
 @media (max-width: 45rem) {
   .hero {
     min-height: 0;
+    padding-top: var(--space-6);
     padding-bottom: 0;
+  }
+
+  .headline {
+    font-size: var(--step-0);
+    margin-top: var(--space-4);
+  }
+
+  /* The main action full width, the other two side by side. */
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: var(--space-5);
+  }
+
+  .actions li:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .actions a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hint {
+    right: var(--gutter);
+    bottom: var(--space-4);
+    font-size: 0.75rem;
+  }
+
+  .legend {
+    gap: var(--space-4);
+    padding-block: var(--space-5);
   }
 
   .copy {
@@ -354,8 +387,8 @@
     position: relative;
     inset: auto;
     z-index: 0;
-    height: 24rem;
-    margin: var(--space-5) calc(-1 * var(--gutter)) 0;
+    height: 22rem;
+    margin: var(--space-6) calc(-1 * var(--gutter)) 0;
     order: 2;
   }
 

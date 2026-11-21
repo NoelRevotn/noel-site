@@ -59,6 +59,9 @@ test("skill orb legend reads out a skill's projects", async ({ page }) => {
   await page.goto("/noel-site/en/");
   const skills = page.locator("#skills");
   await skills.scrollIntoViewIfNeeded();
+  // Phones show one domain at a time: open the systems tab first.
+  const tab = skills.getByRole("button", { name: "Backend & systems" });
+  if (await tab.isVisible()) await tab.click();
   await skills.getByRole("button", { name: "Python" }).click();
   await expect(skills.locator("figcaption")).toContainText("H2Oeste");
 });
