@@ -31,6 +31,9 @@ jobs:
       - run: pnpm test
       - run: pnpm check:content
       - run: pnpm build
+        env:
+          # Public by design (ADR-0005); set as a repository variable, not a secret.
+          NEXT_PUBLIC_WEB3FORMS_KEY: ${{ vars.WEB3FORMS_KEY }}
       - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm cv:pdf
       - run: pnpm test:e2e

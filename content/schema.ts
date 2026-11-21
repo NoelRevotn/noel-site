@@ -62,3 +62,15 @@ export type SkillGroup = z.infer<typeof SkillGroup>;
 export type TimelineEntry = z.infer<typeof TimelineEntry>;
 export type DevelopingArea = z.infer<typeof DevelopingArea>;
 export type Certification = z.infer<typeof Certification>;
+
+/** Blog post metadata, exported from each MDX file as `export const metadata = {...}`. */
+export const PostMeta = z.object({
+  title: z.string().min(1),
+  description: z.string().min(1),
+  date: z.iso.date(),
+  updated: z.iso.date().optional(),
+  tags: z.array(z.string()).default([]),
+  /** Drafts never ship; preview them with SHOW_DRAFTS=1. */
+  draft: z.boolean().default(false),
+});
+export type PostMeta = z.infer<typeof PostMeta>;

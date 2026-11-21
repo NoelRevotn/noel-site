@@ -133,10 +133,37 @@
     "lead": "La forma más rápida de contactarme es por correo.",
     "copy": "Copiar correo",
     "copied": "Copiado",
-    "form": "Un formulario de contacto llega en la fase 4."
+    "form": "O usa el formulario de abajo."
   },
   "colophon": {
     "title": "Cómo está hecho este sitio",
     "lead": "Una herramienta de reclutamiento y una prueba de habilidad: esto es de lo que está hecho."
+  },
+  "blog": {
+    "title": "Artículos",
+    "lead": "Notas sobre lo que construyo y aprendo: ML, sistemas y web.",
+    "empty": "Aún no hay artículos. El primero se está escribiendo.",
+    "minutes": "{n} min de lectura",
+    "toc": "En esta página",
+    "onlyEnglish": "Disponible solo en inglés.",
+    "back": "Todos los artículos",
+    "rss": "Feed RSS",
+    "tags": "Etiquetas"
+  },
+  "form": {
+    "title": "Enviar un mensaje",
+    "name": "Nombre",
+    "email": "Correo",
+    "message": "Mensaje",
+    "submit": "Enviar mensaje",
+    "sending": "Enviando…",
+    "sent": "Mensaje enviado. Gracias.",
+    "error": "No se pudo enviar el mensaje. Inténtalo de nuevo o escríbeme directamente.",
+    "required": "Este campo es obligatorio.",
+    "invalidEmail": "Escribe un correo válido, como nombre@ejemplo.com.",
+    "tooShort": "Escribe al menos 10 caracteres.",
+    "privacy": "Tu nombre, correo y mensaje se envían a mi bandeja a través de Web3Forms y solo se usan para responderte. La verificación la provee hCaptcha.",
+    "unavailable": "El formulario aún no está conectado. Escríbeme directamente por correo.",
+    "captcha": "Completa la verificación antes de enviar."
   }
 }

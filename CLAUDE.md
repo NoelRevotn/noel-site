@@ -31,3 +31,5 @@ The source of truth is `PLAN.md`. Read §0 before any work. Short version:
 - Design system: `docs/DESIGN.md`; tokens in `src/styles/tokens.css`. Line colours mean domains only.
 - Home page = data: add/remove/reorder sections in `site.config.ts` (`home`), components in `src/sections/<id>/`, map in `src/sections/registry.tsx`.
 - UI strings in `messages/{en,es}.json` (keep keys in parity); content in `content/*.ts` (CV facts only; unknowns are `TODO(noel)`).
+- Blog posts: `content/blog/<slug>/en.mdx` (required) and `es.mdx` (optional), each starting with `export const metadata = { title, description, date, tags, draft }`. `draft: true` never ships; preview with `SHOW_DRAFTS=1 pnpm build`.
+- Contact form key: GitHub repo variable `WEB3FORMS_KEY` → `NEXT_PUBLIC_WEB3FORMS_KEY` at build (public by design, ADR-0005).
