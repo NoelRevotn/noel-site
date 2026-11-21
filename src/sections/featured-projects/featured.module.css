@@ -53,6 +53,15 @@
   font-size: var(--step-2);
 }
 
+.title a {
+  text-decoration: none;
+}
+
+.title a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+}
+
 .summary {
   font-weight: 700;
   margin-top: var(--space-1) !important;

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Stop } from "@/components/ui/Stop";
-import { profile } from "../../../content/profile";
+import { profile } from "@/lib/content";
 import s from "./contact.module.css";
 
 /** The last stop: how to reach Noel. */

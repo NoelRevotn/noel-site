@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { StationMark, Stop } from "@/components/ui/Stop";
-import { timeline } from "../../../content/timeline";
+import { timeline } from "@/lib/content";
 import s from "./timeline.module.css";
 
 /** Experience and education as a timetable: dates in mono, ongoing entries hollow. */

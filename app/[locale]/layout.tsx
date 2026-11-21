@@ -12,7 +12,7 @@ import { StationCursor } from "@/islands/cursor/StationCursor";
 import { Rail } from "@/islands/rail/Rail";
 import { RevealObserver } from "@/islands/reveal/RevealObserver";
 import { fontVariables } from "@/lib/fonts";
-import { withBase } from "@/lib/paths";
+import { pageMetadata, personJsonLd } from "@/lib/seo";
 import { HEAD_SCRIPT } from "@/lib/theme-script";
 import "@/styles/globals.css";
 import { profile } from "../../content/profile";
@@ -32,16 +32,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "meta" });
-  const url = (l: string) => `${site.origin}${withBase(`/${l}/`)}`;
-  return {
-    metadataBase: new URL(site.origin),
-    title: t("title"),
-    description: t("description"),
-    alternates: {
-      canonical: url(locale),
-      languages: { ...Object.fromEntries(routing.locales.map((l) => [l, url(l)])), "x-default": url("en") },
-    },
-  };
+  return { ...pageMetadata(locale, "/", t("title"), t("description")), metadataBase: new URL(site.origin) };
 }
 
 export default async function LocaleLayout({
@@ -60,6 +51,10 @@ export default async function LocaleLayout({
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd(locale)) }}
+        />
       </head>
       <body>
         <Backdrop className={cursor.backdrop} />
@@ -70,7 +65,10 @@ export default async function LocaleLayout({
           <Rail />
           {children}
           <Footer />
-          <CommandPalette links={{ github: profile.links.github, linkedin: profile.links.linkedin }} />
+          <CommandPalette
+            links={{ github: profile.links.github, linkedin: profile.links.linkedin }}
+            email={profile.email}
+          />
           <StationCursor
             className={cursor.cursor}
             plateClassName={cursor.plate}

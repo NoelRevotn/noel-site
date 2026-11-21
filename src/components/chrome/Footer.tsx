@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { profile } from "../../../content/profile";
+import { profile } from "@/lib/content";
 import s from "./footer.module.css";
 
 /** Footer: the line's terminus. Socials, how it's built, source. */

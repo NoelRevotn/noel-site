@@ -82,3 +82,70 @@
 .mark[data-built="true"] {
   background: var(--ink);
 }
+
+.todo {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  padding: 0.05em 0.35em;
+  border-radius: var(--radius-1);
+  background: #fff3c4;
+  color: #4a3600;
+}
+
+.pageHead {
+  position: relative;
+  padding: var(--space-7) 0 0 var(--stop-pad);
+}
+
+.pageTitle {
+  position: relative;
+  font-variation-settings: "wdth" 118;
+  font-size: var(--step-4);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.pageTitle::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--stop-pad));
+  top: 50%;
+  width: 1.125rem;
+  height: 1.125rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 var(--stroke) var(--ink);
+}
+
+.lead {
+  font-size: var(--step-1);
+  color: var(--muted);
+  max-width: var(--measure);
+  margin: var(--space-4) 0 0;
+}
+
+@media print {
+  .trunk::before,
+  .trunk::after,
+  .stopTitle::before,
+  .pageTitle::before {
+    display: none;
+  }
+
+  .stop,
+  .pageHead {
+    padding: var(--space-5) 0 0;
+  }
+
+  .stopTitle {
+    margin-bottom: 4pt;
+    border-bottom: 1.5pt solid #000;
+    padding-bottom: 2pt;
+  }
+
+  .todo {
+    background: none;
+    color: inherit;
+  }
+}

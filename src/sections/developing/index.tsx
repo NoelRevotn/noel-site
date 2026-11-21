@@ -1,6 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { StationMark, Stop } from "@/components/ui/Stop";
-import { developing } from "../../../content/developing";
+import { developing } from "@/lib/content";
 import s from "./developing.module.css";
 
 /** Growth areas, shown honestly as hollow (in-progress) stations. */

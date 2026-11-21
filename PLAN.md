@@ -400,6 +400,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-21 | Phase 2 shell: plain CSS tokens + CSS Modules (no Tailwind), next-intl EN/ES, Motion only for layout/inView, light-first theme; labs B, C removed | Claude Code | ADR-0004, docs/DESIGN.md |
 | 2026-11-21 | **CP2 approved.** v1 islands: ⌘K palette, skill graph, tokenizer toy (project map and terminal mode stay in the backlog). Headshot: yes, Noel provides the photo. Added motion: train colour-gradient glow on the 3D lines, a page-wide ambient track backdrop (fades in after the hero), and a cursor that stretches with speed and pulls a short train of cars | Noel | — |
 | 2026-11-21 | `/lab` routes removed now that CP2 is approved | Claude Code | ADR-0004 |
+| 2026-11-21 | Phase 3 content: public email (Noel's OK); CV PDF printed from the web CV page in CI (GPA kept, phone removed, Noel's request); case studies for Buddy and DataLizer (Noel's choice) with TODO(noel) for every unverified part; case studies are typed TS + Zod for now, MDX arrives with the blog in Phase 4 | Noel / Claude Code | — |
 
 ---
 
