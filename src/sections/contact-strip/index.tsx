@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
-import { Stop } from "@/components/ui/Stop";
+import { LineIcon } from "@/components/icons/LineIcon";
+import { Scene } from "@/components/scene/Scene";
 import { profile } from "@/lib/content";
 import s from "./contact.module.css";
 
@@ -7,7 +8,7 @@ import s from "./contact.module.css";
 export async function ContactStrip() {
   const t = await getTranslations();
   return (
-    <Stop id="contact" title={t("sections.contact")}>
+    <Scene id="contact" title={t("home.contact")} icon={<LineIcon name="signal" />}>
       <p className={s.text} data-reveal>
         {t("contact.text")}
       </p>
@@ -32,6 +33,6 @@ export async function ContactStrip() {
           <li className={s.todo}>TODO(noel): {t("contact.email")}</li>
         )}
       </ul>
-    </Stop>
+    </Scene>
   );
 }

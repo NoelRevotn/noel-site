@@ -11,15 +11,26 @@
   backdrop-filter: blur(10px);
 }
 
-/* The line itself: draws in once, ends in a terminus bar under the plates. */
+/*
+ * The line itself is a track: two thin rails with sleepers between them, centred where the solid
+ * line used to be. It draws in once from the left.
+ */
 .rail::before {
   content: "";
   position: absolute;
   left: 0;
   right: var(--gutter);
-  top: 3.25rem;
-  height: var(--line-w);
-  background: var(--ink);
+  top: calc(3.25rem + var(--line-w) / 2 - 6px);
+  height: 12px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) top / 100% 2px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) bottom / 100% 2px no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--ink) 55%, transparent) 0 2px,
+        transparent 2px 9px
+      )
+      center / 100% 100% no-repeat;
   transform-origin: left;
   animation: draw 900ms var(--ease-emphasized) both;
 }
@@ -32,6 +43,25 @@
 
 .nav {
   position: relative;
+}
+
+/* The train that rides between stations on navigation: two cars in a line colour, lit windows. */
+.train {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: calc(3.25rem + var(--line-w) / 2 - 7px);
+  width: 2.75rem;
+  height: 14px;
+  margin-left: -1.375rem;
+  border-radius: 4px 7px 7px 4px;
+  background:
+    linear-gradient(90deg, transparent 0 47%, var(--page) 47% 53%, transparent 53%),
+    repeating-linear-gradient(90deg, var(--c, var(--ink)) 0 4px, var(--ground) 4px 7px) center / 100% 4px
+      no-repeat,
+    var(--c, var(--ink));
+  opacity: 0;
+  pointer-events: none;
 }
 
 .stations {

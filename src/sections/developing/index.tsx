@@ -1,28 +1,22 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { StationMark, Stop } from "@/components/ui/Stop";
+import { LineIcon } from "@/components/icons/LineIcon";
+import { Chip, Chips, Scene } from "@/components/scene/Scene";
+import { StationMark } from "@/components/ui/Stop";
 import { developing } from "@/lib/content";
-import s from "./developing.module.css";
 
-/** Growth areas, shown honestly as hollow (in-progress) stations. */
+/** Growth areas as hollow (in-progress) stations: one chip each. */
 export async function Developing() {
   const t = await getTranslations();
   const locale = (await getLocale()) as "en" | "es";
   return (
-    <Stop id="developing" title={t("sections.developing")}>
-      <p className={s.intro}>{t("developing.intro")}</p>
-      <ul className={s.list}>
-        {developing.map((d, i) => (
-          <li key={d.via} className={s.item} data-reveal style={{ "--reveal-i": i } as React.CSSProperties}>
-            <StationMark built={false} />
-            <span>
-              <strong className={s.topic}>{d.topic[locale]}</strong>
-              <span className={s.via}>
-                {d.via} <span className="mono">{d.startedAt}</span>
-              </span>
-            </span>
-          </li>
+    <Scene id="developing" title={t("home.developing")} icon={<LineIcon name="learn" />}>
+      <Chips label={t("sections.developing")}>
+        {developing.map((d) => (
+          <Chip key={d.via + d.topic.en} mark={<StationMark built={false} />}>
+            {d.topic[locale]}
+          </Chip>
         ))}
-      </ul>
-    </Stop>
+      </Chips>
+    </Scene>
   );
 }

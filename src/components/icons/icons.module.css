@@ -1,0 +1,36 @@
+.icon {
+  display: block;
+  flex: none;
+  fill: none;
+  stroke: var(--c, var(--ink));
+  stroke-width: 2.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Each stroke draws in when its block is revealed, one after another. */
+@media (prefers-reduced-motion: no-preference) {
+  :global(.js) .icon path {
+    stroke-dasharray: 1 2;
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1100ms var(--ease-emphasized);
+    transition-delay: calc(var(--reveal-i, 0) * 70ms + 150ms);
+  }
+
+  :global(.js) .icon path:nth-child(2) {
+    transition-delay: calc(var(--reveal-i, 0) * 70ms + 300ms);
+  }
+
+  :global(.js) .icon path:nth-child(n + 3) {
+    transition-delay: calc(var(--reveal-i, 0) * 70ms + 450ms);
+  }
+
+  :global(.js) :global([data-reveal]:not([data-shown])) .icon path,
+  :global(.js) .icon:global([data-reveal]:not([data-shown])) path {
+    stroke-dashoffset: 1;
+  }
+}
+
+:global(html[data-motion="paused"]) .icon path {
+  transition: none;
+}

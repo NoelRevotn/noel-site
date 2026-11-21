@@ -85,7 +85,8 @@
   "footer": {
     "built": "Built with Next.js and three.js, deployed on GitHub Pages.",
     "source": "Source code",
-    "colophon": "How this site is built"
+    "colophon": "How this site is built",
+    "terminal": "Last stop on the line"
   },
   "palette": {
     "open": "Open command menu",
@@ -182,5 +183,14 @@
     "label": "Map of my work: ML/AI, systems and web lines meeting at H2Oeste. Drag or use the arrow keys to rotate; Home resets the view.",
     "hint": "Drag to explore · 360°",
     "cursor": "Drag"
+  },
+  "home": {
+    "work": "Things I'm building.",
+    "skills": "The tools behind them.",
+    "developing": "Learning right now.",
+    "timeline": "Where I've worked.",
+    "writing": "What I'm writing.",
+    "contact": "Let's talk.",
+    "fullCv": "See the full CV"
   }
 }

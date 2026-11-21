@@ -85,7 +85,8 @@
   "footer": {
     "built": "Hecho con Next.js y three.js, publicado en GitHub Pages.",
     "source": "Código fuente",
-    "colophon": "Cómo está hecho este sitio"
+    "colophon": "Cómo está hecho este sitio",
+    "terminal": "Última estación de la línea"
   },
   "palette": {
     "open": "Abrir menú de comandos",
@@ -182,5 +183,14 @@
     "label": "Mapa de mi trabajo: las líneas de ML/IA, sistemas y web se cruzan en H2Oeste. Arrastra o usa las flechas para girarlo; Inicio restablece la vista.",
     "hint": "Arrastra para explorar · 360°",
     "cursor": "Arrastrar"
+  },
+  "home": {
+    "work": "Lo que estoy construyendo.",
+    "skills": "Las herramientas detrás.",
+    "developing": "Aprendiendo ahora.",
+    "timeline": "Dónde he trabajado.",
+    "writing": "Lo que escribo.",
+    "contact": "Hablemos.",
+    "fullCv": "Ver el CV completo"
   }
 }
