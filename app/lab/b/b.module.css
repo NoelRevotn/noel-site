@@ -3,7 +3,6 @@
   --ground: #f8fafb;
   --ink: #10202c;
   --muted: #4b5d6b;
-  --sounding: #4b5d6b;
   --shoal: #cfe4f1;
   --mid: #e4f0f7;
   --contour: #7fa7c2;
@@ -20,32 +19,14 @@
   --ground: #07121c;
   --ink: #dce6ee;
   --muted: #93a6b5;
-  --sounding: #6f8799;
   --shoal: #14354c;
   --mid: #0d2436;
   --contour: #2f6286;
-  --magenta: #ff66ba;
+  --magenta: #e5589f;
   --paper: #0b1925;
   --rule: #24394b;
   --surface: #0b1925;
   color-scheme: dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :global(html:not([data-theme="light"])):has(.root) {
-    --ground: #07121c;
-    --ink: #dce6ee;
-    --muted: #93a6b5;
-    --sounding: #6f8799;
-    --shoal: #14354c;
-    --mid: #0d2436;
-    --contour: #2f6286;
-    --magenta: #ff66ba;
-    --paper: #0b1925;
-    --rule: #24394b;
-    --surface: #0b1925;
-    color-scheme: dark;
-  }
 }
 
 .root {
@@ -125,8 +106,11 @@
 }
 
 .controls {
+  position: absolute;
+  z-index: 5;
+  top: calc(var(--frame) + 0.75rem);
+  right: calc(var(--frame) + 1rem);
   display: flex;
-  gap: 0;
   background: var(--paper);
   border: 1px solid var(--ink);
 }
@@ -200,6 +184,75 @@
 
 .note p {
   margin: 0;
+}
+
+.noteShort {
+  display: none;
+}
+
+/* A plotted waypoint: the work sits on the chart and links to it. */
+.waypoint {
+  position: absolute;
+  left: 61%;
+  top: 44%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  text-decoration: none;
+}
+
+.fix {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--magenta);
+  background: color-mix(in oklab, var(--paper) 60%, transparent);
+}
+
+.fix::before {
+  content: "";
+  position: absolute;
+  inset: 0.4375rem;
+  border-radius: 50%;
+  background: var(--magenta);
+}
+
+/* Leader line from the fix to the label. */
+.fix::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 2px);
+  top: 50%;
+  width: 1.75rem;
+  height: 1.5px;
+  background: var(--magenta);
+}
+
+.waypointLabel {
+  display: grid;
+  background: var(--paper);
+  border: 1px solid var(--magenta);
+  padding: 0.375rem 0.625rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.05;
+  transition: background-color 160ms;
+}
+
+.waypointCoords {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.waypoint:hover .waypointLabel {
+  background: var(--shoal);
 }
 
 /* The title cartouche: double-ruled, bottom left. */
@@ -286,7 +339,13 @@
 /* Below the chart: notes in a single column, chart-margin style. */
 .notes {
   max-width: 62rem;
-  margin-inline: auto;
+  margin: clamp(2rem, 5vw, 4rem) auto 0;
+  border: 1px solid var(--ink);
+  outline: 1px solid var(--ink);
+  outline-offset: -6px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) top / 100% 6px no-repeat,
+    var(--paper);
   padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) 0;
   display: grid;
   gap: clamp(3rem, 7vw, 5rem);
@@ -301,7 +360,7 @@
   margin: 0 0 1.25rem;
 }
 
-.waypoint {
+.entry {
   display: grid;
   grid-template-columns: 2.5rem 1fr;
   gap: 1.25rem;
@@ -309,7 +368,7 @@
   padding-top: 1.5rem;
 }
 
-.waypoint p {
+.entry p {
   margin: 0 0 0.75rem;
   max-width: 64ch;
 }
@@ -326,7 +385,7 @@
   fill: var(--magenta);
 }
 
-.waypointTitle {
+.entryTitle {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: 2.25rem;
@@ -343,8 +402,7 @@
 }
 
 .stack {
-  font-family: var(--font-mono);
-  font-size: 0.8125rem;
+  font-size: 0.9375rem;
   color: var(--muted);
 }
 
@@ -438,7 +496,29 @@
   }
 
   .controls {
+    position: relative;
+    top: auto;
+    right: auto;
+    order: 3;
+    margin: 0 0.5rem 0.5rem;
     justify-content: space-between;
+  }
+
+  .noteLong {
+    display: none;
+  }
+
+  .noteShort {
+    display: block;
+  }
+
+  .waypoint {
+    left: 45%;
+    top: 7.5rem;
+  }
+
+  .waypointLabel {
+    font-size: 1.25rem;
   }
 
   .chart {
@@ -447,7 +527,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding-top: 16rem;
+    padding-top: 22rem;
   }
 
   .note {
@@ -458,6 +538,7 @@
   }
 
   .cartouche {
+    order: 2;
     position: relative;
     left: auto;
     bottom: auto;

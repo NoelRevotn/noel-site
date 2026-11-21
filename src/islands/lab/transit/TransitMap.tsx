@@ -8,17 +8,17 @@ type Side = "above" | "below" | "right";
 type Station = { name: string; at: Pt; built: boolean; side: Side };
 type LineDef = { id: "ml" | "sys" | "web"; label: string; color: string; path: Pt[]; stations: Station[] };
 
-// Normalised to the map area. All three lines meet at H2Oeste: its agents (ML), FastAPI backend
-// (systems) and React dashboard (web) are each a domain of the same project (CV, 2026).
+// Normalised to the map area. Stations are only real work (CV, 2026). All three lines meet at
+// H2Oeste: its agents (ML), FastAPI backend (systems) and React dashboard (web).
 const H2O: Pt = { x: 0.56, y: 0.47 };
 const LINES: LineDef[] = [
   {
     id: "ml",
     label: "ML / AI line",
     color: "--line-ml",
-    path: [{ x: 0.02, y: 0.16 }, { x: 0.3, y: 0.16 }, H2O, { x: 0.82, y: 0.73 }, { x: 1.2, y: 0.73 }],
+    path: [{ x: 0.08, y: 0.16 }, { x: 0.3, y: 0.16 }, H2O, { x: 0.82, y: 0.73 }, { x: 1.2, y: 0.73 }],
     stations: [
-      { name: "Gemini API", at: { x: 0.12, y: 0.16 }, built: true, side: "below" },
+      { name: "GCI World program", at: { x: 0.12, y: 0.16 }, built: false, side: "below" },
       { name: "AgenteQuery", at: { x: 0.3, y: 0.16 }, built: true, side: "above" },
       { name: "H2Oeste", at: H2O, built: true, side: "right" },
       { name: "Samsung AI program", at: { x: 0.92, y: 0.73 }, built: false, side: "below" },
@@ -29,7 +29,7 @@ const LINES: LineDef[] = [
     label: "Systems line",
     color: "--line-sys",
     path: [
-      { x: -0.2, y: 0.62 },
+      { x: 0.1, y: 0.62 },
       { x: 0.2, y: 0.62 },
       { x: 0.35, y: 0.47 },
       H2O,
@@ -37,9 +37,8 @@ const LINES: LineDef[] = [
       { x: 1.2, y: 0.25 },
     ],
     stations: [
-      { name: "Linux / WSL", at: { x: 0.08, y: 0.62 }, built: true, side: "below" },
       { name: "H2Oeste", at: H2O, built: true, side: "right" },
-      { name: "FastAPI", at: { x: 0.9, y: 0.25 }, built: true, side: "above" },
+      { name: "Presidency IT practice", at: { x: 0.92, y: 0.25 }, built: true, side: "above" },
     ],
   },
   {
@@ -52,12 +51,12 @@ const LINES: LineDef[] = [
       { x: 0.47, y: 0.88 },
       { x: 0.56, y: 0.79 },
       H2O,
-      { x: 0.56, y: -0.2 },
+      { x: 0.56, y: 0.05 },
     ],
     stations: [
       { name: "ITINERA", at: { x: 0.32, y: 0.88 }, built: true, side: "below" },
       { name: "H2Oeste", at: H2O, built: true, side: "right" },
-      { name: "React", at: { x: 0.56, y: 0.06 }, built: true, side: "right" },
+      { name: "This site", at: { x: 0.56, y: 0.05 }, built: false, side: "right" },
     ],
   },
 ];
@@ -190,6 +189,27 @@ function createEngine(): Engine {
         ctx.stroke();
       });
 
+      // Terminus bars where a line ends inside the map.
+      lines.forEach((l, i) => {
+        ctx.globalAlpha = focus !== null && i !== focus ? 1 - 0.75 * focusMix : 1;
+        ctx.strokeStyle = vars[l.def.color] || ink;
+        ctx.lineWidth = lw;
+        ctx.lineCap = "butt";
+        for (const [a, b] of [
+          [l.pts[0]!, l.pts[1]!],
+          [l.pts[l.pts.length - 1]!, l.pts[l.pts.length - 2]!],
+        ] as const) {
+          if (a.x < 0 || a.x > w || a.y < 0 || a.y > h) continue;
+          const ang = Math.atan2(b.y - a.y, b.x - a.x) + Math.PI / 2;
+          const d = lw * 1.6;
+          ctx.beginPath();
+          ctx.moveTo(a.x - Math.cos(ang) * d, a.y - Math.sin(ang) * d);
+          ctx.lineTo(a.x + Math.cos(ang) * d, a.y + Math.sin(ang) * d);
+          ctx.stroke();
+        }
+        ctx.lineCap = "round";
+      });
+
       // Trains: advance, dwell at each stop, reverse at the ends.
       lines.forEach((l, i) => {
         const color = vars[l.def.color] || ink;
@@ -218,12 +238,14 @@ function createEngine(): Engine {
           ctx.rotate(angle);
           ctx.fillStyle = ground;
           ctx.beginPath();
-          ctx.roundRect(-14, -(lw / 2 + 4), 28, lw + 8, 6);
+          ctx.roundRect(-16, -(lw / 2 + 5), 32, lw + 10, 7);
+          ctx.fill();
+          ctx.fillStyle = ink;
+          ctx.beginPath();
+          ctx.roundRect(-13, -(lw / 2 + 2.5), 26, lw + 5, 5);
           ctx.fill();
           ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.roundRect(-11, -(lw / 2 + 1.5), 22, lw + 3, 4);
-          ctx.fill();
+          ctx.fillRect(-9, -1.5, 18, 3);
           ctx.restore();
         }
       });
@@ -263,7 +285,7 @@ function createEngine(): Engine {
           else if (st.side === "below") y = p.y + r + 14;
           else {
             x = p.x + r + 10;
-            y = p.y - (interchange ? r + 8 : 0);
+            y = p.y;
           }
           x = Math.max(8, Math.min(x, w - tw - 8));
           // A ground-coloured halo keeps the label legible where it passes another line.

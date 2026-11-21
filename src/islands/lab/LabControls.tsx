@@ -1,14 +1,26 @@
 "use client";
 
-import { labStore, REDUCED, useLabState, useMedia, useResolvedTheme } from "./store";
+import { useEffect } from "react";
+import { FINE_POINTER, labStore, REDUCED, useLabState, useMedia, useResolvedTheme } from "./store";
 
-type Props = { className?: string; buttonClassName?: string };
+type Props = {
+  className?: string;
+  buttonClassName?: string;
+  /** The palette this direction opens in, whatever the OS asks; the other one is opt-in. */
+  initialTheme?: "light" | "dark";
+};
 
 /** Theme, motion and cursor switches for every lab. WCAG 2.2.2 requires the pause. */
-export function LabControls({ className, buttonClassName }: Props) {
+export function LabControls({ className, buttonClassName, initialTheme }: Props) {
   const { paused, cursor } = useLabState();
   const resolved = useResolvedTheme();
   const reduced = useMedia(REDUCED);
+  const fine = useMedia(FINE_POINTER, true);
+
+  useEffect(() => {
+    if (initialTheme && labStore.get().theme === "system") labStore.setTheme(initialTheme);
+  }, [initialTheme]);
+
   return (
     <div className={className} role="group" aria-label="Display settings">
       <button
@@ -29,14 +41,16 @@ export function LabControls({ className, buttonClassName }: Props) {
       >
         {reduced ? "Motion off" : "Pause motion"}
       </button>
-      <button
-        type="button"
-        className={buttonClassName}
-        aria-pressed={cursor}
-        onClick={() => labStore.setCursor(!cursor)}
-      >
-        Custom cursor
-      </button>
+      {fine && (
+        <button
+          type="button"
+          className={buttonClassName}
+          aria-pressed={cursor}
+          onClick={() => labStore.setCursor(!cursor)}
+        >
+          Custom cursor
+        </button>
+      )}
     </div>
   );
 }

@@ -60,7 +60,7 @@ const spec: Spec = {
     { name: "Shoal", hex: "#14354C", role: "Shallow band" },
     { name: "Mid", hex: "#0D2436", role: "Middle band" },
     { name: "Contour", hex: "#2F6286", role: "Contour hairlines" },
-    { name: "Magenta", hex: "#FF66BA", role: "Action, probes, cautions" },
+    { name: "Magenta", hex: "#E5589F", role: "Action, probes, cautions" },
     { name: "Paper", hex: "#0B1925", role: "Cartouche and notes" },
     { name: "Rule", hex: "#24394B", role: "Neatline, hairlines" },
   ],
@@ -106,18 +106,28 @@ export default function LabB() {
             </li>
           </ul>
         </nav>
-        <LabControls className={s.controls} buttonClassName={s.toggle} />
       </header>
 
       <main id="main">
         <section className={s.chart} aria-labelledby="name">
           <ChartField className={s.field} />
           <aside className={s.note} aria-label="Chart note">
-            <p>
-              <strong>Note.</strong> Depths are a synthetic loss surface. Magenta tracks are probes running
-              gradient descent toward its minima.
+            <p className={s.noteLong}>
+              <strong>Note.</strong> Depths are a synthetic loss surface (depth = 4 + 30 × (1.2 − loss) m).
+              Magenta tracks are probes running gradient descent; a ring marks a fix in a minimum.
+            </p>
+            <p className={s.noteShort}>
+              <strong>Note.</strong> Synthetic loss surface; magenta probes descend it.
             </p>
           </aside>
+          <a className={s.waypoint} href="#work">
+            <span className={s.fix} aria-hidden="true" />
+            <span className={s.waypointLabel}>
+              H2Oeste
+              <span className={s.waypointCoords}>8°57′N 79°29′W</span>
+            </span>
+          </a>
+          <LabControls className={s.controls} buttonClassName={s.toggle} initialTheme="light" />
           <div className={s.cartouche}>
             <h1 id="name" className={s.name}>
               {lab.name}
@@ -151,14 +161,14 @@ export default function LabB() {
             <h2 id="work-title" className={s.sectionTitle}>
               Work
             </h2>
-            <article className={s.waypoint}>
+            <article className={s.entry}>
               <svg className={s.mark} viewBox="0 0 40 40" aria-hidden="true">
                 <circle cx="20" cy="20" r="15" />
                 <circle cx="20" cy="20" r="3.5" />
                 <path d="M20 0 V8 M20 32 V40 M0 20 H8 M32 20 H40" />
               </svg>
               <div>
-                <h3 className={s.waypointTitle}>{p.title}</h3>
+                <h3 className={s.entryTitle}>{p.title}</h3>
                 <p className={s.summary}>{p.summary}</p>
                 <p>{p.what}</p>
                 <p className={s.muted}>{p.context}</p>

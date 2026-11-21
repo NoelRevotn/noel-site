@@ -1,4 +1,4 @@
-/* Lab A · Línea. Tokens live on <html> so the canvas and the spec sheet can read them. */
+/* Lab A · Línea. Opens on the white signage ground; "night service" is opt-in via the Dark switch. */
 :global(html):has(.root) {
   --ground: #ffffff;
   --ink: #0f1e33;
@@ -10,6 +10,8 @@
   --line-web: #0057b8;
   --on-line: #ffffff;
   --rail-h: 5.5rem;
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --stop-pad: clamp(3rem, 6vw, 4.5rem);
   color-scheme: light;
   background: var(--ground);
   scrollbar-color: var(--ink) var(--surface);
@@ -28,25 +30,11 @@
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :global(html:not([data-theme="light"])):has(.root) {
-    --ground: #0b1424;
-    --ink: #e9eff7;
-    --muted: #a6b3c6;
-    --surface: #15223a;
-    --rule: #2a3a55;
-    --line-ml: #ff7a84;
-    --line-sys: #3ad58d;
-    --line-web: #79b0ff;
-    --on-line: #0b1424;
-    color-scheme: dark;
-  }
-}
-
 .root {
-  /* Font variables come from next/font classes on this element, so resolve them here. */
+  /* next/font sets these variables on this element, so resolve them here. */
   --font-display: var(--font-archivo), sans-serif;
   --font-text: var(--font-atkinson), sans-serif;
+  --font-mono: var(--font-azeret), monospace;
   color: var(--ink);
   background: var(--ground);
   font-family: var(--font-text);
@@ -56,8 +44,8 @@
 }
 
 .root ::selection {
-  background: var(--line-web);
-  color: var(--on-line);
+  background: var(--ink);
+  color: var(--ground);
 }
 
 .root :focus-visible {
@@ -85,30 +73,37 @@
   top: 1rem;
 }
 
-/* The rail: one line crossing the top of every page; stations are the navigation. */
+/* The rail: one line across the top of every page, ending in a terminus bar. */
 .rail {
   position: sticky;
   top: 0;
   z-index: 10;
   height: var(--rail-h);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-inline: clamp(1rem, 4vw, 3rem);
+  padding-inline: var(--gutter);
   background: var(--ground);
 }
 
-.rail::before {
+.rail::before,
+.rail::after {
   content: "";
   position: absolute;
+  background: var(--ink);
+}
+
+.rail::before {
   left: 0;
-  right: 0;
+  right: var(--gutter);
   top: 3.25rem;
   height: 8px;
-  background: var(--ink);
   transform-origin: left;
   animation: draw 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.rail::after {
+  right: var(--gutter);
+  top: calc(3.25rem - 10px);
+  width: 8px;
+  height: 28px;
 }
 
 @keyframes draw {
@@ -124,7 +119,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  align-self: stretch;
+  height: var(--rail-h);
 }
 
 .stations li {
@@ -133,7 +128,8 @@
 
 .stations a {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
   align-items: center;
   gap: 0.5rem;
   padding-top: 0.75rem;
@@ -142,9 +138,6 @@
   font-weight: 650;
   font-size: 0.9375rem;
   text-decoration: none;
-  /* Label above, station mark on the rail. */
-  flex-direction: column-reverse;
-  justify-content: flex-end;
 }
 
 .dot {
@@ -154,11 +147,11 @@
   border-radius: 50%;
   background: var(--ground);
   box-shadow: 0 0 0 3.5px var(--ink);
-  transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: scale 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .stations a:hover .dot {
-  transform: scale(1.2);
+  scale: 1.2;
 }
 
 .stations a[aria-current="page"] .dot {
@@ -168,43 +161,16 @@
 .here {
   position: absolute;
   left: 50%;
-  top: 4.25rem;
+  top: 4.3rem;
   translate: -50% 0;
   white-space: nowrap;
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
-  padding: 0.0625rem 0.5rem;
+  line-height: 1.4;
+  padding: 0 0.4375rem;
   border-radius: 4px;
-  background: var(--line-ml);
-  color: var(--on-line);
-}
-
-.controls {
-  display: flex;
-  gap: 0.375rem;
-  position: relative;
-  background: var(--ground);
-  padding-left: 0.5rem;
-}
-
-.toggle {
-  font: 600 0.8125rem/1 var(--font-text);
-  color: var(--ink);
-  background: var(--surface);
-  border: 2px solid var(--rule);
-  border-radius: 6px;
-  padding: 0.5rem 0.625rem;
-  min-height: 2.5rem;
-}
-
-.toggle[aria-pressed="true"] {
   background: var(--ink);
-  border-color: var(--ink);
   color: var(--ground);
-}
-
-.toggle:disabled {
-  opacity: 0.6;
 }
 
 /* Hero: copy on clear ground at the left, the live map owns the right. */
@@ -213,7 +179,7 @@
   min-height: calc(100svh - var(--rail-h));
   display: grid;
   align-items: center;
-  padding: clamp(2rem, 6vw, 5rem) clamp(1rem, 4vw, 3rem);
+  padding: clamp(2rem, 6vw, 5rem) var(--gutter);
 }
 
 .map {
@@ -271,9 +237,7 @@
   font-variation-settings: "wdth" 100;
   font-weight: 700;
   text-decoration: none;
-  transition:
-    transform 160ms cubic-bezier(0.16, 1, 0.3, 1),
-    background-color 160ms;
+  transition: translate 160ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .primary {
@@ -281,13 +245,14 @@
   color: var(--ground) !important;
 }
 
+/* A station mark on the plate, in ink and ground only: line colours mean domains. */
 .primary::before {
   content: "";
   width: 0.75rem;
   height: 0.75rem;
   border-radius: 50%;
-  background: var(--ground);
-  box-shadow: 0 0 0 3px var(--line-ml);
+  background: var(--ink);
+  box-shadow: 0 0 0 3px var(--ground);
 }
 
 .secondary {
@@ -297,18 +262,50 @@
 
 .primary:hover,
 .secondary:hover {
-  transform: translateY(-2px);
+  translate: 0 -2px;
 }
 
 .primary:active,
 .secondary:active {
-  transform: translateY(0);
+  translate: 0 0;
+}
+
+/* Service panel: display settings, off the rail, bottom right of the hero. */
+.controls {
+  position: absolute;
+  right: var(--gutter);
+  bottom: 1.25rem;
+  display: flex;
+  gap: 0.375rem;
+  padding: 0.375rem;
+  border-radius: 10px;
+  background: var(--ground);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.toggle {
+  font: 600 0.8125rem/1 var(--font-text);
+  color: var(--ink);
+  background: var(--surface);
+  border: 0;
+  border-radius: 6px;
+  padding: 0.5rem 0.625rem;
+  min-height: 2.5rem;
+}
+
+.toggle[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--ground);
+}
+
+.toggle:disabled {
+  opacity: 0.6;
 }
 
 /* Legend strip. */
 .legend {
   border-block: 1px solid var(--rule);
-  padding: 1.25rem clamp(1rem, 4vw, 3rem);
+  padding: 1.25rem var(--gutter);
   display: flex;
   flex-wrap: wrap;
   gap: 1rem 2.5rem;
@@ -332,11 +329,16 @@
   gap: 0.625rem;
 }
 
-.bar {
-  width: 2rem;
-  height: 6px;
-  border-radius: 3px;
+/* Line code: mono on a line-coloured tab, the way transit maps tag lines. */
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  padding: 0.125rem 0.375rem;
+  border-radius: 4px;
   background: var(--c);
+  color: var(--on-line);
 }
 
 .root [data-line="ml"] {
@@ -376,20 +378,50 @@
   background: var(--ground);
 }
 
-/* Sections. */
-.section {
-  max-width: 72rem;
-  margin-inline: auto;
-  padding: clamp(3.5rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) 0;
+/* The trunk: the line continues down the page; each section is a stop on it. */
+.trunk {
+  position: relative;
+  padding: 0 var(--gutter) 1rem;
 }
 
-.sectionTitle {
+.trunk::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--gutter) + 0.5625rem - 4px);
+  top: 0;
+  bottom: 0;
+  width: 8px;
+  background: var(--ink);
+}
+
+.stop {
+  position: relative;
+  padding: clamp(3.5rem, 8vw, 6rem) 0 0 var(--stop-pad);
+  max-width: 72rem;
+}
+
+.stopTitle {
+  position: relative;
   font-family: var(--font-display);
   font-variation-settings: "wdth" 112;
   font-weight: 800;
   font-size: clamp(1.75rem, 3.5vw, 2.5rem);
   margin: 0 0 1.5rem;
   line-height: 1.1;
+}
+
+/* Station mark on the trunk, level with the heading. */
+.stopTitle::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--stop-pad));
+  top: 50%;
+  width: 1.125rem;
+  height: 1.125rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--ground);
+  box-shadow: 0 0 0 3.5px var(--ink);
 }
 
 .plate {
@@ -454,7 +486,7 @@
 
 .transfers div {
   border-top: 6px solid var(--c);
-  padding-top: 0.375rem;
+  padding-top: 0.5rem;
 }
 
 .transfers dt {
@@ -463,14 +495,20 @@
 }
 
 .transfers dd {
-  margin: 0;
+  margin: 0.25rem 0 0;
 }
 
 .body {
   font-size: 1.25rem;
   line-height: 1.6;
   max-width: 62ch;
-  margin: 0;
+  margin: 0 0 0.75rem;
+}
+
+.date {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .spec {
@@ -533,24 +571,15 @@
   scale: 1;
 }
 
-/* Narrow screens: the map becomes its own block under the copy; controls drop under the rail. */
+/* Narrow screens: the rail stays sticky with a compact flag; the map sits under the copy. */
 @media (max-width: 45rem) {
-  .rail {
-    height: auto;
-    flex-wrap: wrap;
-    padding-block: 0 0.75rem;
-    position: relative;
+  .stations {
+    gap: 0;
+    justify-content: space-between;
   }
 
   .rail nav {
-    width: 100%;
-  }
-
-  .stations {
-    height: 5.5rem;
-    gap: 0;
-    justify-content: space-between;
-    width: 100%;
+    width: calc(100% - 1.5rem);
   }
 
   .stations a {
@@ -558,16 +587,13 @@
   }
 
   .here {
-    display: none;
-  }
-
-  .controls {
-    padding-left: 0;
-    flex-wrap: wrap;
+    font-size: 0.625rem;
+    top: 4.4rem;
   }
 
   .hero {
     min-height: 0;
+    padding-top: 2.5rem;
     padding-bottom: 0;
   }
 
@@ -579,8 +605,15 @@
     position: relative;
     inset: auto;
     height: 22rem;
-    order: 2;
     margin-top: 2rem;
+  }
+
+  .controls {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    justify-self: start;
+    margin: 1rem 0 1.5rem;
   }
 
   .plate {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo, Atkinson_Hyperlegible_Next } from "next/font/google";
+import { Archivo, Atkinson_Hyperlegible_Next, Azeret_Mono } from "next/font/google";
 import { SpecSheet, type Spec } from "@/components/lab/SpecSheet";
 import { LabControls } from "@/islands/lab/LabControls";
 import { StationCursor } from "@/islands/lab/transit/StationCursor";
@@ -8,6 +8,7 @@ import { lab } from "@/lib/lab-content";
 import s from "./a.module.css";
 
 const display = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
+const mono = Azeret_Mono({ subsets: ["latin"], variable: "--font-azeret", display: "swap" });
 const text = Atkinson_Hyperlegible_Next({ subsets: ["latin"], variable: "--font-atkinson", display: "swap" });
 
 export const metadata: Metadata = { title: "Lab A · Línea" };
@@ -27,6 +28,12 @@ const spec: Spec = {
       family: "Atkinson Hyperlegible Next (Braille Institute, built for low-vision legibility)",
       license: "SIL Open Font License",
       href: "https://fonts.google.com/specimen/Atkinson+Hyperlegible+Next/license",
+    },
+    {
+      role: "Mono",
+      family: "Azeret Mono, only for line codes (ML, SY, WB) and dates, with tabular figures",
+      license: "SIL Open Font License",
+      href: "https://fonts.google.com/specimen/Azeret+Mono/license",
     },
   ],
   light: [
@@ -62,7 +69,7 @@ const spec: Spec = {
     { fg: "Web line", bg: "Ground", use: "Focus ring (3:1 needed)" },
   ],
   ambient:
-    "A live network map. Three lines (ML/AI, systems, web) are routed at 45° and 90° angles and all meet at H2Oeste. Trains run each line and dwell at stations. Filled stations are built; hollow ones are in progress. Canvas 2D, about 4 KB of code. It pauses off-screen and in background tabs, steps quality down on slow devices, and draws one still frame under reduced motion.",
+    "A live network map. Three lines (ML/AI, systems, web) are routed at 45° and 90° angles and all meet at H2Oeste. Stations are only real work: filled ones are built, hollow ones are in progress (GCI World, Samsung AI program, this site). Ink trains run each line and dwell at stations. Canvas 2D. It pauses off-screen and in background tabs, steps quality down on slow devices, and draws one still frame under reduced motion.",
   cursor:
     "A station mark (ground fill, ink ring). Over a link or button it becomes a small ink plate naming the action: Go, Open, Download, Press. Pointing near a map line isolates that line and names its domain. Fine pointers only; off under reduced motion; switchable.",
   signature:
@@ -73,7 +80,7 @@ const spec: Spec = {
 export default function LabA() {
   const p = lab.project;
   return (
-    <div className={`${s.root} ${display.variable} ${text.variable}`}>
+    <div className={`${s.root} ${display.variable} ${text.variable} ${mono.variable}`}>
       <a className={s.skip} href="#main">
         Skip to content
       </a>
@@ -116,7 +123,6 @@ export default function LabA() {
             </li>
           </ol>
         </nav>
-        <LabControls className={s.controls} buttonClassName={s.toggle} />
       </header>
 
       <main id="main">
@@ -146,6 +152,7 @@ export default function LabA() {
               </li>
             </ul>
           </div>
+          <LabControls className={s.controls} buttonClassName={s.toggle} initialTheme="light" />
         </section>
 
         <section className={s.legend} aria-labelledby="legend-title">
@@ -154,16 +161,16 @@ export default function LabA() {
           </h2>
           <ul className={s.lines}>
             <li data-line="ml">
-              <span className={s.bar} aria-hidden="true" />
-              ML / AI: Gemini API, AgenteQuery, H2Oeste, Samsung AI program (in progress)
+              <span className={s.code}>ML</span>
+              ML / AI: GCI World program (in progress), AgenteQuery, H2Oeste, Samsung AI program (in progress)
             </li>
             <li data-line="sys">
-              <span className={s.bar} aria-hidden="true" />
-              Systems: Linux / WSL, H2Oeste, FastAPI
+              <span className={s.code}>SY</span>
+              Systems: H2Oeste, Presidency IT practice
             </li>
             <li data-line="web">
-              <span className={s.bar} aria-hidden="true" />
-              Web: ITINERA, H2Oeste, React
+              <span className={s.code}>WB</span>
+              Web: ITINERA, H2Oeste, this site (in progress)
             </li>
           </ul>
           <p className={s.key}>
@@ -172,57 +179,67 @@ export default function LabA() {
           </p>
         </section>
 
-        <section id="work" className={s.section} aria-labelledby="work-title">
-          <h2 id="work-title" className={s.sectionTitle}>
-            Work
-          </h2>
-          <article className={s.plate}>
-            <svg className={s.glyph} viewBox="0 0 64 64" aria-hidden="true">
-              <path d="M4 18 H24 L32 32" />
-              <path d="M4 46 H20 L32 32" data-line="sys" />
-              <path d="M32 4 V32" data-line="web" />
-              <circle cx="32" cy="32" r="9" />
-            </svg>
-            <div>
-              <h3 className={s.plateTitle}>{p.title}</h3>
-              <p className={s.plateSummary}>{p.summary}</p>
-              <p>{p.what}</p>
-              <p className={s.muted}>{p.context}</p>
-              <p>{p.role}</p>
-              <dl className={s.transfers}>
-                <div data-line="ml">
-                  <dt>ML / AI</dt>
-                  <dd>{p.stack.ml.join(", ")}</dd>
-                </div>
-                <div data-line="sys">
-                  <dt>Systems</dt>
-                  <dd>{p.stack.sys.join(", ")}</dd>
-                </div>
-                <div data-line="web">
-                  <dt>Web</dt>
-                  <dd>{p.stack.web.join(", ")}</dd>
-                </div>
-              </dl>
-            </div>
-          </article>
-        </section>
+        <div className={s.trunk}>
+          <section id="work" className={s.stop} aria-labelledby="work-title">
+            <h2 id="work-title" className={s.stopTitle}>
+              Work
+            </h2>
+            <article className={s.plate}>
+              <svg className={s.glyph} viewBox="0 0 64 64" aria-hidden="true">
+                <path d="M4 18 H24 L32 32" />
+                <path d="M4 46 H20 L32 32" data-line="sys" />
+                <path d="M32 4 V32" data-line="web" />
+                <circle cx="32" cy="32" r="9" />
+              </svg>
+              <div>
+                <h3 className={s.plateTitle}>{p.title}</h3>
+                <p className={s.plateSummary}>{p.summary}</p>
+                <p>{p.what}</p>
+                <p className={s.muted}>{p.context}</p>
+                <p>{p.role}</p>
+                <dl className={s.transfers}>
+                  <div data-line="ml">
+                    <dt>
+                      <span className={s.code}>ML</span> ML / AI
+                    </dt>
+                    <dd>{p.stack.ml.join(", ")}</dd>
+                  </div>
+                  <div data-line="sys">
+                    <dt>
+                      <span className={s.code}>SY</span> Systems
+                    </dt>
+                    <dd>{p.stack.sys.join(", ")}</dd>
+                  </div>
+                  <div data-line="web">
+                    <dt>
+                      <span className={s.code}>WB</span> Web
+                    </dt>
+                    <dd>{p.stack.web.join(", ")}</dd>
+                  </div>
+                </dl>
+              </div>
+            </article>
+          </section>
 
-        <section id="about" className={s.section} aria-labelledby="about-title">
-          <h2 id="about-title" className={s.sectionTitle}>
-            About
-          </h2>
-          <p className={s.body}>{lab.about}</p>
-        </section>
+          <section id="about" className={s.stop} aria-labelledby="about-title">
+            <h2 id="about-title" className={s.stopTitle}>
+              About
+            </h2>
+            <p className={s.body}>{lab.about}</p>
+          </section>
 
-        <section id="cv" className={s.section} aria-labelledby="cv-title">
-          <h2 id="cv-title" className={s.sectionTitle}>
-            CV
-          </h2>
-          <p className={s.body}>
-            B.S. in Systems and Computer Engineering, {lab.school}, March 2025 to December 2028 (expected).
-            The downloadable PDF arrives in Phase 3.
-          </p>
-        </section>
+          <section id="cv" className={s.stop} aria-labelledby="cv-title">
+            <h2 id="cv-title" className={s.stopTitle}>
+              CV
+            </h2>
+            <p className={s.body}>
+              B.S. in Systems and Computer Engineering, {lab.school}
+              <br />
+              <span className={s.date}>2025-03 to 2028-12</span> <span className={s.muted}>(expected)</span>
+            </p>
+            <p className={`${s.body} ${s.muted}`}>The downloadable PDF arrives in Phase 3.</p>
+          </section>
+        </div>
       </main>
 
       <SpecSheet spec={spec} className={s.spec} />
