@@ -398,13 +398,15 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-21 | ~~CP1 direction: Línea × Sondeo mix at `/lab/mix`~~ Withdrawn by Noel the same day; mix and HTML/SVG approach discarded | Noel | — |
 | 2026-11-21 | **CP1 direction: Lab A (Línea)**, with the network map in 3D (levels per domain, H2Oeste as the interchange shaft) using three.js | Noel | ADR-0003 |
 | 2026-11-21 | Phase 2 shell: plain CSS tokens + CSS Modules (no Tailwind), next-intl EN/ES, Motion only for layout/inView, light-first theme; labs B, C removed | Claude Code | ADR-0004, docs/DESIGN.md |
+| 2026-11-21 | **CP2 approved.** v1 islands: ⌘K palette, skill graph, tokenizer toy (project map and terminal mode stay in the backlog). Headshot: yes, Noel provides the photo. Added motion: train colour-gradient glow on the 3D lines, a page-wide ambient track backdrop (fades in after the hero), and a cursor that stretches with speed and pulls a short train of cars | Noel | — |
+| 2026-11-21 | `/lab` routes removed now that CP2 is approved | Claude Code | ADR-0004 |
 
 ---
 
 ## 15. Open questions for Noel (ask at the relevant checkpoint)
 1. Contact email to publish (or form-only)? Other socials (X, Kaggle, Hugging Face, ORCID)? — Phase 3
 2. Which 2–3 projects are featured, and are their repos public? — Phase 3
-3. Headshot: yes or no? — CP1
+3. ~~Headshot: yes or no?~~ Yes, Noel provides it (CP2) — TODO(noel): send the photo
 4. Status line ("Open to ML/AI internships, 2027"?) — Phase 3
 5. A Spanish CV PDF too, or English only? — Phase 4
 6. Content license? — Phase 5

@@ -5,6 +5,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Footer } from "@/components/chrome/Footer";
 import { routing } from "@/i18n/routing";
+import { Backdrop } from "@/islands/backdrop/Backdrop";
 import { CommandPalette } from "@/islands/command-palette/CommandPalette";
 import cursor from "@/islands/cursor/cursor.module.css";
 import { StationCursor } from "@/islands/cursor/StationCursor";
@@ -61,6 +62,7 @@ export default async function LocaleLayout({
         <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
       </head>
       <body>
+        <Backdrop className={cursor.backdrop} />
         <NextIntlClientProvider>
           <a className="skip-link" href="#main">
             {t("skip")}
@@ -69,7 +71,12 @@ export default async function LocaleLayout({
           {children}
           <Footer />
           <CommandPalette links={{ github: profile.links.github, linkedin: profile.links.linkedin }} />
-          <StationCursor className={cursor.cursor} plateClassName={cursor.plate} />
+          <StationCursor
+            className={cursor.cursor}
+            plateClassName={cursor.plate}
+            markClassName={cursor.mark}
+            carClassName={cursor.car}
+          />
           <RevealObserver />
         </NextIntlClientProvider>
       </body>

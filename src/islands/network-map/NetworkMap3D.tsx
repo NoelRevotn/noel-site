@@ -66,6 +66,8 @@ const SPAN_X = 8;
 const SPAN_Z = 5.6;
 const DWELL = 1.4;
 const SPEED = 0.6;
+const SEGMENTS = 400;
+const RADIAL = 12;
 
 function webglAvailable() {
   try {
@@ -108,7 +110,13 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     }),
     edge: new THREE.LineBasicMaterial({ transparent: true, opacity: 0.9 }),
   };
-  const lineMats = LINES.map(() => new THREE.MeshStandardMaterial({ roughness: 0.4, transparent: true }));
+  const lineMats = LINES.map(
+    () => new THREE.MeshStandardMaterial({ roughness: 0.4, transparent: true, vertexColors: true }),
+  );
+  // Per-line base colour and the brighter glow a passing train leaves on the track.
+  const baseColors = LINES.map(() => new THREE.Color());
+  const glowColors = LINES.map(() => new THREE.Color());
+  const white = new THREE.Color(0xffffff);
   const windowMats = LINES.map(() => new THREE.MeshBasicMaterial());
   const applyColors = () => {
     mats.ink.color.copy(color("--ink"));
@@ -117,8 +125,10 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     mats.edge.color.copy(color("--rule"));
     LINES.forEach((l, i) => {
       const c = color(l.colorVar);
-      lineMats[i]!.color.copy(c);
-      lineMats[i]!.emissive.copy(c).multiplyScalar(0.55);
+      lineMats[i]!.color.set(0xffffff); // vertex colours carry the line colour
+      lineMats[i]!.emissive.copy(c).multiplyScalar(0.3);
+      baseColors[i]!.copy(c);
+      glowColors[i]!.copy(c).lerp(white, 0.62);
       windowMats[i]!.color.copy(c);
     });
   };
@@ -183,7 +193,12 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   type Train = { mesh: Three.Group; u: number; dir: 1 | -1; dwell: number; last: number };
   const lines = LINES.map((l, i) => {
     const curve = roundedCurve(l.path.map((p) => toWorld(p, l.level)));
-    const tube = new THREE.Mesh(track(new THREE.TubeGeometry(curve, 400, 0.06, 12, false)), lineMats[i]);
+    const tubeGeo = track(new THREE.TubeGeometry(curve, SEGMENTS, 0.06, RADIAL, false));
+    tubeGeo.setAttribute(
+      "color",
+      new THREE.BufferAttribute(new Float32Array(tubeGeo.attributes.position!.count * 3), 3),
+    );
+    const tube = new THREE.Mesh(tubeGeo, lineMats[i]);
     tube.userData.line = i;
     scene.add(tube);
     const length = curve.getLength();
@@ -223,7 +238,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
       scene.add(g);
       return { mesh: g, u, dir: k ? -1 : 1, dwell: 0, last: -1 };
     });
-    return { curve, tube, length, stopU, trains };
+    return { curve, tube, tubeGeo, length, stopU, trains, index: i };
   });
 
   // DOM labels, projected every frame.
@@ -299,6 +314,34 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
         tr.mesh.lookAt(tmp.copy(tr.mesh.position).add(tan));
       }
     });
+
+    // Train glow: a colour gradient along the track, brightest just behind each train.
+    for (const ln of lines) {
+      const attr = ln.tubeGeo.attributes.color as Three.BufferAttribute;
+      const arr = attr.array as Float32Array;
+      const base = baseColors[ln.index]!;
+      const glow = glowColors[ln.index]!;
+      for (let r = 0; r <= SEGMENTS; r++) {
+        const u = r / SEGMENTS;
+        let k = 0;
+        for (const tr of ln.trains) {
+          // Signed distance along the line, positive behind the train's direction of travel.
+          const d = (tr.u - u) * ln.length * tr.dir;
+          const v = d >= 0 ? Math.exp(-d / 0.9) * (d < 2.6 ? 1 : 0) : Math.exp(d / 0.22);
+          if (v > k) k = v;
+        }
+        const cr = base.r + (glow.r - base.r) * k;
+        const cg = base.g + (glow.g - base.g) * k;
+        const cb = base.b + (glow.b - base.b) * k;
+        for (let j = 0; j <= RADIAL; j++) {
+          const o = (r * (RADIAL + 1) + j) * 3;
+          arr[o] = cr;
+          arr[o + 1] = cg;
+          arr[o + 2] = cb;
+        }
+      }
+      attr.needsUpdate = true;
+    }
 
     // Isolation by raycast against the tubes.
     let hit = -1;

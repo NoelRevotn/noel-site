@@ -23,7 +23,7 @@ html {
 body {
   margin: 0;
   color: var(--ink);
-  background: var(--ground);
+  /* No body background: html paints the ground, so the fixed backdrop shows through. */
   font-family: var(--font-text);
   font-size: var(--step-0);
   line-height: 1.6;
