@@ -1,0 +1,575 @@
+/* Lab C · Banco. */
+:global(html):has(.root) {
+  --chassis: #cdd1d4;
+  --panel: #dde0e2;
+  --ink: #1c2024;
+  --muted: #454c53;
+  --keycap: #f1f1ec;
+  --keycap-skirt: #b9b9b0;
+  --orange: #e8590c;
+  --orange-skirt: #a63f08;
+  --screen: #16100a;
+  --amber: #ffb547;
+  --amber-dim: #4a3210;
+  --rule: #a9afb4;
+  --ground: var(--chassis);
+  --surface: var(--panel);
+  color-scheme: light;
+  background: var(--chassis);
+  scrollbar-color: var(--muted) var(--chassis);
+}
+
+:global(html[data-theme="dark"]):has(.root) {
+  --chassis: #1d2124;
+  --panel: #272c30;
+  --ink: #e7eaec;
+  --muted: #a8b0b7;
+  --keycap: #3a4046;
+  --keycap-skirt: #22272b;
+  --orange: #ff6a1f;
+  --orange-skirt: #a8400c;
+  --screen: #100b06;
+  --amber: #ffb547;
+  --amber-dim: #3d2a0e;
+  --rule: #3b4247;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(html:not([data-theme="light"])):has(.root) {
+    --chassis: #1d2124;
+    --panel: #272c30;
+    --ink: #e7eaec;
+    --muted: #a8b0b7;
+    --keycap: #3a4046;
+    --keycap-skirt: #22272b;
+    --orange: #ff6a1f;
+    --orange-skirt: #a8400c;
+    --screen: #100b06;
+    --amber: #ffb547;
+    --amber-dim: #3d2a0e;
+    --rule: #3b4247;
+    color-scheme: dark;
+  }
+}
+
+.root {
+  --font-display: var(--font-bricolage), sans-serif;
+  --font-text: var(--font-bricolage), sans-serif;
+  --font-mono: var(--font-fragment), monospace;
+  color: var(--ink);
+  background: var(--chassis);
+  font-family: var(--font-text);
+  font-variation-settings: "opsz" 14;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  padding: clamp(0.75rem, 3vw, 2.5rem);
+}
+
+.root ::selection {
+  background: var(--amber);
+  color: var(--screen);
+}
+
+.root :focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.root a {
+  color: inherit;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 20;
+  background: var(--keycap);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+}
+
+.skip:focus {
+  top: 1rem;
+}
+
+/* The instrument: one object seen from above. */
+.instrument {
+  position: relative;
+  max-width: 80rem;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(16rem, 1fr);
+  grid-template-areas:
+    "screen keys"
+    "screen knob"
+    "controls knob";
+  gap: clamp(1rem, 2.5vw, 2rem);
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  border-radius: 22px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 92%, white) 0%, var(--panel) 40%);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 60%, transparent) inset,
+    0 -2px 0 color-mix(in oklab, black 12%, transparent) inset,
+    0 24px 48px -20px rgb(0 0 0 / 0.45),
+    0 4px 10px -4px rgb(0 0 0 / 0.25);
+}
+
+.screw {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, color-mix(in oklab, var(--panel) 70%, white), var(--rule));
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.25);
+}
+
+.screw::after {
+  content: "";
+  position: absolute;
+  inset: 6px 2px;
+  background: rgb(0 0 0 / 0.35);
+  rotate: 35deg;
+}
+
+.screw[data-pos="tl"] {
+  top: 12px;
+  left: 12px;
+}
+
+.screw[data-pos="tr"] {
+  top: 12px;
+  right: 12px;
+}
+
+.screw[data-pos="bl"] {
+  bottom: 12px;
+  left: 12px;
+}
+
+.screw[data-pos="br"] {
+  bottom: 12px;
+  right: 12px;
+}
+
+/* Amber screen. */
+.screen {
+  grid-area: screen;
+  position: relative;
+  background: radial-gradient(
+    120% 90% at 30% 20%,
+    color-mix(in oklab, var(--screen) 88%, var(--amber)),
+    var(--screen) 60%
+  );
+  color: var(--amber);
+  border-radius: 14px;
+  padding: clamp(1.5rem, 3.5vw, 2.75rem);
+  min-height: 30rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow:
+    inset 0 0 0 2px rgb(0 0 0 / 0.6),
+    inset 0 2px 18px rgb(0 0 0 / 0.7),
+    0 1px 0 color-mix(in oklab, white 50%, transparent);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-variation-settings:
+    "opsz" 96,
+    "wdth" 85;
+  font-weight: 700;
+  font-size: clamp(2.75rem, 6vw, 5.25rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  margin: 0;
+  text-shadow: 0 0 18px color-mix(in oklab, var(--amber) 45%, transparent);
+}
+
+.headline {
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
+  line-height: 1.45;
+  max-width: 34ch;
+  margin: 1.25rem 0 0;
+}
+
+.channel {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin: 1.5rem 0 1.25rem;
+  min-height: 5.5rem;
+}
+
+.channel p {
+  margin: 0;
+}
+
+.trace {
+  width: 100%;
+  height: 6.5rem;
+  margin-top: auto;
+  display: block;
+}
+
+.readout {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin: 0.5rem 0 0;
+  opacity: 0.85;
+}
+
+/* Keycaps: real travel on press. */
+.keys {
+  grid-area: keys;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  align-content: start;
+}
+
+.key {
+  --skirt: var(--keycap-skirt);
+  display: grid;
+  place-items: center;
+  min-height: 4.25rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--keycap) 85%, white), var(--keycap));
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  text-decoration: none;
+  text-align: center;
+  box-shadow:
+    0 4px 0 var(--skirt),
+    0 6px 12px -4px rgb(0 0 0 / 0.35);
+  transition:
+    translate 70ms ease-out,
+    box-shadow 70ms ease-out;
+}
+
+.key:hover {
+  background: var(--keycap);
+}
+
+.key:active {
+  translate: 0 3px;
+  box-shadow:
+    0 1px 0 var(--skirt),
+    0 2px 4px -2px rgb(0 0 0 / 0.35);
+}
+
+.commit {
+  --skirt: var(--orange-skirt);
+  grid-column: span 2;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--orange) 85%, white), var(--orange));
+  color: var(--screen);
+  font-weight: 700;
+  min-height: 5rem;
+  font-size: 1rem;
+}
+
+.commit:hover {
+  background: var(--orange);
+}
+
+/* Knob. */
+.knobWrap {
+  grid-area: knob;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.knob {
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 58%, rgb(0 0 0 / 0.12) 59% 60%, transparent 61%),
+    repeating-conic-gradient(
+      from 0deg,
+      color-mix(in oklab, var(--rule) 70%, white) 0deg 4deg,
+      var(--rule) 4deg 8deg
+    );
+  box-shadow:
+    0 6px 14px -4px rgb(0 0 0 / 0.45),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+  position: relative;
+  touch-action: none;
+  transition: rotate 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.knob::before {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--panel) 80%, white), var(--panel));
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+}
+
+.knob::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 26%;
+  width: 4px;
+  height: 18%;
+  translate: -50% 0;
+  border-radius: 2px;
+  background: var(--orange);
+}
+
+.detents {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.detent button {
+  font: 400 0.8125rem/1.2 var(--font-mono);
+  color: var(--muted);
+  background: none;
+  border: 0;
+  padding: 0.375rem 0;
+  min-height: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detent button::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rule);
+}
+
+.detent[data-active="true"] button {
+  color: var(--ink);
+}
+
+.detent[data-active="true"] button::before {
+  background: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+}
+
+.wide {
+  grid-column: span 2;
+}
+
+.controls {
+  grid-area: controls;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.switch {
+  font: 400 0.8125rem/1 var(--font-mono);
+  color: var(--ink);
+  background: var(--keycap);
+  border: 0;
+  border-radius: 8px;
+  padding: 0.625rem 0.75rem 0.625rem 1.75rem;
+  min-height: 2.5rem;
+  position: relative;
+  box-shadow:
+    0 3px 0 var(--keycap-skirt),
+    0 4px 8px -4px rgb(0 0 0 / 0.35);
+}
+
+.switch::before {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--rule);
+}
+
+.switch[aria-pressed="true"]::before {
+  background: var(--orange);
+  box-shadow: 0 0 6px var(--orange);
+}
+
+.switch:active {
+  translate: 0 2px;
+  box-shadow: 0 1px 0 var(--keycap-skirt);
+}
+
+.switch:disabled {
+  opacity: 0.6;
+}
+
+/* Modules below the instrument. */
+.modules {
+  max-width: 80rem;
+  margin: clamp(2rem, 5vw, 4rem) auto 0;
+  display: grid;
+  gap: clamp(1rem, 2.5vw, 2rem);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+
+.module {
+  background: var(--panel);
+  border-radius: 16px;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  box-shadow:
+    0 1px 0 color-mix(in oklab, white 50%, transparent) inset,
+    0 10px 24px -14px rgb(0 0 0 / 0.4);
+}
+
+.module:first-child {
+  grid-column: 1 / -1;
+}
+
+.module p {
+  margin: 0 0 0.75rem;
+  max-width: 64ch;
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-variation-settings:
+    "opsz" 48,
+    "wdth" 85;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--muted);
+  margin: 0 0 1rem;
+}
+
+.moduleTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-variation-settings:
+    "opsz" 72,
+    "wdth" 85;
+  font-weight: 700;
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1;
+  margin: 0 0 0.5rem;
+}
+
+.led {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow:
+    0 0 10px var(--amber),
+    inset 0 -1px 2px rgb(0 0 0 / 0.3);
+}
+
+.summary {
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.legends {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.legends li {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 7px;
+  background: var(--keycap);
+  box-shadow: 0 2px 0 var(--keycap-skirt);
+}
+
+.body {
+  font-size: 1.1875rem;
+}
+
+.spec {
+  max-width: 80rem;
+  margin-top: clamp(2rem, 5vw, 4rem);
+  background: var(--panel);
+  border-radius: 16px;
+}
+
+/* Cursor. */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms;
+}
+
+.cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor::before {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.ring {
+  position: absolute;
+  left: -15px;
+  top: -15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 14px;
+  border: 2px solid var(--ink);
+  opacity: 0.55;
+  transition:
+    width 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    height 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 180ms;
+}
+
+.cursor[data-state="link"] .ring {
+  left: 0;
+  top: 0;
+  opacity: 1;
+  border-color: var(--orange);
+}
+
+@media (max-width: 52rem) {
+  .instrument {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "screen"
+      "keys"
+      "knob"
+      "controls";
+  }
+
+  .screen {
+    min-height: 0;
+  }
+}
