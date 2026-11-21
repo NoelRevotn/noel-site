@@ -133,10 +133,37 @@
     "lead": "The quickest way to reach me is email.",
     "copy": "Copy email",
     "copied": "Copied",
-    "form": "A contact form arrives in Phase 4."
+    "form": "Or use the form below."
   },
   "colophon": {
     "title": "How this site is built",
     "lead": "A recruiting tool and a proof of skill: here is what it's made of."
+  },
+  "blog": {
+    "title": "Writing",
+    "lead": "Notes on what I build and learn: ML, systems and the web.",
+    "empty": "No posts yet. The first one is being written.",
+    "minutes": "{n} min read",
+    "toc": "On this page",
+    "onlyEnglish": "Available in English only.",
+    "back": "All posts",
+    "rss": "RSS feed",
+    "tags": "Tags"
+  },
+  "form": {
+    "title": "Send a message",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "sent": "Message sent. Thank you.",
+    "error": "The message couldn't be sent. Please try again, or email me directly.",
+    "required": "This field is required.",
+    "invalidEmail": "Enter a valid email address, like name@example.com.",
+    "tooShort": "Write at least 10 characters.",
+    "privacy": "Your name, email and message are sent through Web3Forms to my inbox and used only to reply to you. The verification step is provided by hCaptcha.",
+    "unavailable": "The form isn't connected yet. Please email me directly.",
+    "captcha": "Complete the verification before sending."
   }
 }

@@ -17,3 +17,38 @@
   border-radius: 50%;
   box-shadow: 0 0 0 var(--stroke) var(--muted);
 }
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-width: 54rem;
+}
+
+.list li {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.list time {
+  color: var(--muted);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 108;
+  font-weight: 800;
+  font-size: var(--step-1);
+  text-decoration: none;
+}
+
+.title:hover {
+  text-decoration: underline;
+}
+
+.desc {
+  color: var(--muted);
+  max-width: var(--measure);
+}

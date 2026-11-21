@@ -1,0 +1,34 @@
+export const metadata = {
+  title: "Draft: how this site's network map is built",
+  description: "A placeholder post that exercises the MDX pipeline. It never ships: draft is true.",
+  date: "2026-11-21",
+  tags: ["meta", "three.js"],
+  draft: true,
+};
+
+This is a **draft placeholder** written to test the blog pipeline. Drafts never ship to the public site. Noel's first real post replaces it.
+
+## Headings get anchors
+
+Every `##` and `###` heading gets an `id`, and the table of contents links to it.
+
+### Code is highlighted at build time
+
+```ts title="NetworkMap3D.tsx"
+const glow = base.clone().lerp(white, 0.62);
+for (const train of line.trains) {
+  const d = (train.u - u) * line.length * train.dir;
+  k = Math.max(k, d >= 0 ? Math.exp(-d / 0.9) : Math.exp(d / 0.22));
+}
+```
+
+## Tables and lists (GFM)
+
+| Line | Domain  |
+| ---- | ------- |
+| ML   | ML / AI |
+| SY   | Systems |
+| WB   | Web     |
+
+- [x] MDX
+- [ ] First real post
