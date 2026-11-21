@@ -2,6 +2,11 @@ import Link from "next/link";
 
 const directions = [
   {
+    href: "/lab/mix/",
+    name: "Mix: Línea × Sondeo",
+    line: "Línea's network workflow with Sondeo's typography, animated in HTML/SVG. The current pick.",
+  },
+  {
     href: "/lab/a/",
     name: "A · Línea",
     line: "Your work as a transit network: domains are lines, projects are stations.",
