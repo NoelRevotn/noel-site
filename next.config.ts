@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 import { site } from "./site.config";
 
 // Static export for GitHub Pages. Constraints and reasoning: docs/adr/0002-static-export-constraints.md
@@ -9,4 +10,4 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true }, // the default image optimizer needs a server
 };
 
-export default nextConfig;
+export default createNextIntlPlugin()(nextConfig);

@@ -1,0 +1,56 @@
+/* Station-mark cursor that becomes an interchange plate naming the action. */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-fast);
+}
+
+.cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: var(--ground);
+  box-shadow: 0 0 0 var(--stroke) var(--ink);
+  transition:
+    scale 200ms var(--ease-emphasized),
+    background-color 200ms;
+}
+
+.cursor[data-state="link"]::before {
+  scale: 0.55;
+  background: var(--ink);
+}
+
+.plate {
+  position: absolute;
+  left: 14px;
+  top: 10px;
+  white-space: nowrap;
+  font: 700 0.8125rem/1 var(--font-display);
+  padding: 0.375rem 0.5rem;
+  border-radius: 5px;
+  background: var(--ink);
+  color: var(--ground);
+  opacity: 0;
+  scale: 0.85;
+  transform-origin: left top;
+  transition:
+    opacity 140ms,
+    scale 200ms var(--ease-emphasized);
+}
+
+.cursor[data-state="link"] .plate {
+  opacity: 1;
+  scale: 1;
+}

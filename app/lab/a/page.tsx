@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Archivo, Atkinson_Hyperlegible_Next, Azeret_Mono } from "next/font/google";
 import { SpecSheet, type Spec } from "@/components/lab/SpecSheet";
-import { LabControls } from "@/islands/lab/LabControls";
-import { StationCursor } from "@/islands/lab/transit/StationCursor";
-import { TransitMap3D } from "@/islands/lab/transit/TransitMap3D";
+import { DisplayControls } from "@/islands/settings/DisplayControls";
+import { StationCursor } from "@/islands/cursor/StationCursor";
+import { NetworkMap3D } from "@/islands/network-map/NetworkMap3D";
 import { lab } from "@/lib/lab-content";
 import s from "./a.module.css";
 
@@ -127,7 +127,7 @@ export default function LabA() {
 
       <main id="main">
         <section className={s.hero} aria-labelledby="name">
-          <TransitMap3D className={s.map3d} labelClassName={s.label3d} fallbackClassName={s.map} />
+          <NetworkMap3D className={s.map3d} labelClassName={s.label3d} fallbackClassName={s.map} />
           <div className={s.copy}>
             <h1 id="name" className={s.name}>
               {lab.name}
@@ -152,7 +152,7 @@ export default function LabA() {
               </li>
             </ul>
           </div>
-          <LabControls className={s.controls} buttonClassName={s.toggle} initialTheme="light" />
+          <DisplayControls className={s.controls} buttonClassName={s.toggle} initialTheme="light" />
         </section>
 
         <section className={s.legend} aria-labelledby="legend-title">

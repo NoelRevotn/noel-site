@@ -1,0 +1,56 @@
+.footer {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--space-3) var(--space-6);
+  padding: var(--space-7) var(--gutter) var(--space-6);
+  border-top: var(--line-w) solid var(--ink);
+  margin-top: var(--space-8);
+}
+
+/* The rail ends here: a terminus bar at the left of the footer line. */
+.terminus {
+  position: absolute;
+  left: var(--gutter);
+  top: calc(-1 * var(--line-w) - 10px);
+  width: var(--line-w);
+  height: 28px;
+  background: var(--ink);
+}
+
+.name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 118;
+  font-weight: 800;
+  font-size: var(--step-2);
+}
+
+.links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-5);
+  justify-self: end;
+  font-weight: 700;
+}
+
+.built {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--step--1);
+}
+
+@media (max-width: 40rem) {
+  .footer {
+    grid-template-columns: 1fr;
+  }
+
+  .links {
+    justify-self: start;
+  }
+}

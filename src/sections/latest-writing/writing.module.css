@@ -1,0 +1,19 @@
+.empty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  max-width: var(--measure);
+  padding: var(--space-5);
+  border-radius: var(--radius-3);
+  border: 2px dashed var(--rule);
+  color: var(--muted);
+}
+
+.ring {
+  flex: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 var(--stroke) var(--muted);
+}

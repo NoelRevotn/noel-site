@@ -1,0 +1,90 @@
+.page {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  gap: var(--space-4);
+  padding: var(--space-7) var(--gutter);
+  max-width: 48rem;
+}
+
+/* A broken line: two termini with the track missing between them. */
+.line {
+  display: flex;
+  align-items: center;
+  margin-bottom: var(--space-5);
+}
+
+.end {
+  width: 6rem;
+  height: var(--line-w);
+  background: var(--ink);
+  position: relative;
+}
+
+.end::after {
+  content: "";
+  position: absolute;
+  top: -10px;
+  width: var(--line-w);
+  height: 28px;
+  background: var(--ink);
+}
+
+.end:first-child::after {
+  right: 0;
+}
+
+.end:last-child::after {
+  left: 0;
+}
+
+.gap {
+  width: 4rem;
+  border-top: var(--line-w) dotted var(--rule);
+}
+
+.code {
+  margin: 0;
+  color: var(--muted);
+}
+
+.title {
+  font-variation-settings: "wdth" 118;
+  font-size: var(--step-4);
+  line-height: 0.95;
+}
+
+.text {
+  margin: 0;
+  font-size: var(--step-1);
+  max-width: var(--measure);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: var(--space-4) 0 0;
+}
+
+.primary,
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: var(--space-3) 1.25rem;
+  border-radius: var(--radius-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.primary {
+  background: var(--ink);
+  color: var(--ground);
+}
+
+.secondary {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 2px var(--ink);
+}

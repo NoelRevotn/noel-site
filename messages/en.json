@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "title": "Noel Echeverría · Systems & Computer Engineering student building AI agents",
+    "description": "Portfolio of Noel Echeverría, a Systems and Computer Engineering student at UTP, Panama, building AI agents and data tools in Python."
+  },
+  "skip": "Skip to content",
+  "nav": {
+    "label": "Main",
+    "home": "Home",
+    "projects": "Projects",
+    "cv": "CV",
+    "blog": "Writing",
+    "contact": "Contact",
+    "here": "You are here"
+  },
+  "settings": {
+    "group": "Display settings",
+    "dark": "Dark",
+    "pause": "Pause motion",
+    "motionOff": "Motion off",
+    "motionOffHint": "Motion is off because your system asks for reduced motion",
+    "cursor": "Custom cursor",
+    "language": "Language",
+    "switchTo": "Español"
+  },
+  "hero": {
+    "headline": "Systems and Computer Engineering student building AI agents and data tools in Python.",
+    "location": "Panama City, Panama",
+    "viewProjects": "View projects",
+    "viewCv": "View CV",
+    "contact": "Contact"
+  },
+  "legend": {
+    "label": "Map legend",
+    "ml": "ML / AI",
+    "sys": "Systems",
+    "web": "Web",
+    "built": "Built",
+    "inProgress": "In progress"
+  },
+  "sections": {
+    "featured": "Selected work",
+    "skills": "Skills",
+    "developing": "Currently developing",
+    "timeline": "Experience & education",
+    "writing": "Latest writing",
+    "contact": "Get in touch"
+  },
+  "featured": {
+    "role": "My role",
+    "status": { "shipped": "Shipped", "prototype": "Prototype", "in-progress": "In progress" }
+  },
+  "skills": {
+    "intro": "Grouped by domain. Each skill links to where I used it.",
+    "usedIn": "Used in"
+  },
+  "developing": {
+    "intro": "What I'm learning now, shown honestly as in progress."
+  },
+  "writing": {
+    "empty": "No posts yet. The first article arrives with the blog in Phase 4."
+  },
+  "contact": {
+    "text": "Open to ML, AI and software engineering internships.",
+    "email": "Email",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "footer": {
+    "built": "Built with Next.js and three.js, deployed on GitHub Pages.",
+    "source": "Source code",
+    "colophon": "How this site is built"
+  },
+  "palette": {
+    "open": "Open command menu",
+    "title": "Command menu",
+    "placeholder": "Type a command or search…",
+    "empty": "No matching command.",
+    "go": "Go to",
+    "actions": "Actions",
+    "links": "Links",
+    "theme": "Toggle dark theme",
+    "motion": "Pause or play motion",
+    "cursor": "Toggle custom cursor",
+    "language": "Ver en español"
+  },
+  "stub": {
+    "soon": "This page is on the map but not built yet.",
+    "phase": "Arrives in {phase}.",
+    "home": "Back to home"
+  },
+  "notFound": {
+    "title": "Wrong line",
+    "body": "This stop doesn't exist. Head back to a station that does.",
+    "home": "Go home"
+  }
+}

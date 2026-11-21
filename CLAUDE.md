@@ -27,4 +27,7 @@ The source of truth is `PLAN.md`. Read §0 before any work. Short version:
 - Static export: no proxy/middleware, redirects, headers, Server Actions or request-time APIs. Dynamic routes need `generateStaticParams` + `dynamicParams = false`. Details: `docs/adr/0002-static-export-constraints.md`.
 - The site is served under the basePath `/noel-site` (`site.config.ts`). `next/link` adds it automatically; plain `<a>`, meta refresh and `next/image` `src` need `withBase()` from `src/lib/paths.ts`.
 - Branches `feat/… fix/… chore/… docs/…`; Conventional Commits; small PRs, one concern each.
-- `"use client"` only under `src/islands/**` (an ESLint rule will enforce this in Phase 2).
+- `"use client"` only under `src/islands/**` (enforced by ESLint).
+- Design system: `docs/DESIGN.md`; tokens in `src/styles/tokens.css`. Line colours mean domains only.
+- Home page = data: add/remove/reorder sections in `site.config.ts` (`home`), components in `src/sections/<id>/`, map in `src/sections/registry.tsx`.
+- UI strings in `messages/{en,es}.json` (keep keys in parity); content in `content/*.ts` (CV facts only; unknowns are `TODO(noel)`).

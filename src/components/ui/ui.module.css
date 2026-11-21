@@ -1,0 +1,84 @@
+/* Design-system primitives (Línea). */
+.trunk {
+  --stop-pad: clamp(3rem, 6vw, 4.5rem);
+  position: relative;
+  max-width: calc(var(--max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-4);
+}
+
+.trunk::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--gutter) + 0.5625rem - var(--line-w) / 2);
+  top: 0;
+  bottom: 0;
+  width: var(--line-w);
+  background: var(--ink);
+}
+
+/* Terminus bar where the trunk ends. */
+.trunk::after {
+  content: "";
+  position: absolute;
+  left: calc(var(--gutter) + 0.5625rem - 14px);
+  bottom: 0;
+  width: 28px;
+  height: var(--line-w);
+  background: var(--ink);
+}
+
+.stop {
+  position: relative;
+  padding: var(--space-8) 0 0 var(--stop-pad);
+}
+
+.stopTitle {
+  position: relative;
+  font-variation-settings: "wdth" 112;
+  font-size: var(--step-3);
+  margin-bottom: var(--space-5);
+}
+
+.stopTitle::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--stop-pad));
+  top: 50%;
+  width: 1.125rem;
+  height: 1.125rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--ground);
+  box-shadow: 0 0 0 var(--stroke) var(--ink);
+}
+
+.code {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  padding: 0 0.375rem;
+  border-radius: var(--radius-1);
+  background: var(--c);
+  color: var(--on-line);
+}
+
+.code[data-line="tools"] {
+  color: var(--ground);
+}
+
+.mark {
+  display: inline-block;
+  flex: none;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  background: var(--ground);
+  box-shadow: 0 0 0 3px var(--ink);
+}
+
+.mark[data-built="true"] {
+  background: var(--ink);
+}
