@@ -62,3 +62,21 @@ test("skill orb legend reads out a skill's projects", async ({ page }) => {
   await skills.getByRole("button", { name: "Python" }).click();
   await expect(skills.locator("figcaption")).toContainText("H2Oeste");
 });
+
+test("dark theme survives a language switch", async ({ page }) => {
+  await page.goto("/noel-site/es/");
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "noel-site:settings",
+      JSON.stringify({ theme: "dark", paused: false, cursor: true }),
+    ),
+  );
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page
+    .getByRole("link", { name: /English/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/noel-site\/en\/$/);
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+});

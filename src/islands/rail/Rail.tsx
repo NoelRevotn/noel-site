@@ -2,7 +2,7 @@
 
 import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, localeHref, usePathname } from "@/i18n/navigation";
 import { PALETTE_EVENT } from "../command-palette/events";
 import s from "./rail.module.css";
 
@@ -76,17 +76,11 @@ export function Rail() {
         </ol>
       </nav>
       <div className={s.end}>
-        <Link
-          prefetch={false}
-          href={pathname}
-          locale={other}
-          className={s.plate}
-          hrefLang={other}
-          lang={other}
-        >
+        {/* A plain link on purpose: a full load keeps the saved theme (see localeHref). */}
+        <a href={localeHref(pathname, other)} className={s.plate} hrefLang={other} lang={other}>
           <span className="visually-hidden">{ts("language")}: </span>
           {ts("switchTo")}
-        </Link>
+        </a>
         <button
           type="button"
           className={s.plate}

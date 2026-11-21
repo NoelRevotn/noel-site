@@ -1,18 +1,42 @@
 .hero {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: calc(100svh - var(--rail-h) - 4.5rem);
   display: grid;
   align-items: center;
   padding: var(--space-7) var(--gutter);
 }
 
+/*
+ * The map is the hero's background: full bleed, no frame. Its edges dissolve into the page and a
+ * soft wash of the ground colour sits behind the copy, so the network lives behind the headline
+ * without ever competing with it.
+ */
 .map3d,
 .map2d {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 42%;
+  inset: 0;
+  z-index: -2;
+  mask-image:
+    linear-gradient(to bottom, transparent 0, #000 9%, #000 78%, transparent 100%),
+    linear-gradient(to right, transparent 0, #000 6%, #000 94%, transparent 100%);
+  mask-composite: intersect;
+}
+
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    var(--ground) 0,
+    color-mix(in oklab, var(--ground) 86%, transparent) 30%,
+    color-mix(in oklab, var(--ground) 30%, transparent) 50%,
+    transparent 62%
+  );
 }
 
 .map2d {
@@ -36,7 +60,6 @@
   user-select: none; /* dragging orbits the map; it must never select the labels */
   -webkit-user-select: none;
   cursor: grab;
-  border-radius: var(--radius-3);
 }
 
 .map3d[data-dragging="true"] {
@@ -49,8 +72,9 @@
 
 .hint {
   position: absolute;
-  right: var(--space-5);
-  bottom: var(--space-5);
+  /* Inside the map's faded edges, so it stays fully legible. */
+  right: 9%;
+  bottom: 24%;
   padding: var(--space-1) var(--space-3);
   border-radius: 999px;
   background: var(--ink);
@@ -320,12 +344,18 @@
     max-width: none;
   }
 
+  /* Phones: the copy first, then the map full width below it (no wash needed). */
+  .hero::before {
+    display: none;
+  }
+
   .map3d,
   .map2d {
     position: relative;
     inset: auto;
+    z-index: 0;
     height: 24rem;
-    margin-top: var(--space-5);
+    margin: var(--space-5) calc(-1 * var(--gutter)) 0;
     order: 2;
   }
 

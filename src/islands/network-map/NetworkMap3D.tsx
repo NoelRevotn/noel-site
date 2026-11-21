@@ -69,8 +69,9 @@ const LINES: LineDef[] = [
 
 const SPAN_X = 8;
 const SPAN_Z = 5.6;
-const DWELL = 1.4;
-const SPEED = 0.6;
+const DWELL = 0.8;
+const SPEED = 0.95;
+const DUST = 260;
 const SEGMENTS = 180;
 const RADIAL = 8;
 
@@ -107,6 +108,20 @@ async function mount(
   sun.position.set(3, 9, 6);
   scene.add(sun);
 
+  // One soft round sprite for every glow: train headlights, data flow, drifting dust, floors.
+  const soft = (() => {
+    const c = document.createElement("canvas");
+    c.width = c.height = 64;
+    const g = c.getContext("2d")!;
+    const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, "rgba(255,255,255,1)");
+    grad.addColorStop(0.3, "rgba(255,255,255,0.6)");
+    grad.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+
   const css = () => getComputedStyle(host);
   const color = (name: string) => new THREE.Color(css().getPropertyValue(name).trim() || "#000");
   const toWorld = (p: P, y: number) => new THREE.Vector3((p.x - 0.5) * SPAN_X, y, (p.y - 0.5) * SPAN_Z);
@@ -116,13 +131,14 @@ async function mount(
     // Ink and ground stay flat (unlit) so they read as true signage colours.
     ink: new THREE.MeshBasicMaterial(),
     ground: new THREE.MeshBasicMaterial(),
+    // Floors fade out from the middle (soft sprite as the map): no hard rectangle edges.
     platform: new THREE.MeshBasicMaterial({
       transparent: true,
-      opacity: 0.16,
+      opacity: 0.55,
       depthWrite: false,
       side: THREE.DoubleSide,
+      map: soft,
     }),
-    edge: new THREE.LineBasicMaterial({ transparent: true, opacity: 0.9 }),
   };
   const lineMats = LINES.map(
     () => new THREE.MeshStandardMaterial({ roughness: 0.4, transparent: true, vertexColors: true }),
@@ -132,40 +148,103 @@ async function mount(
   const glowColors = LINES.map(() => new THREE.Color());
   const white = new THREE.Color(0xffffff);
   const windowMats = LINES.map(() => new THREE.MeshBasicMaterial());
+  const carMats = LINES.map(() => new THREE.MeshStandardMaterial({ roughness: 0.35, metalness: 0.15 }));
+  // A wide, faint tube around each line: the halo that makes the track read as lit.
+  const haloMats = LINES.map(
+    () => new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.16, depthWrite: false }),
+  );
+  const sprite = (size: number, opacity: number, vertexColors = false) =>
+    new THREE.PointsMaterial({
+      size,
+      map: soft,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+      vertexColors,
+    });
+  const lampMats = LINES.map(() => sprite(0.95, 0.95));
+  const dustMat = sprite(0.11, 0.6, true);
+  const pulseMats: { mat: Three.MeshBasicMaterial; line: number }[] = [];
   const flowMats: Three.PointsMaterial[] = [];
+  let dustColors: Float32Array | null = null;
+  let dustLine: Uint8Array | null = null;
   const applyColors = () => {
     mats.ink.color.copy(color("--ink"));
     mats.ground.color.copy(color("--ground"));
     scene.fog = new THREE.Fog(color("--ground"), 11, 26);
     mats.platform.color.copy(color("--surface"));
-    mats.edge.color.copy(color("--rule"));
+    // Light adds up to white on the dark theme; on the light ground glows are plain tints.
+    const night = settings.get().theme === "dark";
+    const blending = night ? THREE.AdditiveBlending : THREE.NormalBlending;
     LINES.forEach((l, i) => {
       const c = color(l.colorVar);
       lineMats[i]!.color.set(0xffffff); // vertex colours carry the line colour
-      lineMats[i]!.emissive.copy(c).multiplyScalar(0.3);
+      lineMats[i]!.emissive.copy(c).multiplyScalar(night ? 0.6 : 0.3);
       baseColors[i]!.copy(c);
-      glowColors[i]!.copy(c).lerp(white, 0.62);
-      flowMats[i]?.color.copy(c).lerp(white, 0.35);
-      windowMats[i]!.color.copy(c);
+      glowColors[i]!.copy(c).lerp(white, 0.7);
+      flowMats[i]?.color.copy(c).lerp(white, night ? 0.45 : 0.1);
+      windowMats[i]!.color.copy(c).lerp(white, 0.75);
+      carMats[i]!.color.copy(c);
+      carMats[i]!.emissive.copy(c).multiplyScalar(night ? 0.5 : 0.15);
+      haloMats[i]!.color.copy(c);
+      haloMats[i]!.opacity = night ? 0.2 : 0.12;
+      lampMats[i]!.color.copy(c).lerp(white, night ? 0.5 : 0);
     });
+    for (const pm of pulseMats) pm.mat.color.copy(color(LINES[pm.line]!.colorVar));
+    for (const m of [...haloMats, ...lampMats, ...flowMats, dustMat]) {
+      m.blending = blending;
+      m.needsUpdate = true;
+    }
+    dustMat.opacity = night ? 0.7 : 0.45;
+    if (dustColors && dustLine) {
+      const cols = LINES.map((l) => color(l.colorVar));
+      for (let k = 0; k < dustLine.length; k++) {
+        const c = cols[dustLine[k]!]!;
+        dustColors[k * 3] = c.r;
+        dustColors[k * 3 + 1] = c.g;
+        dustColors[k * 3 + 2] = c.b;
+      }
+    }
   };
   applyColors();
 
-  const disposables: { dispose(): void }[] = [...Object.values(mats), ...lineMats, ...windowMats];
+  const disposables: { dispose(): void }[] = [
+    ...Object.values(mats),
+    ...lineMats,
+    ...windowMats,
+    ...carMats,
+    ...haloMats,
+    ...lampMats,
+    dustMat,
+    soft,
+  ];
   const track = <T extends { dispose(): void }>(g: T) => (disposables.push(g), g);
 
-  // Level platforms: thin translucent floors with a hairline edge.
+  // Level platforms: soft pools of light under each level, fading out with no edge.
+  const floorGeo = track(new THREE.PlaneGeometry(SPAN_X * 1.5, SPAN_Z * 1.5));
   for (const y of Object.values(LEVELS)) {
-    const geo = track(new THREE.PlaneGeometry(SPAN_X * 1.08, SPAN_Z * 1.08));
-    const floor = new THREE.Mesh(geo, mats.platform);
+    const floor = new THREE.Mesh(floorGeo, mats.platform);
     floor.rotation.x = -Math.PI / 2;
     floor.position.y = y - 0.08;
     scene.add(floor);
-    const edges = new THREE.LineSegments(track(new THREE.EdgesGeometry(geo)), mats.edge);
-    edges.rotation.x = -Math.PI / 2;
-    edges.position.y = y - 0.08;
-    scene.add(edges);
   }
+
+  // Dust: faint motes in the line colours drifting up through the levels, so the scene breathes.
+  const dustGeo = track(new THREE.BufferGeometry());
+  const dustPos = new Float32Array(DUST * 3);
+  const dustSpeed = new Float32Array(DUST);
+  dustColors = new Float32Array(DUST * 3);
+  dustLine = new Uint8Array(DUST);
+  for (let k = 0; k < DUST; k++) {
+    dustPos[k * 3] = (Math.random() - 0.5) * SPAN_X * 1.4;
+    dustPos[k * 3 + 1] = -0.4 + Math.random() * 3.2;
+    dustPos[k * 3 + 2] = (Math.random() - 0.5) * SPAN_Z * 1.4;
+    dustSpeed[k] = 0.05 + Math.random() * 0.14;
+    dustLine[k] = k % LINES.length;
+  }
+  dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+  dustGeo.setAttribute("color", new THREE.BufferAttribute(dustColors, 3));
+  scene.add(new THREE.Points(dustGeo, dustMat));
 
   // Interchange shaft through all three levels, with a platform ring at each.
   const h2o = toWorld(H2O, 0);
@@ -210,8 +289,10 @@ async function mount(
   const stationGeo = track(new THREE.CylinderGeometry(0.12, 0.12, 0.1, 32));
   const hitGeo = track(new THREE.CylinderGeometry(0.35, 0.35, 0.4, 12));
   const hollowRing = track(new THREE.TorusGeometry(0.12, 0.035, 10, 32));
-  const carGeo = track(new THREE.BoxGeometry(0.14, 0.12, 0.34));
-  const winGeo = track(new THREE.BoxGeometry(0.145, 0.03, 0.22));
+  const carGeo = track(new THREE.BoxGeometry(0.15, 0.13, 0.34));
+  const winGeo = track(new THREE.BoxGeometry(0.155, 0.035, 0.24));
+  const pulseGeo = track(new THREE.TorusGeometry(0.16, 0.018, 8, 40));
+  const pulses: { mesh: Three.Mesh; mat: Three.MeshBasicMaterial; phase: number }[] = [];
 
   type Train = { mesh: Three.Group; u: number; dir: 1 | -1; dwell: number; last: number };
   type StationNode = { group: Three.Group; disc: Three.Mesh; href?: string; name: string; scale: number };
@@ -226,6 +307,7 @@ async function mount(
     const tube = new THREE.Mesh(tubeGeo, lineMats[i]);
     tube.userData.line = i;
     scene.add(tube);
+    scene.add(new THREE.Mesh(track(new THREE.TubeGeometry(curve, 90, 0.17, 8, false)), haloMats[i]));
     const length = curve.getLength();
     // Arc-length positions of the stations (H2Oeste included) for dwelling.
     const samples = 120;
@@ -261,26 +343,43 @@ async function mount(
       group.add(hit);
       stationNodes.push({ group, disc: hit, href: st.href, name: st.name, scale: 1 });
       scene.add(group);
+      // Project stations send out a slow ring, like a live signal.
+      if (st.href) {
+        const mat = track(new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false }));
+        pulseMats.push({ mat, line: i });
+        const ring = new THREE.Mesh(pulseGeo, mat);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.copy(pos).setY(pos.y + 0.02);
+        scene.add(ring);
+        pulses.push({ mesh: ring, mat, phase: pulses.length * 0.37 });
+      }
     }
+    // Two-car trains in the line colour with lit windows; a headlight glow rides in front.
     const trains: Train[] = [0.15, 0.7].map((u, k) => {
       const g = new THREE.Group();
-      g.add(new THREE.Mesh(carGeo, mats.ink));
-      const win = new THREE.Mesh(winGeo, windowMats[i]);
-      win.position.y = 0.015;
-      g.add(win);
+      for (const z of [0, -0.38]) {
+        const car = new THREE.Mesh(carGeo, carMats[i]);
+        car.position.z = z;
+        const win = new THREE.Mesh(winGeo, windowMats[i]);
+        win.position.set(0, 0.02, z);
+        g.add(car, win);
+      }
       scene.add(g);
       return { mesh: g, u, dir: k ? -1 : 1, dwell: 0, last: -1 };
     });
-    const flowCount = 22;
+    const lampGeo = track(new THREE.BufferGeometry());
+    lampGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(trains.length * 3), 3));
+    scene.add(new THREE.Points(lampGeo, lampMats[i]));
+    const flowCount = 30;
     const flowGeo = track(new THREE.BufferGeometry());
     flowGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(flowCount * 3), 3));
     const flowMat = track(
-      new THREE.PointsMaterial({ size: 0.09, transparent: true, opacity: 0.85, depthWrite: false }),
+      new THREE.PointsMaterial({ size: 0.2, map: soft, transparent: true, opacity: 0.9, depthWrite: false }),
     );
     flowMats.push(flowMat);
     scene.add(new THREE.Points(flowGeo, flowMat));
     const flowU = Array.from({ length: flowCount }, (_, k) => k / flowCount);
-    return { curve, tube, tubeGeo, length, stopU, trains, index: i, flowGeo, flowU };
+    return { curve, tube, tubeGeo, length, stopU, trains, index: i, flowGeo, flowU, lampGeo };
   };
   const lines: ReturnType<typeof buildLine>[] = [];
   for (const [i, l] of LINES.entries()) {
@@ -347,7 +446,7 @@ async function mount(
   const placeCamera = () => {
     const narrow = w / h < 1.1;
     // Static unless the visitor drags: azimuth wraps a full 360°, elevation stays above/below the deck.
-    const radius = narrow ? 16 : 13.2;
+    const radius = narrow ? 15 : 11.6;
     const az = orbit.az;
     const pol = orbit.pol;
     camera.position.set(
@@ -382,9 +481,37 @@ async function mount(
         const pos = ln.curve.getPointAt(tr.u);
         const tan = ln.curve.getTangentAt(tr.u);
         tr.mesh.position.copy(pos).setY(pos.y + 0.12);
-        tr.mesh.lookAt(tmp.copy(tr.mesh.position).add(tan));
+        tr.mesh.lookAt(tmp.copy(tr.mesh.position).addScaledVector(tan, tr.dir));
       }
+      // Headlights: a glow just ahead of the lead car of each train.
+      const lamp = ln.lampGeo.attributes.position!.array as Float32Array;
+      ln.trains.forEach((tr, k) => {
+        const ahead = Math.min(0.999, Math.max(0, tr.u + (tr.dir * 0.22) / ln.length));
+        ln.curve.getPointAt(ahead, tmp);
+        lamp[k * 3] = tmp.x;
+        lamp[k * 3 + 1] = tmp.y + 0.12;
+        lamp[k * 3 + 2] = tmp.z;
+      });
+      ln.lampGeo.attributes.position!.needsUpdate = true;
     });
+
+    // Drifting dust, wrapping back to the floor.
+    if (dt > 0) {
+      for (let k = 0; k < DUST; k++) {
+        const y = dustPos[k * 3 + 1]! + dustSpeed[k]! * dt;
+        dustPos[k * 3 + 1] = y > 2.9 ? -0.4 : y;
+        dustPos[k * 3] = dustPos[k * 3]! + Math.sin(t * 0.3 + k) * 0.04 * dt;
+      }
+      dustGeo.attributes.position!.needsUpdate = true;
+    }
+    dustGeo.attributes.color!.needsUpdate = true;
+
+    // Station signals: rings that grow and fade every few seconds.
+    for (const pu of pulses) {
+      const f = (t * 0.42 + pu.phase) % 1;
+      pu.mesh.scale.setScalar(1 + f * 2.2);
+      pu.mat.opacity = 0.7 * (1 - f) * (1 - f);
+    }
 
     // Train glow: a colour gradient along the track, brightest just behind each train.
     for (const ln of lines) {
@@ -509,7 +636,12 @@ async function mount(
     w = host.clientWidth || 1;
     h = host.clientHeight || 1;
     renderer.setSize(w, h, false);
-    camera.aspect = w / h;
+    // Wide screens: render the left part of a wider frame, so the network sits right of centre
+    // and the headline keeps the left side.
+    const shift = w / h >= 1.1 ? 1.4 : 1;
+    camera.aspect = (w * shift) / h;
+    if (shift > 1) camera.setViewOffset(w * shift, h, 0, 0, w, h);
+    else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     if (!running()) render();
   };
