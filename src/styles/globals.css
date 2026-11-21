@@ -135,7 +135,7 @@ html.lab-cursor-on :is(input, textarea, select, [contenteditable="true"]) {
 @media print {
   @page {
     size: A4;
-    margin: 14mm 16mm;
+    margin: 11mm 14mm;
   }
 
   :root {
@@ -143,13 +143,13 @@ html.lab-cursor-on :is(input, textarea, select, [contenteditable="true"]) {
     --ink: #000000;
     --muted: #333333;
     --rule: #bbbbbb;
-    --step-4: 26pt;
-    --step-3: 15pt;
+    --step-4: 22pt;
+    --step-3: 12pt;
     --step-2: 13pt;
-    --step-1: 11pt;
-    --step-0: 9pt;
+    --step-1: 10pt;
+    --step-0: 9.25pt;
     --space-7: 0;
-    --space-8: 8pt;
+    --space-8: 5pt;
     --space-5: 4pt;
     --space-4: 4pt;
     --gutter: 0;

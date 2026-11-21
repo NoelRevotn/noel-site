@@ -402,6 +402,8 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-21 | `/lab` routes removed now that CP2 is approved | Claude Code | ADR-0004 |
 | 2026-11-21 | Phase 3 content: public email (Noel's OK); CV PDF printed from the web CV page in CI (GPA kept, phone removed, Noel's request); case studies for Buddy and DataLizer (Noel's choice) with TODO(noel) for every unverified part; case studies are typed TS + Zod for now, MDX arrives with the blog in Phase 4 | Noel / Claude Code | — |
 | 2026-11-21 | Phase 4: blog on @next/mdx + Shiki (drafts never ship; ES falls back to EN with a notice); contact form on Web3Forms with honeypot + hCaptcha, key as a public repo variable | Claude Code | ADR-0005 |
+| 2026-11-21 | Phase 5: Motion removed (WAAPI FLIP + IntersectionObserver instead); 3D map deferred, built in slices, static with 360° drag orbit (Noel); JS budgets and Lighthouse CI enforced; selection colour back to the original cyan (Noel) | Claude Code / Noel | ADR-0006 |
+| 2026-11-21 | Readability pass (Noel): content sits on solid panels over the backdrop, Selected work runs as a horizontal row of cards, the CV PDF is one A4 page (CI fails otherwise) | Noel | ADR-0006 |
 
 ---
 

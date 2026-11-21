@@ -19,7 +19,7 @@ const COPY = {
       ["Languages", "next-intl, English and Spanish under /en/ and /es/"],
       [
         "3D and motion",
-        "three.js for the network map (loaded after first paint), Motion for layout and scroll reveals, CSS for the rest",
+        "three.js for the network map (loaded after first paint), CSS and the Web Animations API for everything else; no animation library",
       ],
       ["Content", "Typed files validated with Zod at build time"],
       ["Quality", "ESLint, Prettier, Vitest, Playwright with axe accessibility checks in CI"],
@@ -30,7 +30,7 @@ const COPY = {
     a11yTitle: "Accessibility",
     a11y: "Built to WCAG 2.2 AA: full keyboard use, visible focus, a pause switch for all motion, and no motion at all when your system asks for reduced motion.",
     perfTitle: "Performance",
-    perf: "Lighthouse scores are measured and published here in Phase 5.",
+    perf: "Lighthouse on mobile (November 2026): the home page scores 91 for performance and 100 for accessibility, best practices and SEO; every other page scores 100 in all four. CI fails the build if JavaScript grows past its budget.",
     source: "Read the source on GitHub",
     tok: {
       title: "Tokenizer toy",
@@ -52,7 +52,7 @@ const COPY = {
       ["Idiomas", "next-intl, inglés y español en /en/ y /es/"],
       [
         "3D y movimiento",
-        "three.js para el mapa de la red (se carga después del primer pintado), Motion para layout y revelados al hacer scroll, CSS para lo demás",
+        "three.js para el mapa de la red (se carga después del primer pintado), CSS y la Web Animations API para todo lo demás; sin librería de animación",
       ],
       ["Contenido", "Archivos tipados validados con Zod al compilar"],
       ["Calidad", "ESLint, Prettier, Vitest, Playwright con pruebas de accesibilidad axe en CI"],
@@ -63,7 +63,7 @@ const COPY = {
     a11yTitle: "Accesibilidad",
     a11y: "Hecho según WCAG 2.2 AA: uso completo con teclado, foco visible, un interruptor para pausar todo el movimiento y nada de movimiento cuando tu sistema pide reducirlo.",
     perfTitle: "Rendimiento",
-    perf: "Las puntuaciones de Lighthouse se miden y publican aquí en la fase 5.",
+    perf: "Lighthouse en móvil (noviembre de 2026): la página de inicio obtiene 91 en rendimiento y 100 en accesibilidad, buenas prácticas y SEO; todas las demás páginas obtienen 100 en las cuatro. La integración continua falla si el JavaScript supera su presupuesto.",
     source: "Ver el código en GitHub",
     tok: {
       title: "Juguete de tokenización",
