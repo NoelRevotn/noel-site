@@ -57,7 +57,11 @@
   },
   "skills": {
     "intro": "Grouped by domain. Each skill links to where I used it.",
-    "usedIn": "Used in"
+    "usedIn": "Used in",
+    "graphTitle": "Skill graph: skills linked to the projects that use them",
+    "graphHint": "Point at or Tab to a node to see what it connects to.",
+    "connects": "connects to",
+    "nothing": "nothing yet"
   },
   "developing": {
     "intro": "What I'm learning now, shown honestly as in progress."
@@ -165,5 +169,11 @@
     "privacy": "Your name, email and message are sent through Web3Forms to my inbox and used only to reply to you. The verification step is provided by hCaptcha.",
     "unavailable": "The form isn't connected yet. Please email me directly.",
     "captcha": "Complete the verification before sending."
+  },
+  "map": {
+    "role": "interactive 3D map",
+    "label": "Map of my work: ML/AI, systems and web lines meeting at H2Oeste. Drag or use the arrow keys to rotate; Home resets the view.",
+    "hint": "Drag to explore · 360°",
+    "cursor": "Drag"
   }
 }

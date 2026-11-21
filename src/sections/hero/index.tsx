@@ -13,7 +13,13 @@ export async function Hero() {
   return (
     <>
       <section className={s.hero} aria-labelledby="name">
-        <NetworkMap3D className={s.map3d} labelClassName={s.label} fallbackClassName={s.map2d} />
+        <NetworkMap3D
+          className={s.map3d}
+          labelClassName={s.label}
+          fallbackClassName={s.map2d}
+          hintClassName={s.hint}
+          labels={{ role: t("map.role"), label: t("map.label"), hint: t("map.hint") }}
+        />
         <div className={s.copy}>
           <h1 id="name" className={s.name}>
             {profile.name}
@@ -28,17 +34,17 @@ export async function Hero() {
           </p>
           <ul className={s.actions}>
             <li>
-              <Link className={s.primary} href="/projects">
+              <Link prefetch={false} className={s.primary} href="/projects">
                 {t("hero.viewProjects")}
               </Link>
             </li>
             <li>
-              <Link className={s.secondary} href="/cv">
+              <Link prefetch={false} className={s.secondary} href="/cv">
                 {t("hero.viewCv")}
               </Link>
             </li>
             <li>
-              <Link className={s.secondary} href="/contact">
+              <Link prefetch={false} className={s.secondary} href="/contact">
                 {t("hero.contact")}
               </Link>
             </li>

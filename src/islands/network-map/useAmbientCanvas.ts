@@ -27,6 +27,7 @@ export function useAmbientCanvas(
   ref: RefObject<HTMLCanvasElement | null>,
   createEngine: () => Engine,
   varNames: readonly string[],
+  options: { fps?: number; deferUntilIdle?: boolean; stillOnTouch?: boolean } = {},
 ) {
   useEffect(() => {
     const canvas = ref.current;
@@ -46,12 +47,18 @@ export function useAmbientCanvas(
     let raf = 0;
     let onScreen = true;
     let slowFrames = 0;
+    let started = !options.deferUntilIdle;
+    let acc = 0;
+    const frameTime = options.fps ? 1 / options.fps : 0;
 
     const readVars = () => {
       const cs = getComputedStyle(canvas);
       vars = Object.fromEntries(varNames.map((n) => [n, cs.getPropertyValue(n).trim()]));
     };
-    const running = () => onScreen && !document.hidden && !settings.get().paused && !reduced.matches;
+    // Touch devices can't steer the field and are usually low-power: draw one still frame there.
+    const touchStill = !!options.stillOnTouch && window.matchMedia("(pointer: coarse)").matches;
+    const running = () =>
+      started && !touchStill && onScreen && !document.hidden && !settings.get().paused && !reduced.matches;
 
     const resize = () => {
       w = canvas.clientWidth;
@@ -65,11 +72,21 @@ export function useAmbientCanvas(
     const drawStill = () => engine.draw({ ctx, w, h, t, dt: 0, pointer, vars, still: true });
 
     const tick = (now: number) => {
-      const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
+      let dt = last ? Math.min((now - last) / 1000, 0.1) : 0;
       last = now;
+      // Optional frame cap: accumulate time and draw only when a frame is due.
+      if (frameTime) {
+        acc += dt;
+        if (acc < frameTime) {
+          raf = requestAnimationFrame(tick);
+          return;
+        }
+        dt = Math.min(acc, 0.1);
+        acc = 0;
+      }
       t += dt;
       // Step quality down when the device can't hold ~40 fps.
-      slowFrames = dt > 0.025 ? slowFrames + 1 : Math.max(0, slowFrames - 1);
+      slowFrames = dt > Math.max(0.025, frameTime * 1.5) ? slowFrames + 1 : Math.max(0, slowFrames - 1);
       if (slowFrames > 45 && quality > 0.5) {
         quality -= 0.25;
         slowFrames = 0;
@@ -121,7 +138,20 @@ export function useAmbientCanvas(
     dark.addEventListener("change", onTheme);
     window.addEventListener("pointermove", onMove, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
-    sync();
+    if (started) sync();
+    else {
+      // Wait for load + idle so the ambient layer never competes with first paint (Lighthouse TBT).
+      const begin = () => {
+        started = true;
+        sync();
+      };
+      const go = () =>
+        "requestIdleCallback" in window
+          ? window.requestIdleCallback(begin, { timeout: 3000 })
+          : setTimeout(begin, 500);
+      if (document.readyState === "complete") go();
+      else window.addEventListener("load", go, { once: true });
+    }
 
     return () => {
       cancelAnimationFrame(raf);

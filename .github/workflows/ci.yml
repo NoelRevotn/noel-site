@@ -34,9 +34,22 @@ jobs:
         env:
           # Public by design (ADR-0005); set as a repository variable, not a secret.
           NEXT_PUBLIC_WEB3FORMS_KEY: ${{ vars.WEB3FORMS_KEY }}
-      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm check:budgets
+      - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm cv:pdf
       - run: pnpm test:e2e
+      # Lighthouse on the built site, served like GitHub Pages (PLAN §1 targets, lighthouserc.json).
+      - run: node scripts/serve-out.mjs &
+      - uses: treosh/lighthouse-ci-action@v12
+        with:
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          urls: |
+            http://localhost:4173/noel-site/en/
+            http://localhost:4173/noel-site/es/
+            http://localhost:4173/noel-site/en/cv/
+            http://localhost:4173/noel-site/en/projects/buddy/
+            http://localhost:4173/noel-site/en/contact/
       - if: failure()
         uses: actions/upload-artifact@v7
         with:

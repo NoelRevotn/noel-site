@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Stop } from "@/components/ui/Stop";
+import { SkillGraph, type GraphEdge, type GraphNode } from "@/islands/skill-graph/SkillGraph";
 import { projects } from "@/lib/content";
 import { skillGroups } from "@/lib/content";
 import s from "./skills.module.css";
@@ -10,6 +11,23 @@ export async function Skills() {
   const ts = await getTranslations("sections");
   const locale = (await getLocale()) as "en" | "es";
   const title = (slug: string) => projects.find((p) => p.slug === slug)?.title ?? slug;
+  // Graph: every skill with evidence, linked to the projects that prove it.
+  const nodes: GraphNode[] = [];
+  const edges: GraphEdge[] = [];
+  const projectIds = new Set<string>();
+  for (const g of skillGroups) {
+    for (const sk of g.skills) {
+      if (!sk.evidence.length) continue;
+      const id = `s:${sk.name}`;
+      nodes.push({ id, label: sk.name, kind: "skill", line: g.id });
+      for (const slug of sk.evidence) {
+        projectIds.add(slug);
+        edges.push({ from: id, to: `p:${slug}` });
+      }
+    }
+  }
+  for (const slug of projectIds)
+    nodes.push({ id: `p:${slug}`, label: title(slug), kind: "project", line: "tools" });
   return (
     <Stop id="skills" title={ts("skills")}>
       <p className={s.intro}>{t("intro")}</p>
@@ -44,6 +62,16 @@ export async function Skills() {
           </section>
         ))}
       </div>
+      <SkillGraph
+        nodes={nodes}
+        edges={edges}
+        labels={{
+          title: t("graphTitle"),
+          hint: t("graphHint"),
+          connects: t("connects"),
+          nothing: t("nothing"),
+        }}
+      />
     </Stop>
   );
 }

@@ -57,7 +57,11 @@
   },
   "skills": {
     "intro": "Agrupadas por área. Cada habilidad enlaza a donde la usé.",
-    "usedIn": "Usada en"
+    "usedIn": "Usada en",
+    "graphTitle": "Grafo de habilidades: habilidades enlazadas a los proyectos que las usan",
+    "graphHint": "Apunta o navega con Tab a un nodo para ver con qué se conecta.",
+    "connects": "se conecta con",
+    "nothing": "nada aún"
   },
   "developing": {
     "intro": "Lo que estoy aprendiendo ahora, mostrado con honestidad como en progreso."
@@ -165,5 +169,11 @@
     "privacy": "Tu nombre, correo y mensaje se envían a mi bandeja a través de Web3Forms y solo se usan para responderte. La verificación la provee hCaptcha.",
     "unavailable": "El formulario aún no está conectado. Escríbeme directamente por correo.",
     "captcha": "Completa la verificación antes de enviar."
+  },
+  "map": {
+    "role": "mapa 3D interactivo",
+    "label": "Mapa de mi trabajo: las líneas de ML/IA, sistemas y web se cruzan en H2Oeste. Arrastra o usa las flechas para girarlo; Inicio restablece la vista.",
+    "hint": "Arrastra para explorar · 360°",
+    "cursor": "Arrastrar"
   }
 }

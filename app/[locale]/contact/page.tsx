@@ -26,7 +26,7 @@ export default async function ContactPage({ params }: Props) {
         <PageTitle lead={`${t("hero.status")} ${t("contactPage.lead")}`}>{t("contactPage.title")}</PageTitle>
         <div className={s.body}>
           {profile.email && (
-            <div className={s.email} data-reveal>
+            <div className={s.email}>
               <a href={`mailto:${profile.email}`} className={s.address}>
                 {profile.email}
               </a>
@@ -38,7 +38,7 @@ export default async function ContactPage({ params }: Props) {
               />
             </div>
           )}
-          <ul className={s.links} data-reveal>
+          <ul className={s.links}>
             <li>
               <a className={s.plate} href={profile.links.linkedin} target="_blank" rel="noreferrer">
                 LinkedIn

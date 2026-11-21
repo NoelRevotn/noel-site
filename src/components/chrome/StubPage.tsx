@@ -16,7 +16,7 @@ export async function StubPage({ title, phase }: { title: string; phase: string 
           <p className={s.text}>
             {t("soon")} {t("phase", { phase })}
           </p>
-          <Link href="/" className={s.home}>
+          <Link prefetch={false} href="/" className={s.home}>
             {t("home")}
           </Link>
         </section>

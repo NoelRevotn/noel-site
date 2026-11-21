@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Stop, Trunk } from "@/components/ui/Stop";
 import { PageTitle } from "@/components/ui/Text";
+import { Tokenizer } from "@/islands/tokenizer/Tokenizer";
 import { profile } from "@/lib/content";
 import { pageMetadata } from "@/lib/seo";
 import s from "./colophon.module.css";
@@ -31,6 +32,16 @@ const COPY = {
     perfTitle: "Performance",
     perf: "Lighthouse scores are measured and published here in Phase 5.",
     source: "Read the source on GitHub",
+    tok: {
+      title: "Tokenizer toy",
+      intro: "Language models read text as tokens, not letters. Type something and watch it split.",
+      input: "Text to tokenize",
+      placeholder: "Type here…",
+      tokens: "tokens",
+      chars: "characters",
+      note: "An illustration: words and punctuation are split the way GPT-2-style tokenizers pre-split text, long words are cut into toy subword pieces, and the IDs are hashes, not a real model's vocabulary.",
+      initial: "Tokenizers split text into pieces like these.",
+    },
   },
   es: {
     stackTitle: "Tecnologías",
@@ -54,6 +65,17 @@ const COPY = {
     perfTitle: "Rendimiento",
     perf: "Las puntuaciones de Lighthouse se miden y publican aquí en la fase 5.",
     source: "Ver el código en GitHub",
+    tok: {
+      title: "Juguete de tokenización",
+      intro:
+        "Los modelos de lenguaje leen texto como tokens, no como letras. Escribe algo y mira cómo se divide.",
+      input: "Texto a tokenizar",
+      placeholder: "Escribe aquí…",
+      tokens: "tokens",
+      chars: "caracteres",
+      note: "Una ilustración: palabras y signos se dividen como lo hacen los tokenizadores estilo GPT-2, las palabras largas se cortan en subpalabras de juguete y los IDs son hashes, no el vocabulario de un modelo real.",
+      initial: "Los tokenizadores dividen el texto en piezas como estas.",
+    },
   },
 } as const;
 
@@ -87,6 +109,10 @@ export default async function ColophonPage({ params }: Props) {
         </Stop>
         <Stop id="a11y" title={c.a11yTitle}>
           <p className={s.body}>{c.a11y}</p>
+        </Stop>
+        <Stop id="tokenizer" title={c.tok.title}>
+          <p className={s.body}>{c.tok.intro}</p>
+          <Tokenizer labels={c.tok} initial={c.tok.initial} />
         </Stop>
         <Stop id="perf" title={c.perfTitle}>
           <p className={s.body}>{c.perf}</p>

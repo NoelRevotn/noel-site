@@ -52,8 +52,8 @@ a {
 }
 
 ::selection {
-  background: var(--ink);
-  color: var(--ground);
+  background: var(--select);
+  color: var(--on-select);
 }
 
 :focus-visible {

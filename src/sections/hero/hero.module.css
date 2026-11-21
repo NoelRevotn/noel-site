@@ -30,6 +30,40 @@
   opacity: 1;
 }
 
+/* Drag to orbit: horizontal drags rotate, vertical swipes still scroll on touch. */
+.map3d {
+  touch-action: pan-y;
+  user-select: none; /* dragging orbits the map; it must never select the labels */
+  -webkit-user-select: none;
+  cursor: grab;
+  border-radius: var(--radius-3);
+}
+
+.map3d[data-dragging="true"] {
+  cursor: grabbing;
+}
+
+.map3d[data-over-station="true"] {
+  cursor: pointer;
+}
+
+.hint {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  padding: var(--space-1) var(--space-3);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--ground);
+  font: 700 0.8125rem/1.6 var(--font-display);
+  pointer-events: none;
+  transition: opacity var(--dur-slow) var(--ease-emphasized);
+}
+
+.map3d[data-explored="true"] .hint {
+  opacity: 0;
+}
+
 .label {
   position: absolute;
   left: 0;

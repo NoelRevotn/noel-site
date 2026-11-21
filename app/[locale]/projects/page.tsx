@@ -48,7 +48,9 @@ export default async function ProjectsPage({ params }: Props) {
                     <StationMark built={p.status !== "in-progress"} />
                     <div>
                       <h3 className={s.name}>
-                        <Link href={`/projects/${p.slug}`}>{p.title}</Link>
+                        <Link prefetch={false} href={`/projects/${p.slug}`}>
+                          {p.title}
+                        </Link>
                         {p.domains.length > 1 && (
                           <span className={s.transfers}>
                             {p.domains

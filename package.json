@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "serve": "node scripts/serve-out.mjs",
     "check:content": "vitest run tests/content",
-    "cv:pdf": "node scripts/cv-pdf.mjs"
+    "cv:pdf": "node scripts/cv-pdf.mjs",
+    "check:budgets": "node scripts/check-budgets.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -21,7 +22,6 @@
     "@next/mdx": "16.4.6",
     "@types/mdx": "^2.0.14",
     "github-slugger": "^2.0.0",
-    "motion": "14.14.0",
     "next": "16.4.6",
     "next-intl": "4.15.3",
     "react": "19.3.0",

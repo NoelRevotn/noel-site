@@ -1,6 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Smoke tests run against the built static export (pnpm build first), served like GitHub Pages.
+// Tests run against the built static export (pnpm build first), served like GitHub Pages.
+// Smoke + keyboard tests run in Chromium, Firefox, WebKit and a mobile profile; axe runs in Chromium.
 export default defineConfig({
   testDir: "tests/e2e",
   forbidOnly: !!process.env.CI,
@@ -12,5 +13,10 @@ export default defineConfig({
     url: "http://localhost:4173/noel-site/",
     reuseExistingServer: !process.env.CI,
   },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /smoke\.spec/ },
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, testMatch: /smoke\.spec/ },
+    { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /smoke\.spec/ },
+  ],
 });

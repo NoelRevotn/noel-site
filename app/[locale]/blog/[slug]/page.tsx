@@ -50,7 +50,9 @@ export default async function PostPage({ params }: Props) {
           <article className={s.article}>
             <p className={s.lead}>{t("empty")}</p>
             <p className={s.back}>
-              <Link href="/blog">{t("back")}</Link>
+              <Link prefetch={false} href="/blog">
+                {t("back")}
+              </Link>
             </p>
           </article>
         </Trunk>
@@ -111,7 +113,9 @@ export default async function PostPage({ params }: Props) {
           </div>
 
           <p className={s.back} lang={locale}>
-            <Link href="/blog">{t("back")}</Link>
+            <Link prefetch={false} href="/blog">
+              {t("back")}
+            </Link>
           </p>
         </article>
       </Trunk>

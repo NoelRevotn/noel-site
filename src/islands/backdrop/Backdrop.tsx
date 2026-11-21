@@ -11,7 +11,7 @@ import { useAmbientCanvas, type Engine, type Frame } from "../network-map/useAmb
  * so text contrast is never affected.
  */
 
-const GAP = 30;
+const GAP = 34;
 const TIE = 10;
 const REACH = 170;
 const OCTANT = Math.PI / 4;
@@ -180,6 +180,6 @@ const VARS = ["--rule", "--ink", "--line-ml", "--line-sys", "--line-web"] as con
 
 export function Backdrop({ className }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  useAmbientCanvas(ref, createEngine, VARS);
+  useAmbientCanvas(ref, createEngine, VARS, { fps: 30, deferUntilIdle: true, stillOnTouch: true });
   return <canvas ref={ref} className={className} aria-hidden="true" />;
 }
