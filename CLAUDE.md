@@ -13,14 +13,14 @@ The source of truth is `PLAN.md`. Read §0 before any work. Short version:
 
 ## Commands (pnpm, Node 24 from `.nvmrc`)
 
-| | |
-|---|---|
-| `pnpm dev` | dev server at http://localhost:3000/noel-site/en/ |
-| `pnpm build` | static export to `out/` |
-| `pnpm serve` | serves `out/` like GitHub Pages at http://localhost:4173/noel-site/ |
-| `pnpm lint` · `pnpm typecheck` · `pnpm format:check` | static checks |
-| `pnpm test` | Vitest unit tests (`src/**/*.test.ts`) |
-| `pnpm test:e2e` | Playwright smoke tests against `out/` (build first) |
+|                                                      |                                                                     |
+| ---------------------------------------------------- | ------------------------------------------------------------------- |
+| `pnpm dev`                                           | dev server at http://localhost:3000/noel-site/en/                   |
+| `pnpm build`                                         | static export to `out/`                                             |
+| `pnpm serve`                                         | serves `out/` like GitHub Pages at http://localhost:4173/noel-site/ |
+| `pnpm lint` · `pnpm typecheck` · `pnpm format:check` | static checks                                                       |
+| `pnpm test`                                          | Vitest unit tests (`src/**/*.test.ts`)                              |
+| `pnpm test:e2e`                                      | Playwright smoke tests against `out/` (build first)                 |
 
 ## Conventions
 
