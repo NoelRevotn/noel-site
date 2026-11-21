@@ -446,7 +446,7 @@ async function mount(
   const placeCamera = () => {
     const narrow = w / h < 1.1;
     // Static unless the visitor drags: azimuth wraps a full 360°, elevation stays above/below the deck.
-    const radius = narrow ? 15 : 11.6;
+    const radius = narrow ? 15 : 12.2;
     const az = orbit.az;
     const pol = orbit.pol;
     camera.position.set(
@@ -638,7 +638,7 @@ async function mount(
     renderer.setSize(w, h, false);
     // Wide screens: render the left part of a wider frame, so the network sits right of centre
     // and the headline keeps the left side.
-    const shift = w / h >= 1.1 ? 1.4 : 1;
+    const shift = w / h >= 1.1 ? 1.2 : 1;
     camera.aspect = (w * shift) / h;
     if (shift > 1) camera.setViewOffset(w * shift, h, 0, 0, w, h);
     else camera.clearViewOffset();
