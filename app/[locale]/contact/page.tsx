@@ -23,7 +23,9 @@ export default async function ContactPage({ params }: Props) {
   return (
     <main id="main">
       <Trunk>
-        <PageTitle lead={`${t("hero.status")} ${t("contactPage.lead")}`}>{t("contactPage.title")}</PageTitle>
+        <PageTitle icon="signal" lead={`${t("hero.status")} ${t("contactPage.lead")}`}>
+          {t("contactPage.title")}
+        </PageTitle>
         <div className={s.body}>
           {profile.email && (
             <div className={s.email}>

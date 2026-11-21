@@ -1,76 +1,60 @@
 /* Design-system primitives (Línea). */
-.trunk {
-  --stop-pad: clamp(3rem, 6vw, 4.5rem);
-  --panel-pad: clamp(1rem, 3vw, 2.25rem);
-  position: relative;
-  max-width: calc(var(--max) + 2 * var(--gutter));
-  margin-inline: auto;
-  padding: 0 var(--gutter) var(--space-4);
-}
-
-.trunk::before {
-  content: "";
-  position: absolute;
-  left: calc(var(--gutter) + 0.5625rem - var(--line-w) / 2);
-  top: 0;
-  bottom: 0;
-  width: var(--line-w);
-  background: var(--ink);
-}
-
-/* Terminus bar where the trunk ends. */
-.trunk::after {
-  content: "";
-  position: absolute;
-  left: calc(var(--gutter) + 0.5625rem - 14px);
-  bottom: 0;
-  width: 28px;
-  height: var(--line-w);
-  background: var(--ink);
-}
 
 /*
- * Every block on the trunk sits on a solid panel so the animated backdrop never runs behind text.
- * `:not(script)` lifts specificity above the single-class page modules, so this one rule owns the
- * spacing; pages only style what is inside their panel.
+ * Content pages read like the home page: one calm centred column, no panels, lots of air between
+ * sections and a short track between them. (--stop-pad and --panel-pad stay 0 for older rules.)
  */
-.trunk > :not(script) {
+.trunk {
+  --stop-pad: 0px;
+  --panel-pad: 0px;
   position: relative;
-  margin: var(--space-6) 0 0 var(--stop-pad);
-  padding: var(--panel-pad);
-  border-radius: var(--radius-3);
-  background: var(--ground);
-  box-shadow:
-    inset 0 0 0 1px var(--rule),
-    0 24px 48px -36px rgb(15 30 51 / 0.45);
+  max-width: calc(52rem + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-7);
 }
 
-.trunk > :first-child {
-  margin-top: var(--space-7);
+.trunk > :not(script) {
+  position: relative;
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+
+/* The track between two sections: rails and sleepers, fading out at both ends. */
+.trunk > :not(script) + :not(script)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(100%, 32rem);
+  height: 14px;
+  translate: -50% -50%;
+  background:
+    linear-gradient(var(--rule), var(--rule)) top / 100% 2px no-repeat,
+    linear-gradient(var(--rule), var(--rule)) bottom / 100% 2px no-repeat,
+    repeating-linear-gradient(90deg, var(--rule) 0 3px, transparent 3px 16px) center / 100% 60% no-repeat;
+  mask-image: linear-gradient(to right, transparent, #000 20%, #000 80%, transparent);
 }
 
 .stop {
   position: relative;
+  scroll-margin-top: var(--rail-h);
+}
+
+/* Section heading: an icon that draws in, and the title, centred. */
+.stopHead {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  text-align: center;
 }
 
 .stopTitle {
   position: relative;
+  max-width: 22ch;
   font-variation-settings: "wdth" 112;
   font-size: var(--step-3);
-  margin-bottom: var(--space-5);
-}
-
-.stopTitle::before {
-  content: "";
-  position: absolute;
-  left: calc(-1 * (var(--stop-pad) + var(--panel-pad)));
-  top: 50%;
-  width: 1.125rem;
-  height: 1.125rem;
-  translate: 0 -50%;
-  border-radius: 50%;
-  background: var(--ground);
-  box-shadow: 0 0 0 var(--stroke) var(--ink);
+  line-height: 1.05;
+  text-wrap: balance;
 }
 
 .code {
@@ -112,8 +96,13 @@
   color: #4a3600;
 }
 
+/* Page title: centred, with the page's icon and one line under it. */
 .pageHead {
   position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-4);
+  text-align: center;
 }
 
 .pageTitle {
@@ -122,42 +111,44 @@
   font-size: var(--step-4);
   line-height: 0.95;
   letter-spacing: -0.02em;
-}
-
-.pageTitle::before {
-  content: "";
-  position: absolute;
-  left: calc(-1 * (var(--stop-pad) + var(--panel-pad)));
-  top: 50%;
-  width: 1.125rem;
-  height: 1.125rem;
-  translate: 0 -50%;
-  border-radius: 50%;
-  background: var(--ink);
-  box-shadow: 0 0 0 var(--stroke) var(--ink);
+  text-wrap: balance;
 }
 
 .lead {
   font-size: var(--step-1);
   color: var(--muted);
-  max-width: var(--measure);
-  margin: var(--space-4) 0 0;
+  max-width: 40ch;
+  margin: 0;
+  text-wrap: balance;
 }
 
 @media print {
-  .trunk::before,
-  .trunk::after,
-  .stopTitle::before,
-  .pageTitle::before {
-    display: none;
+  .trunk {
+    max-width: none;
+    padding: 0;
   }
 
   .trunk > :not(script) {
-    margin: 0;
     padding: var(--space-5) 0 0;
-    border-radius: 0;
-    background: none;
-    box-shadow: none;
+  }
+
+  .trunk > :not(script) + :not(script)::before,
+  .stopHead svg,
+  .pageHead svg {
+    display: none;
+  }
+
+  .stopHead,
+  .pageHead {
+    justify-items: start;
+    text-align: left;
+    gap: 0;
+    margin-bottom: 0;
+  }
+
+  .stopTitle {
+    max-width: none;
+    width: 100%;
   }
 
   .stopTitle {

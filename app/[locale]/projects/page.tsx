@@ -29,7 +29,9 @@ export default async function ProjectsPage({ params }: Props) {
   return (
     <main id="main">
       <Trunk>
-        <PageTitle lead={t("projects.lead")}>{t("projects.title")}</PageTitle>
+        <PageTitle icon="train" lead={t("projects.lead")}>
+          {t("projects.title")}
+        </PageTitle>
         {LINES.map((line) => {
           const items = projects.filter((p) => p.domains.includes(line.id));
           return (

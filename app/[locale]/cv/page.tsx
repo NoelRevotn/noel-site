@@ -29,6 +29,7 @@ export default async function CvPage({ params }: Props) {
     <main id="main" className={s.cv}>
       <Trunk>
         <PageTitle
+          icon="work"
           extra={
             <div className={s.head}>
               <p className={s.contact}>
@@ -53,11 +54,11 @@ export default async function CvPage({ params }: Props) {
           {profile.name}
         </PageTitle>
 
-        <Stop id="summary" title={t("cvPage.summary")}>
+        <Stop id="summary" title={t("cvPage.summary")} icon="agent">
           <p className={s.lead}>{cv.summary[l]}</p>
         </Stop>
 
-        <Stop id="education" title={t("cvPage.education")}>
+        <Stop id="education" title={t("cvPage.education")} icon="learn">
           {cv.education.map((e) => (
             <article key={e.school} className={s.entry}>
               <h3>{e.school}</h3>
@@ -70,7 +71,7 @@ export default async function CvPage({ params }: Props) {
           ))}
         </Stop>
 
-        <Stop id="experience" title={t("cvPage.experience")}>
+        <Stop id="experience" title={t("cvPage.experience")} icon="work">
           {work.map((e) => (
             <article key={`${e.org}-${e.start}`} className={s.entry}>
               <h3>{e.org}</h3>
@@ -85,7 +86,7 @@ export default async function CvPage({ params }: Props) {
           ))}
         </Stop>
 
-        <Stop id="cv-projects" title={t("cvPage.projects")}>
+        <Stop id="cv-projects" title={t("cvPage.projects")} icon="train">
           {projects.map((p) => (
             <article key={p.slug} className={s.entry}>
               <h3>
@@ -103,7 +104,7 @@ export default async function CvPage({ params }: Props) {
           ))}
         </Stop>
 
-        <Stop id="cv-skills" title={t("cvPage.skills")}>
+        <Stop id="cv-skills" title={t("cvPage.skills")} icon="terminal">
           <dl className={s.skills}>
             {skillGroups.map((g) => (
               <div key={g.id}>
@@ -114,7 +115,7 @@ export default async function CvPage({ params }: Props) {
           </dl>
         </Stop>
 
-        <Stop id="certs" title={t("cvPage.certs")}>
+        <Stop id="certs" title={t("cvPage.certs")} icon="data">
           <ul className={s.list}>
             {programs.map((e) => (
               <li key={e.org}>
@@ -129,7 +130,7 @@ export default async function CvPage({ params }: Props) {
           </ul>
         </Stop>
 
-        <Stop id="awards" title={t("cvPage.awards")}>
+        <Stop id="awards" title={t("cvPage.awards")} icon="signal">
           <ul className={s.list}>
             {cv.awards.map((a) => (
               <li key={a.en}>{a[l]}</li>

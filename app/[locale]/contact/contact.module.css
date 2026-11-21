@@ -1,12 +1,14 @@
 .body {
   display: grid;
   gap: var(--space-5);
-  justify-items: start;
+  justify-items: center;
+  text-align: center;
 }
 
 .email {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   align-items: center;
   gap: var(--space-4);
 }
