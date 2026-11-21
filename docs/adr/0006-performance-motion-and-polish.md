@@ -46,6 +46,12 @@ Phase 5 set out to ship the islands, polish motion and pass the quality gates (Â
 
    `scripts/cv-pdf.mjs` counts the pages and fails if the PDF is longer than one.
 
+8. **Slider and orb without a library.** Noel pointed at Motion's gallery tilt/ripple and particle orb examples. Those are Motion+ (paid) and would bring Motion back. Both are built from the platform instead:
+   - `src/islands/project-slider/`: native scroll-snap with per-card springs driven by scroll velocity (the ripple is stiffness falling off with distance), plus tabs, arrows and mouse drag.
+   - `src/islands/skill-orb/`: a 2D canvas that projects a Fibonacci-sphere particle shell. The legend buttons are the keyboard and screen-reader path.
+
+   Together they add about 3 KB to the home page's initial JS.
+
 ## Results (Lighthouse 13, mobile emulation, local static build)
 
 | Page          | Performance | Accessibility | Best practices | SEO |

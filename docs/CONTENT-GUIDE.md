@@ -30,7 +30,7 @@ The order in the array is the order on the site.
 
 ## Add or change a skill
 
-Edit `content/skills.ts`. Skills live in groups (`ml`, `sys`, `web`, `tools`). `evidence` lists the project slugs that prove the skill; the skill graph draws those links. There are no bars or ratings by design.
+Edit `content/skills.ts`. Skills live in groups (`ml`, `sys`, `web`, `tools`). `evidence` lists the project slugs that prove the skill; the skill orb on the home page draws those links. There are no bars or ratings by design.
 
 ## Add a job, program or certification
 
