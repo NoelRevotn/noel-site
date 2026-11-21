@@ -4,114 +4,170 @@ import { useRef } from "react";
 import { useAmbientCanvas, type Engine, type Frame } from "../network-map/useAmbientCanvas";
 
 /**
- * Page-wide ambient layer: faint octilinear schematic track with signal pulses in the three line
- * colours. Fades in once the hero (and its 3D map) scrolls away, so only one hero moment runs.
- * Drawn in the hairline colour, so it never competes with text contrast.
+ * Page-wide ambient layer: a "sleeper field" of short track ties whose angle follows a slowly
+ * drifting flow, snapped to the eight octilinear directions and eased between them. Near the
+ * pointer the ties swirl around it and spring outward; signals in the three line colours ride the
+ * flow with short trails. Faint in the hero, full strength once it scrolls away. Hairline colour,
+ * so text contrast is never affected.
  */
 
-type Pt = { x: number; y: number };
-type Track = { pts: Pt[]; seg: number[]; total: number; color: string; pulses: number[]; speed: number };
+const GAP = 30;
+const TIE = 10;
+const REACH = 170;
+const OCTANT = Math.PI / 4;
+const COLORS = ["--line-ml", "--line-sys", "--line-web"] as const;
 
-const GRID = 56;
-const DIRS: Pt[] = [
-  { x: 1, y: 0 },
-  { x: 1, y: 1 },
-  { x: 0, y: 1 },
-  { x: -1, y: 1 },
-  { x: -1, y: 0 },
-  { x: -1, y: -1 },
-  { x: 0, y: -1 },
-  { x: 1, y: -1 },
-];
-const COLORS = ["--line-ml", "--line-sys", "--line-web"];
+type Tie = { x: number; y: number; a: number; ox: number; oy: number; vx: number; vy: number };
+type Signal = {
+  x: number;
+  y: number;
+  life: number;
+  color: number;
+  trail: Float32Array;
+  head: number;
+  len: number;
+};
+const TRAIL = 14;
 
-function rng(seed: number) {
-  let s = seed >>> 0;
-  return () => {
-    s = (s * 1664525 + 1013904223) >>> 0;
-    return s / 4294967296;
-  };
+function flow(x: number, y: number, t: number) {
+  return (
+    Math.sin(x * 0.0042 + t * 0.12) * Math.cos(y * 0.0051 - t * 0.09) * Math.PI +
+    Math.sin((x + y) * 0.0021 + t * 0.05) * Math.PI
+  );
 }
 
-function buildTracks(w: number, h: number): Track[] {
-  const rand = rng(20261121);
-  const count = Math.max(5, Math.round((w * h) / 140000));
-  const tracks: Track[] = [];
-  for (let n = 0; n < count; n++) {
-    let p = { x: Math.round((rand() * w) / GRID) * GRID, y: Math.round((rand() * h) / GRID) * GRID };
-    let dir = Math.floor(rand() * 4) * 2; // start on an axis
-    const pts = [p];
-    for (let k = 0; k < 7; k++) {
-      const len = (2 + Math.floor(rand() * 5)) * GRID;
-      p = { x: p.x + DIRS[dir]!.x * len, y: p.y + DIRS[dir]!.y * len };
-      pts.push(p);
-      dir = (dir + (rand() < 0.5 ? 1 : 7)) % 8; // turn 45° left or right
-    }
-    const seg = [0];
-    for (let i = 1; i < pts.length; i++) {
-      seg.push(seg[i - 1]! + Math.hypot(pts[i]!.x - pts[i - 1]!.x, pts[i]!.y - pts[i - 1]!.y));
-    }
-    tracks.push({
-      pts,
-      seg,
-      total: seg[seg.length - 1]!,
-      color: COLORS[n % 3]!,
-      pulses: [rand(), rand() * 0.5 + 0.5],
-      speed: 38 + rand() * 30,
-    });
-  }
-  return tracks;
-}
-
-function at(t: Track, s: number): Pt {
-  for (let i = 1; i < t.pts.length; i++) {
-    if (s <= t.seg[i]! || i === t.pts.length - 1) {
-      const a = t.pts[i - 1]!;
-      const b = t.pts[i]!;
-      const u = (s - t.seg[i - 1]!) / (t.seg[i]! - t.seg[i - 1]! || 1);
-      return { x: a.x + (b.x - a.x) * u, y: a.y + (b.y - a.y) * u };
-    }
-  }
-  return t.pts[0]!;
+/** Shortest signed angular difference. */
+function delta(from: number, to: number) {
+  let d = (to - from) % (Math.PI * 2);
+  if (d > Math.PI) d -= Math.PI * 2;
+  if (d < -Math.PI) d += Math.PI * 2;
+  return d;
 }
 
 function createEngine(): Engine {
-  let tracks: Track[] = [];
+  let ties: Tie[] = [];
+  let signals: Signal[] = [];
+  let time = 0;
+  let w = 0;
+  let h = 0;
+
+  const spawn = (s?: Signal): Signal => {
+    const sig = s ?? { x: 0, y: 0, life: 0, color: 0, trail: new Float32Array(TRAIL * 2), head: 0, len: 0 };
+    sig.x = Math.random() * w;
+    sig.y = Math.random() * h;
+    sig.life = 4 + Math.random() * 5;
+    sig.color = Math.floor(Math.random() * 3);
+    sig.len = 0;
+    sig.head = 0;
+    return sig;
+  };
+
   return {
-    resize(w, h) {
-      tracks = buildTracks(w, h);
+    resize(nw, nh) {
+      w = nw;
+      h = nh;
+      ties = [];
+      for (let y = GAP / 2; y < h + GAP; y += GAP) {
+        for (let x = GAP / 2; x < w + GAP; x += GAP) {
+          ties.push({ x, y, a: Math.round(flow(x, y, 0) / OCTANT) * OCTANT, ox: 0, oy: 0, vx: 0, vy: 0 });
+        }
+      }
+      signals = Array.from({ length: Math.max(8, Math.round((w * h) / 45000)) }, () => spawn());
     },
-    draw({ ctx, w, h, dt, vars, still }: Frame) {
-      // Fade in after the hero: 0 at the top, full once ~70% of a viewport has scrolled.
-      const fade = Math.min(1, Math.max(0, (window.scrollY - h * 0.25) / (h * 0.45)));
+    draw({ ctx, dt, pointer, vars, still }: Frame) {
+      time += dt;
+      // Faint behind the hero, full strength once ~60% of a viewport has scrolled.
+      const scroll = Math.min(1, Math.max(0, window.scrollY / (h * 0.6)));
+      const fade = 0.35 + 0.65 * scroll;
       ctx.clearRect(0, 0, w, h);
-      if (fade <= 0) return;
-      ctx.globalAlpha = fade;
       ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.strokeStyle = vars["--rule"] || "#c9d2dd";
-      ctx.lineWidth = 2;
-      for (const t of tracks) {
+
+      const rule = vars["--rule"] || "#c9d2dd";
+      const ink = vars["--ink"] || "#0f1e33";
+      const near: Tie[] = [];
+
+      // Ties: target angle from the flow (snapped to an octant), swirled near the pointer.
+      ctx.beginPath();
+      for (const tie of ties) {
+        let target = Math.round(flow(tie.x, tie.y, time) / OCTANT) * OCTANT;
+        let pushX = 0;
+        let pushY = 0;
+        if (pointer.active) {
+          const dx = tie.x - pointer.x;
+          const dy = tie.y - pointer.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < REACH) {
+            const k = (1 - dist / REACH) ** 2;
+            const tangent = Math.atan2(dy, dx) + Math.PI / 2;
+            target = target + delta(target, tangent) * k;
+            pushX = (dx / (dist || 1)) * 9 * k;
+            pushY = (dy / (dist || 1)) * 9 * k;
+            near.push(tie);
+          }
+        }
+        if (still) {
+          tie.a = target;
+        } else {
+          tie.a += delta(tie.a, target) * Math.min(1, dt * 5);
+          // Spring the offset toward the push (stiff, well damped).
+          tie.vx += (180 * (pushX - tie.ox) - 18 * tie.vx) * dt;
+          tie.vy += (180 * (pushY - tie.oy) - 18 * tie.vy) * dt;
+          tie.ox += tie.vx * dt;
+          tie.oy += tie.vy * dt;
+        }
+        const cx = tie.x + tie.ox;
+        const cy = tie.y + tie.oy;
+        const ux = Math.cos(tie.a) * (TIE / 2);
+        const uy = Math.sin(tie.a) * (TIE / 2);
+        ctx.moveTo(cx - ux, cy - uy);
+        ctx.lineTo(cx + ux, cy + uy);
+      }
+      ctx.globalAlpha = fade;
+      ctx.strokeStyle = rule;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Ties near the pointer darken toward ink.
+      if (near.length) {
         ctx.beginPath();
-        ctx.moveTo(t.pts[0]!.x, t.pts[0]!.y);
-        for (let i = 1; i < t.pts.length; i++) ctx.lineTo(t.pts[i]!.x, t.pts[i]!.y);
+        for (const tie of near) {
+          const ux = Math.cos(tie.a) * (TIE / 2);
+          const uy = Math.sin(tie.a) * (TIE / 2);
+          ctx.moveTo(tie.x + tie.ox - ux, tie.y + tie.oy - uy);
+          ctx.lineTo(tie.x + tie.ox + ux, tie.y + tie.oy + uy);
+        }
+        ctx.globalAlpha = fade * 0.45;
+        ctx.strokeStyle = ink;
+        ctx.lineWidth = 1.75;
         ctx.stroke();
       }
-      if (still) return;
-      // Signal pulses: short bright segments travelling along each track.
-      ctx.lineWidth = 3;
-      for (const t of tracks) {
-        ctx.strokeStyle = vars[t.color] || "#0057b8";
-        for (let k = 0; k < t.pulses.length; k++) {
-          t.pulses[k] = (t.pulses[k]! + (t.speed * dt) / t.total) % 1;
-          const head = t.pulses[k]! * t.total;
+
+      if (still) {
+        ctx.globalAlpha = 1;
+        return;
+      }
+
+      // Signals ride the (snapped) flow and leave a short fading trail.
+      for (const s of signals) {
+        const a = Math.round(flow(s.x, s.y, time) / OCTANT) * OCTANT;
+        s.x += Math.cos(a) * 46 * dt;
+        s.y += Math.sin(a) * 46 * dt;
+        s.life -= dt;
+        s.trail[s.head * 2] = s.x;
+        s.trail[s.head * 2 + 1] = s.y;
+        s.head = (s.head + 1) % TRAIL;
+        s.len = Math.min(TRAIL, s.len + 1);
+        if (s.life <= 0 || s.x < -20 || s.x > w + 20 || s.y < -20 || s.y > h + 20) spawn(s);
+        const life = Math.min(1, s.life, (9 - s.life) * 2);
+        ctx.strokeStyle = vars[COLORS[s.color]!] || ink;
+        ctx.lineWidth = 2.5;
+        for (let k = 1; k < s.len; k++) {
+          const i0 = (s.head - s.len + k - 1 + TRAIL) % TRAIL;
+          const i1 = (s.head - s.len + k + TRAIL) % TRAIL;
+          ctx.globalAlpha = fade * 0.7 * life * (k / s.len);
           ctx.beginPath();
-          for (let s = Math.max(0, head - 70), first = true; s <= head; s += 6, first = false) {
-            const p = at(t, s);
-            if (first) ctx.moveTo(p.x, p.y);
-            else ctx.lineTo(p.x, p.y);
-          }
-          ctx.globalAlpha = fade * 0.55;
+          ctx.moveTo(s.trail[i0 * 2]!, s.trail[i0 * 2 + 1]!);
+          ctx.lineTo(s.trail[i1 * 2]!, s.trail[i1 * 2 + 1]!);
           ctx.stroke();
         }
       }
@@ -120,7 +176,7 @@ function createEngine(): Engine {
   };
 }
 
-const VARS = ["--rule", "--line-ml", "--line-sys", "--line-web"] as const;
+const VARS = ["--rule", "--ink", "--line-ml", "--line-sys", "--line-web"] as const;
 
 export function Backdrop({ className }: { className?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);

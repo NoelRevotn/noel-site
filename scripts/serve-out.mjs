@@ -32,7 +32,16 @@ async function resolveFile(urlPath) {
 createServer(async (req, res) => {
   const { pathname } = new URL(req.url ?? "/", "http://localhost");
   if (pathname === base) return res.writeHead(301, { location: `${base}/` }).end(); // GitHub Pages does the same
-  const file = pathname.startsWith(`${base}/`) ? await resolveFile(pathname.slice(base.length)) : null;
+  let file = pathname.startsWith(`${base}/`) ? await resolveFile(pathname.slice(base.length)) : null;
+  // Windows builds write RSC prefetch payloads as nested folders (__next.A/B/C.txt) where Linux
+  // (CI, GitHub Pages) writes one dotted file (__next.A.B.C.txt). Map the URL for local previews.
+  if (!file && /\/__next\.[^/]+\.txt$/.test(pathname)) {
+    const nested = pathname.replace(
+      /__next\.([^/]+)\.txt$/,
+      (_, segs) => `__next.${segs.split(".").join("/")}.txt`,
+    );
+    file = await resolveFile(nested.slice(base.length));
+  }
   const target = file ?? join(root, "404.html");
   res.writeHead(file ? 200 : 404, { "content-type": types[extname(target)] ?? "application/octet-stream" });
   res.end(await readFile(target));

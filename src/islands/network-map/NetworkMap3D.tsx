@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type * as Three from "three";
 import { DARK, settings, REDUCED } from "../settings/store";
+import { withBase } from "@/lib/paths";
 import { NetworkMap2D } from "./NetworkMap2D";
 
 /**
@@ -12,7 +13,7 @@ import { NetworkMap2D } from "./NetworkMap2D";
  */
 
 type P = { x: number; y: number };
-type Station = { name: string; at: P; built: boolean };
+type Station = { name: string; at: P; built: boolean; href?: string };
 type LineDef = { id: "ml" | "sys" | "web"; colorVar: string; level: number; path: P[]; stations: Station[] };
 
 const H2O: P = { x: 0.56, y: 0.47 };
@@ -25,7 +26,8 @@ const LINES: LineDef[] = [
     path: [{ x: 0.1, y: 0.12 }, { x: 0.3, y: 0.12 }, H2O, { x: 0.82, y: 0.73 }, { x: 1.05, y: 0.73 }],
     stations: [
       { name: "GCI World", at: { x: 0.17, y: 0.12 }, built: false },
-      { name: "AgenteQuery", at: { x: 0.3, y: 0.12 }, built: true },
+      { name: "AgenteQuery", at: { x: 0.3, y: 0.12 }, built: true, href: "/projects/agentequery" },
+      { name: "DataLizer", at: { x: 0.69, y: 0.6 }, built: false, href: "/projects/datalizer" },
       { name: "Samsung AI program", at: { x: 0.94, y: 0.73 }, built: false },
     ],
   },
@@ -41,7 +43,10 @@ const LINES: LineDef[] = [
       { x: 0.78, y: 0.25 },
       { x: 1.05, y: 0.25 },
     ],
-    stations: [{ name: "Presidency IT practice", at: { x: 0.94, y: 0.25 }, built: true }],
+    stations: [
+      { name: "Buddy", at: { x: 0.06, y: 0.7 }, built: false, href: "/projects/buddy" },
+      { name: "Presidency IT practice", at: { x: 0.94, y: 0.25 }, built: true },
+    ],
   },
   {
     id: "web",
@@ -56,8 +61,8 @@ const LINES: LineDef[] = [
       { x: 0.56, y: 0.02 },
     ],
     stations: [
-      { name: "ITINERA", at: { x: 0.32, y: 0.88 }, built: true },
-      { name: "This site", at: { x: 0.56, y: 0.06 }, built: false },
+      { name: "ITINERA", at: { x: 0.32, y: 0.88 }, built: true, href: "/projects/itinera" },
+      { name: "This site", at: { x: 0.56, y: 0.06 }, built: false, href: "/colophon" },
     ],
   },
 ];
@@ -118,9 +123,11 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   const glowColors = LINES.map(() => new THREE.Color());
   const white = new THREE.Color(0xffffff);
   const windowMats = LINES.map(() => new THREE.MeshBasicMaterial());
+  const flowMats: Three.PointsMaterial[] = [];
   const applyColors = () => {
     mats.ink.color.copy(color("--ink"));
     mats.ground.color.copy(color("--ground"));
+    scene.fog = new THREE.Fog(color("--ground"), 11, 26);
     mats.platform.color.copy(color("--surface"));
     mats.edge.color.copy(color("--rule"));
     LINES.forEach((l, i) => {
@@ -129,6 +136,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
       lineMats[i]!.emissive.copy(c).multiplyScalar(0.3);
       baseColors[i]!.copy(c);
       glowColors[i]!.copy(c).lerp(white, 0.62);
+      flowMats[i]?.color.copy(c).lerp(white, 0.35);
       windowMats[i]!.color.copy(c);
     });
   };
@@ -166,6 +174,11 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     scene.add(disc, ring);
   }
 
+  const elevator = new THREE.Mesh(track(new THREE.TorusGeometry(0.2, 0.04, 10, 40)), mats.ink);
+  elevator.rotation.x = Math.PI / 2;
+  elevator.position.set(h2o.x, 0, h2o.z);
+  scene.add(elevator);
+
   // Lines as tubes along octilinear routes with rounded corners.
   const roundedCurve = (pts: Three.Vector3[], radius = 0.45) => {
     const path = new THREE.CurvePath<Three.Vector3>();
@@ -186,11 +199,14 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   };
 
   const stationGeo = track(new THREE.CylinderGeometry(0.12, 0.12, 0.1, 32));
+  const hitGeo = track(new THREE.CylinderGeometry(0.35, 0.35, 0.4, 12));
   const hollowRing = track(new THREE.TorusGeometry(0.12, 0.035, 10, 32));
   const carGeo = track(new THREE.BoxGeometry(0.14, 0.12, 0.34));
   const winGeo = track(new THREE.BoxGeometry(0.145, 0.03, 0.22));
 
   type Train = { mesh: Three.Group; u: number; dir: 1 | -1; dwell: number; last: number };
+  type StationNode = { group: Three.Group; disc: Three.Mesh; href?: string; name: string; scale: number };
+  const stationNodes: StationNode[] = [];
   const lines = LINES.map((l, i) => {
     const curve = roundedCurve(l.path.map((p) => toWorld(p, l.level)));
     const tubeGeo = track(new THREE.TubeGeometry(curve, SEGMENTS, 0.06, RADIAL, false));
@@ -219,15 +235,23 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     });
     for (const st of l.stations) {
       const pos = toWorld(st.at, l.level);
+      const group = new THREE.Group();
+      group.position.copy(pos);
       const disc = new THREE.Mesh(stationGeo, st.built ? mats.ink : mats.ground);
-      disc.position.copy(pos);
-      scene.add(disc);
+      group.add(disc);
       if (!st.built) {
         const ring = new THREE.Mesh(hollowRing, mats.ink);
         ring.rotation.x = Math.PI / 2;
-        ring.position.copy(pos).setY(pos.y + 0.05);
-        scene.add(ring);
+        ring.position.y = 0.05;
+        group.add(ring);
       }
+      // Invisible, generous hit area: the disc itself is only a few pixels on screen.
+      const hit = new THREE.Mesh(hitGeo, mats.ink);
+      hit.visible = false;
+      hit.userData.station = stationNodes.length;
+      group.add(hit);
+      stationNodes.push({ group, disc: hit, href: st.href, name: st.name, scale: 1 });
+      scene.add(group);
     }
     const trains: Train[] = [0.15, 0.7].map((u, k) => {
       const g = new THREE.Group();
@@ -238,24 +262,45 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
       scene.add(g);
       return { mesh: g, u, dir: k ? -1 : 1, dwell: 0, last: -1 };
     });
-    return { curve, tube, tubeGeo, length, stopU, trains, index: i };
+    const flowCount = 22;
+    const flowGeo = track(new THREE.BufferGeometry());
+    flowGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(flowCount * 3), 3));
+    const flowMat = track(
+      new THREE.PointsMaterial({ size: 0.09, transparent: true, opacity: 0.85, depthWrite: false }),
+    );
+    flowMats.push(flowMat);
+    scene.add(new THREE.Points(flowGeo, flowMat));
+    const flowU = Array.from({ length: flowCount }, (_, k) => k / flowCount);
+    return { curve, tube, tubeGeo, length, stopU, trains, index: i, flowGeo, flowU };
   });
+
+  applyColors(); // again, now that the per-line flow materials exist
 
   // DOM labels, projected every frame.
   const labelLayer = document.createElement("div");
   labelLayer.style.cssText = "position:absolute;inset:0;pointer-events:none";
   host.appendChild(labelLayer);
-  const labels: { el: HTMLSpanElement; pos: Three.Vector3 }[] = [];
-  const addLabel = (text: string, pos: Three.Vector3, big = false) => {
+  const labels: { el: HTMLSpanElement; pos: Three.Vector3; name: string }[] = [];
+  const go = (href: string) => {
+    const lang = document.documentElement.lang || "en";
+    window.location.href = withBase(`/${lang}${href}/`);
+  };
+  const addLabel = (text: string, pos: Three.Vector3, big = false, href?: string) => {
     const el = document.createElement("span");
     el.className = labelClass;
     if (big) el.dataset.big = "true";
+    if (href) {
+      el.dataset.link = "true";
+      el.addEventListener("click", () => go(href));
+    }
     el.textContent = text;
     labelLayer.appendChild(el);
-    labels.push({ el, pos });
+    labels.push({ el, pos, name: text });
   };
-  LINES.forEach((l) => l.stations.forEach((s) => addLabel(s.name, toWorld(s.at, l.level + 0.22))));
-  addLabel("H2Oeste", toWorld(H2O, LEVELS.ml + 0.5), true);
+  LINES.forEach((l) =>
+    l.stations.forEach((s) => addLabel(s.name, toWorld(s.at, l.level + 0.22), false, s.href)),
+  );
+  addLabel("H2Oeste", toWorld(H2O, LEVELS.ml + 0.5), true, "/projects/h2oeste");
 
   // Camera rig: slow idle drift plus pointer tilt; pointer near a tube isolates that line.
   const target = new THREE.Vector3(0.55, 0.7, 0.1);
@@ -269,16 +314,21 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   let w = 1;
   let h = 1;
   let t = 0;
+  let intro = reduced.matches ? 1 : 0;
   let last = 0;
   let raf = 0;
   let onScreen = true;
   const tmp = new THREE.Vector3();
+  let hovered: StationNode | null = null;
 
   const placeCamera = () => {
     const narrow = w / h < 1.1;
-    const radius = narrow ? 16 : 13.2;
-    const az = THREE.MathUtils.degToRad(-32 + Math.sin(t * 0.09) * 7 + pointer.x * 9);
-    const pol = THREE.MathUtils.degToRad(54 - pointer.y * 6);
+    // Fly in on load (eased), then drift; scrolling tilts the network toward a top-down view.
+    const e = 1 - Math.pow(1 - Math.min(1, intro), 3);
+    const scroll = Math.min(1, window.scrollY / Math.max(h, 1));
+    const radius = (narrow ? 16 : 13.2) * (1 + 0.45 * (1 - e));
+    const az = THREE.MathUtils.degToRad(-32 - 40 * (1 - e) + Math.sin(t * 0.09) * 7 + pointer.x * 9);
+    const pol = THREE.MathUtils.degToRad(54 - pointer.y * 6 - 16 * (1 - e) - 14 * scroll);
     camera.position.set(
       target.x + radius * Math.sin(pol) * Math.sin(az),
       target.y + radius * Math.cos(pol),
@@ -343,6 +393,40 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
       attr.needsUpdate = true;
     }
 
+    // Data flow along each line.
+    for (const ln of lines) {
+      const arr = ln.flowGeo.attributes.position!.array as Float32Array;
+      for (let k = 0; k < ln.flowU.length; k++) {
+        if (dt > 0) ln.flowU[k] = (ln.flowU[k]! + (0.9 * dt) / ln.length) % 1;
+        ln.curve.getPointAt(ln.flowU[k]!, tmp);
+        arr[k * 3] = tmp.x;
+        arr[k * 3 + 1] = tmp.y + 0.075;
+        arr[k * 3 + 2] = tmp.z;
+      }
+      ln.flowGeo.attributes.position!.needsUpdate = true;
+    }
+
+    // Elevator between the three levels of the interchange.
+    elevator.position.y = (0.5 - 0.5 * Math.cos(t * 0.55)) * LEVELS.ml;
+
+    // Station hover: grow on a spring-like ease; project stations open their page on click.
+    let hoverStation = -1;
+    if (pointerIn) {
+      ray.setFromCamera(ndc, camera);
+      const s = ray.intersectObjects(
+        stationNodes.map((n) => n.disc),
+        false,
+      )[0];
+      if (s) hoverStation = s.object.userData.station as number;
+    }
+    hovered = hoverStation >= 0 ? stationNodes[hoverStation]! : null;
+    for (const [k, n] of stationNodes.entries()) {
+      const goal = k === hoverStation ? 1.6 : 1;
+      n.scale += (goal - n.scale) * (dt > 0 ? Math.min(1, dt * 12) : 1);
+      n.group.scale.setScalar(n.scale);
+    }
+    for (const l of labels) l.el.dataset.active = String(!!hovered && l.name === hovered.name);
+
     // Isolation by raycast against the tubes.
     let hit = -1;
     if (pointerIn) {
@@ -359,7 +443,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     lineMats.forEach((m, i) => {
       m.opacity = focus >= 0 && i !== focus ? 1 - 0.8 * focusMix : 1;
     });
-    host.style.cursor = hit >= 0 ? "pointer" : "";
+    host.style.cursor = hovered?.href ? "pointer" : "";
   };
 
   const render = () => {
@@ -378,6 +462,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
     last = now;
     t += dt;
+    intro += dt / 1.8;
     step(dt);
     render();
     raf = requestAnimationFrame(tick);
@@ -432,6 +517,8 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   document.addEventListener("visibilitychange", sync);
   reduced.addEventListener("change", sync);
   dark.addEventListener("change", onTheme);
+  const onClick = () => hovered?.href && go(hovered.href);
+  host.addEventListener("click", onClick);
   window.addEventListener("pointermove", onMove, { passive: true });
   resize();
   sync();
@@ -446,6 +533,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     reduced.removeEventListener("change", sync);
     dark.removeEventListener("change", onTheme);
     window.removeEventListener("pointermove", onMove);
+    host.removeEventListener("click", onClick);
     disposables.forEach((d) => d.dispose());
     renderer.dispose();
     renderer.domElement.remove();

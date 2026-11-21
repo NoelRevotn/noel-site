@@ -74,6 +74,7 @@ export default async function LocaleLayout({
             plateClassName={cursor.plate}
             markClassName={cursor.mark}
             carClassName={cursor.car}
+            dotClassName={cursor.dot}
           />
           <RevealObserver />
         </NextIntlClientProvider>
