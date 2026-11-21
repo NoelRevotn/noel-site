@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import s from "./ui.module.css";
 
 /** Renders content text, highlighting any TODO(noel) placeholder so it can't be missed (PLAN §0 rule 2). */
@@ -19,12 +19,13 @@ export function Text({ children }: { children: string }) {
   );
 }
 
-/** Page title as the first stop on the trunk. */
-export function PageTitle({ children, lead }: { children: string; lead?: string }) {
+/** Page title as the first stop on the trunk; `extra` shares its panel (e.g. the CV contact line). */
+export function PageTitle({ children, lead, extra }: { children: string; lead?: string; extra?: ReactNode }) {
   return (
     <header className={s.pageHead}>
       <h1 className={s.pageTitle}>{children}</h1>
       {lead && <p className={s.lead}>{lead}</p>}
+      {extra}
     </header>
   );
 }

@@ -28,25 +28,30 @@ export default async function CvPage({ params }: Props) {
   return (
     <main id="main" className={s.cv}>
       <Trunk>
-        <PageTitle>{profile.name}</PageTitle>
-        <div className={s.head}>
-          <p className={s.contact}>
-            {profile.location[l]}
-            {profile.email && (
-              <>
+        <PageTitle
+          extra={
+            <div className={s.head}>
+              <p className={s.contact}>
+                {profile.location[l]}
+                {profile.email && (
+                  <>
+                    {" · "}
+                    <a href={`mailto:${profile.email}`}>{profile.email}</a>
+                  </>
+                )}
                 {" · "}
-                <a href={`mailto:${profile.email}`}>{profile.email}</a>
-              </>
-            )}
-            {" · "}
-            <a href={profile.links.linkedin}>LinkedIn</a>
-            {" · "}
-            <a href={profile.links.github}>github.com/NoelRevotn</a>
-          </p>
-          <a className={s.download} href={withBase(`/cv/noel-echeverria-cv-${locale}.pdf`)} download>
-            {t("cvPage.download")}
-          </a>
-        </div>
+                <a href={profile.links.linkedin}>LinkedIn</a>
+                {" · "}
+                <a href={profile.links.github}>github.com/NoelRevotn</a>
+              </p>
+              <a className={s.download} href={withBase(`/cv/noel-echeverria-cv-${locale}.pdf`)} download>
+                {t("cvPage.download")}
+              </a>
+            </div>
+          }
+        >
+          {profile.name}
+        </PageTitle>
 
         <Stop id="summary" title={t("cvPage.summary")}>
           <p className={s.lead}>{cv.summary[l]}</p>
@@ -91,7 +96,7 @@ export default async function CvPage({ params }: Props) {
               <p className={s.sub}>
                 <Text>{p.summary[l]}</Text>
               </p>
-              <p>
+              <p className={s.what}>
                 <Text>{p.what[l]}</Text>
               </p>
             </article>

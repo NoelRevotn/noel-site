@@ -1,5 +1,4 @@
 .facts {
-  padding: var(--space-6) 0 0 clamp(3rem, 6vw, 4.5rem);
   max-width: 58rem;
 }
 
@@ -61,7 +60,6 @@
 }
 
 .back {
-  padding: var(--space-7) 0 0 clamp(3rem, 6vw, 4.5rem);
   margin: 0;
   font-weight: 700;
 }

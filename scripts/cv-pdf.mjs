@@ -1,7 +1,7 @@
 // Prints the web CV (/en/cv/, /es/cv/) to out/cv/noel-echeverria-cv-{locale}.pdf after `next build`.
 // The PDF is the same page as the web CV, so they can't drift; no phone number by design.
 import { spawn } from "node:child_process";
-import { mkdir } from "node:fs/promises";
+import { mkdir, readFile } from "node:fs/promises";
 import { chromium } from "@playwright/test";
 
 const port = 4180;
@@ -20,7 +20,10 @@ try {
     await page.evaluate(() => document.fonts.ready);
     const path = `out/cv/noel-echeverria-cv-${locale}.pdf`;
     await page.pdf({ path, format: "A4", printBackground: true, preferCSSPageSize: true });
-    console.log(`wrote ${path}`);
+    // The CV is a one-page document by design: fail the build if the content outgrows A4.
+    const pages = ((await readFile(path, "latin1")).match(/\/Type\s*\/Page[^s]/g) ?? []).length;
+    console.log(`wrote ${path} (${pages} page${pages === 1 ? "" : "s"})`);
+    if (pages !== 1) process.exitCode = 1;
     await page.close();
   }
 } finally {

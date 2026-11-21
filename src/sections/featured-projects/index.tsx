@@ -37,7 +37,7 @@ export async function FeaturedProjects({ limit = 3 }: { limit?: number }) {
             style={{ "--reveal-i": i } as React.CSSProperties}
           >
             <Glyph domains={p.domains} />
-            <div>
+            <div className={s.body}>
               <h3 className={s.title}>
                 <Link prefetch={false} href={`/projects/${p.slug}`}>
                   {p.title}

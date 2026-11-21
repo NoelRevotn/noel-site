@@ -1,6 +1,7 @@
 /* Design-system primitives (Línea). */
 .trunk {
   --stop-pad: clamp(3rem, 6vw, 4.5rem);
+  --panel-pad: clamp(1rem, 3vw, 2.25rem);
   position: relative;
   max-width: calc(var(--max) + 2 * var(--gutter));
   margin-inline: auto;
@@ -28,9 +29,28 @@
   background: var(--ink);
 }
 
+/*
+ * Every block on the trunk sits on a solid panel so the animated backdrop never runs behind text.
+ * `:not(script)` lifts specificity above the single-class page modules, so this one rule owns the
+ * spacing; pages only style what is inside their panel.
+ */
+.trunk > :not(script) {
+  position: relative;
+  margin: var(--space-6) 0 0 var(--stop-pad);
+  padding: var(--panel-pad);
+  border-radius: var(--radius-3);
+  background: var(--ground);
+  box-shadow:
+    inset 0 0 0 1px var(--rule),
+    0 24px 48px -36px rgb(15 30 51 / 0.45);
+}
+
+.trunk > :first-child {
+  margin-top: var(--space-7);
+}
+
 .stop {
   position: relative;
-  padding: var(--space-8) 0 0 var(--stop-pad);
 }
 
 .stopTitle {
@@ -43,7 +63,7 @@
 .stopTitle::before {
   content: "";
   position: absolute;
-  left: calc(-1 * var(--stop-pad));
+  left: calc(-1 * (var(--stop-pad) + var(--panel-pad)));
   top: 50%;
   width: 1.125rem;
   height: 1.125rem;
@@ -94,7 +114,6 @@
 
 .pageHead {
   position: relative;
-  padding: var(--space-7) 0 0 var(--stop-pad);
 }
 
 .pageTitle {
@@ -108,7 +127,7 @@
 .pageTitle::before {
   content: "";
   position: absolute;
-  left: calc(-1 * var(--stop-pad));
+  left: calc(-1 * (var(--stop-pad) + var(--panel-pad)));
   top: 50%;
   width: 1.125rem;
   height: 1.125rem;
@@ -133,13 +152,16 @@
     display: none;
   }
 
-  .stop,
-  .pageHead {
+  .trunk > :not(script) {
+    margin: 0;
     padding: var(--space-5) 0 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
   }
 
   .stopTitle {
-    margin-bottom: 4pt;
+    margin-bottom: 2pt;
     border-bottom: 1.5pt solid #000;
     padding-bottom: 2pt;
   }
