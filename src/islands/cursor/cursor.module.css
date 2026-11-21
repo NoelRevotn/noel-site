@@ -1,4 +1,4 @@
-/* Station-mark cursor that becomes an interchange plate naming the action. */
+/* The cursor as a little train: station mark + three cars + interchange plate over links. */
 .cursor {
   position: fixed;
   left: 0;
@@ -13,23 +13,41 @@
   opacity: 1;
 }
 
-.cursor::before {
-  content: "";
+.mark {
   position: absolute;
+  left: 0;
+  top: 0;
   width: 16px;
   height: 16px;
-  translate: -50% -50%;
   border-radius: 50%;
   background: var(--ground);
   box-shadow: 0 0 0 var(--stroke) var(--ink);
+  transform: translate(-50%, -50%);
   transition:
-    scale 200ms var(--ease-emphasized),
-    background-color 200ms;
+    background-color 200ms,
+    width 200ms var(--ease-emphasized),
+    height 200ms var(--ease-emphasized);
 }
 
-.cursor[data-state="link"]::before {
-  scale: 0.55;
+.cursor[data-state="link"] .mark {
+  width: 9px;
+  height: 9px;
   background: var(--ink);
+}
+
+.car {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 99;
+  width: 11px;
+  height: 7px;
+  border-radius: 3px;
+  background: var(--ink);
+  box-shadow: 0 0 0 2px var(--ground);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms;
 }
 
 .plate {
@@ -53,4 +71,14 @@
 .cursor[data-state="link"] .plate {
   opacity: 1;
   scale: 1;
+}
+
+/* Page-wide ambient backdrop (src/islands/backdrop): behind everything, never interactive. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
