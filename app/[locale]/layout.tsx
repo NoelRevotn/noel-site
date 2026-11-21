@@ -50,6 +50,9 @@ export default async function LocaleLayout({
   return (
     <html lang={locale} className={fontVariables} suppressHydrationWarning>
       <head>
+        {/* Light by default; the head script switches both for a saved dark theme (theme-script.ts). */}
+        <meta name="color-scheme" content="only light" />
+        <meta name="theme-color" content="#dde4ec" />
         <script dangerouslySetInnerHTML={{ __html: HEAD_SCRIPT }} />
         <script
           type="application/ld+json"

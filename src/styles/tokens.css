@@ -64,7 +64,11 @@
   /* Chrome */
   --rail-h: 5.5rem;
 
-  color-scheme: light;
+  /*
+   * "only light": phone browsers with an automatic dark mode (Chrome, Samsung Internet, Brave)
+   * must not recolour the light theme on their own. Dark visitors get the designed dark theme.
+   */
+  color-scheme: only light;
 }
 
 :root[data-theme="dark"] {

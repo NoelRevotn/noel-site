@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { SETTINGS_KEY as KEY } from "@/lib/theme-script";
+import { applyChrome, SETTINGS_KEY as KEY } from "@/lib/theme-script";
 
 /**
  * Display settings shared by every island on the page: theme, motion pause, custom cursor.
@@ -31,7 +31,10 @@ function load(): State {
 
 function set(patch: Partial<State>) {
   state = { ...load(), ...patch };
-  if (patch.theme) document.documentElement.dataset.theme = patch.theme;
+  if (patch.theme) {
+    document.documentElement.dataset.theme = patch.theme;
+    applyChrome(patch.theme);
+  }
   // CSS loops (e.g. the status pulse) pause on html[data-motion="paused"].
   if (patch.paused !== undefined) document.documentElement.dataset.motion = patch.paused ? "paused" : "on";
   try {
