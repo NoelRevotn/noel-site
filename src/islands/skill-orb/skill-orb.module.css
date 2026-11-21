@@ -68,11 +68,22 @@
   border-radius: 999px;
   background: var(--surface);
   color: var(--ink);
-  box-shadow: inset 3px 0 0 var(--c);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font: 700 0.875rem/1 var(--font-text);
   transition:
     opacity var(--dur-fast) var(--ease-standard),
     background-color var(--dur-fast) var(--ease-standard);
+}
+
+/* A station dot in the skill's line colour, as on the map. */
+.chip[data-kind="skill"]::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--c);
 }
 
 .chip[data-kind="project"] {
