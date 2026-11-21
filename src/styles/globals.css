@@ -9,7 +9,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  background: var(--ground);
+  background: var(--page);
   scrollbar-color: var(--ink) var(--surface);
   scroll-padding-top: calc(var(--rail-h) + 1rem);
 }

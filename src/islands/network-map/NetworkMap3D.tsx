@@ -171,7 +171,7 @@ async function mount(
   const applyColors = () => {
     mats.ink.color.copy(color("--ink"));
     mats.ground.color.copy(color("--ground"));
-    scene.fog = new THREE.Fog(color("--ground"), 11, 26);
+    scene.fog = new THREE.Fog(color("--page"), 11, 26);
     mats.platform.color.copy(color("--surface"));
     // Light adds up to white on the dark theme; on the light ground glows are plain tints.
     const night = settings.get().theme === "dark";

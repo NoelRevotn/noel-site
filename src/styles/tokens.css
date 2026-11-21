@@ -5,6 +5,8 @@
  */
 :root {
   /* Colour roles */
+  /* The page is a cool steel tone; panels and cards (--ground) sit on it as lit islands. */
+  --page: #dde4ec;
   --ground: #ffffff;
   --ink: #0f1e33;
   --muted: #4a5a70;
@@ -66,6 +68,7 @@
 }
 
 :root[data-theme="dark"] {
+  --page: #070e1a;
   --ground: #0b1424;
   --ink: #e9eff7;
   --muted: #a6b3c6;
