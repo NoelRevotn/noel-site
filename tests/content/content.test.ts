@@ -27,7 +27,8 @@ describe("content", () => {
         readFileSync(join(dir, f), "utf8")
           .split("\n")
           .map((line, i) => ({ f, line: i + 1, text: line }))
-          .filter((l) => l.text.includes("TODO(noel)"))
+          // Comments describe the convention; only content strings count.
+          .filter((l) => l.text.includes("TODO(noel)") && !/^\s*(\/\/|\*|\/\*)/.test(l.text))
           .map((l) => `content/${l.f}:${l.line}`),
       );
     if (todos.length) console.warn(`${todos.length} TODO(noel) placeholder(s):\n  ${todos.join("\n  ")}`);
