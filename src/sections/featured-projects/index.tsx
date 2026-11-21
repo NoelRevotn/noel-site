@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { LineCode, StationMark, Stop } from "@/components/ui/Stop";
 import { Text } from "@/components/ui/Text";
 import { Link } from "@/i18n/navigation";
+import { ProjectSlider } from "@/islands/project-slider/ProjectSlider";
 import { projects } from "@/lib/content";
 import type { Domain } from "../../../content/types";
 import s from "./featured.module.css";
@@ -27,55 +28,42 @@ export async function FeaturedProjects({ limit = 3 }: { limit?: number }) {
   const items = projects.filter((p) => p.featured).slice(0, limit);
   return (
     <Stop id="work" title={t("sections.featured")}>
-      <ol className={s.list}>
-        {items.map((p, i) => (
-          <li
-            key={p.slug}
-            id={`project-${p.slug}`}
-            className={s.plate}
-            data-reveal
-            style={{ "--reveal-i": i } as React.CSSProperties}
-          >
+      <ProjectSlider
+        names={items.map((p) => p.title)}
+        labels={{
+          region: t("featured.region"),
+          prev: t("featured.prev"),
+          next: t("featured.next"),
+          slide: t.raw("featured.slide") as string,
+          pick: t("featured.pick"),
+        }}
+      >
+        {items.map((p) => (
+          <article key={p.slug} id={`project-${p.slug}`} className={s.plate}>
             <Glyph domains={p.domains} />
-            <div className={s.body}>
-              <h3 className={s.title}>
-                <Link prefetch={false} href={`/projects/${p.slug}`}>
-                  {p.title}
-                </Link>
-              </h3>
-              <p className={s.summary}>
-                <Text>{p.summary[locale]}</Text>
-              </p>
-              <p>
-                <Text>{p.what[locale]}</Text>
-              </p>
-              <p className={s.muted}>
-                <Text>{p.context[locale]}</Text>
-              </p>
-              {p.role && (
-                <p>
-                  <strong>{t("featured.role")}:</strong> <Text>{p.role[locale]}</Text>
-                </p>
-              )}
-              <div className={s.meta}>
-                <span className={s.status}>
-                  <StationMark built={p.status !== "in-progress"} /> {t(`featured.status.${p.status}`)}
-                </span>
-                <dl className={s.transfers}>
-                  {(Object.keys(p.stack) as Domain[]).map((d) => (
-                    <div key={d} data-line={d}>
-                      <dt>
-                        <LineCode line={d}>{CODE[d]}</LineCode>
-                      </dt>
-                      <dd>{p.stack[d]?.join(", ")}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </div>
+            <h3 className={s.title}>{p.title}</h3>
+            <p className={s.summary}>
+              <Text>{p.summary[locale]}</Text>
+            </p>
+            <div className={s.meta}>
+              <span className={s.status}>
+                <StationMark built={p.status !== "in-progress"} /> {t(`featured.status.${p.status}`)}
+              </span>
+              <span className={s.codes}>
+                {p.domains.map((d) => (
+                  <LineCode key={d} line={d}>
+                    {CODE[d]}
+                  </LineCode>
+                ))}
+              </span>
             </div>
-          </li>
+            <Link prefetch={false} href={`/projects/${p.slug}`} className={s.open}>
+              {t("featured.open")}
+              <span className="visually-hidden">: {p.title}</span>
+            </Link>
+          </article>
         ))}
-      </ol>
+      </ProjectSlider>
     </Stop>
   );
 }

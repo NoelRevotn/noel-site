@@ -404,6 +404,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-21 | Phase 4: blog on @next/mdx + Shiki (drafts never ship; ES falls back to EN with a notice); contact form on Web3Forms with honeypot + hCaptcha, key as a public repo variable | Claude Code | ADR-0005 |
 | 2026-11-21 | Phase 5: Motion removed (WAAPI FLIP + IntersectionObserver instead); 3D map deferred, built in slices, static with 360° drag orbit (Noel); JS budgets and Lighthouse CI enforced; selection colour back to the original cyan (Noel) | Claude Code / Noel | ADR-0006 |
 | 2026-11-21 | Readability pass (Noel): content sits on solid panels over the backdrop, Selected work runs as a horizontal row of cards, the CV PDF is one A4 page (CI fails otherwise) | Noel | ADR-0006 |
+| 2026-11-21 | Less text on the home page (Noel): Selected work becomes a horizontal slider (velocity tilt with a ripple, project tabs; summary only, detail on the project page); the skill graph becomes a 3D particle orb on canvas with a legend as the keyboard path. Built without Motion (its gallery/orb examples are Motion+ and the budget rules it out) | Noel / Claude Code | ADR-0006 |
 
 ---
 

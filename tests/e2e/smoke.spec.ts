@@ -46,3 +46,19 @@ test("language switch keeps the current page", async ({ page }) => {
   await expect(page).toHaveURL(/\/noel-site\/es\/projects\/$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "es");
 });
+
+test("selected work slider switches projects", async ({ page }) => {
+  await page.goto("/noel-site/en/");
+  const work = page.locator("#work");
+  await work.scrollIntoViewIfNeeded();
+  await work.getByRole("button", { name: "DataLizer" }).click();
+  await expect(work.getByRole("button", { name: "DataLizer" })).toHaveAttribute("aria-current", "true");
+});
+
+test("skill orb legend reads out a skill's projects", async ({ page }) => {
+  await page.goto("/noel-site/en/");
+  const skills = page.locator("#skills");
+  await skills.scrollIntoViewIfNeeded();
+  await skills.getByRole("button", { name: "Python" }).click();
+  await expect(skills.locator("figcaption")).toContainText("H2Oeste");
+});

@@ -53,15 +53,22 @@
       "shipped": "Shipped",
       "prototype": "Prototype",
       "in-progress": "In progress"
-    }
+    },
+    "region": "Selected projects",
+    "prev": "Previous project",
+    "next": "Next project",
+    "slide": "{n} of {total}",
+    "pick": "Choose a project",
+    "open": "View project"
   },
   "skills": {
-    "intro": "Grouped by domain. Each skill links to where I used it.",
-    "usedIn": "Used in",
-    "graphTitle": "Skill graph: skills linked to the projects that use them",
-    "graphHint": "Point at or Tab to a node to see what it connects to.",
-    "connects": "connects to",
-    "nothing": "nothing yet"
+    "intro": "Every skill, linked to the projects that prove it.",
+    "graphTitle": "Skill orb: skills linked to the projects that use them",
+    "graphHint": "Drag the orb to turn it. Point at a skill or project, or pick one from the list, to light its links.",
+    "nothing": "nothing yet",
+    "orbUsedIn": "is used in",
+    "orbUses": "uses",
+    "orbProjects": "Projects"
   },
   "developing": {
     "intro": "What I'm learning now, shown honestly as in progress."

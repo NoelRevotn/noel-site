@@ -53,15 +53,22 @@
       "shipped": "Publicado",
       "prototype": "Prototipo",
       "in-progress": "En progreso"
-    }
+    },
+    "region": "Proyectos destacados",
+    "prev": "Proyecto anterior",
+    "next": "Proyecto siguiente",
+    "slide": "{n} de {total}",
+    "pick": "Elige un proyecto",
+    "open": "Ver proyecto"
   },
   "skills": {
-    "intro": "Agrupadas por área. Cada habilidad enlaza a donde la usé.",
-    "usedIn": "Usada en",
-    "graphTitle": "Grafo de habilidades: habilidades enlazadas a los proyectos que las usan",
-    "graphHint": "Apunta o navega con Tab a un nodo para ver con qué se conecta.",
-    "connects": "se conecta con",
-    "nothing": "nada aún"
+    "intro": "Cada habilidad, enlazada a los proyectos que la demuestran.",
+    "graphTitle": "Esfera de habilidades: habilidades enlazadas a los proyectos que las usan",
+    "graphHint": "Arrastra la esfera para girarla. Apunta a una habilidad o proyecto, o elige uno de la lista, para ver sus enlaces.",
+    "nothing": "nada aún",
+    "orbUsedIn": "se usa en",
+    "orbUses": "usa",
+    "orbProjects": "Proyectos"
   },
   "developing": {
     "intro": "Lo que estoy aprendiendo ahora, mostrado con honestidad como en progreso."
