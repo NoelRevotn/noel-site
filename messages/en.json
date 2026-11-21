@@ -21,7 +21,9 @@
     "motionOffHint": "Motion is off because your system asks for reduced motion",
     "cursor": "Custom cursor",
     "language": "Language",
-    "switchTo": "Español"
+    "switchTo": "Español",
+    "toDark": "Switch to dark theme",
+    "toLight": "Switch to light theme"
   },
   "hero": {
     "headline": "Systems and Computer Engineering student building AI agents and data tools in Python.",

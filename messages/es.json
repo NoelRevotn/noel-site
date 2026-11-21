@@ -21,7 +21,9 @@
     "motionOffHint": "El movimiento está apagado porque tu sistema pide reducir el movimiento",
     "cursor": "Cursor personalizado",
     "language": "Idioma",
-    "switchTo": "English"
+    "switchTo": "English",
+    "toDark": "Cambiar a tema oscuro",
+    "toLight": "Cambiar a tema claro"
   },
   "hero": {
     "headline": "Estudiante de Ingeniería de Sistemas y Computación que construye agentes de IA y herramientas de datos en Python.",
