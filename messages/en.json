@@ -28,7 +28,8 @@
     "location": "Panama City, Panama",
     "viewProjects": "View projects",
     "viewCv": "View CV",
-    "contact": "Contact"
+    "contact": "Contact",
+    "status": "Open to ML, AI and software engineering internships."
   },
   "legend": {
     "label": "Map legend",
@@ -48,7 +49,11 @@
   },
   "featured": {
     "role": "My role",
-    "status": { "shipped": "Shipped", "prototype": "Prototype", "in-progress": "In progress" }
+    "status": {
+      "shipped": "Shipped",
+      "prototype": "Prototype",
+      "in-progress": "In progress"
+    }
   },
   "skills": {
     "intro": "Grouped by domain. Each skill links to where I used it.",
@@ -82,7 +87,8 @@
     "theme": "Toggle dark theme",
     "motion": "Pause or play motion",
     "cursor": "Toggle custom cursor",
-    "language": "Ver en español"
+    "language": "Ver en español",
+    "copyEmail": "Copy email address"
   },
   "stub": {
     "soon": "This page is on the map but not built yet.",
@@ -93,5 +99,44 @@
     "title": "Wrong line",
     "body": "This stop doesn't exist. Head back to a station that does.",
     "home": "Go home"
+  },
+  "projects": {
+    "title": "Projects",
+    "lead": "Work grouped by line. A project on several lines is an interchange.",
+    "caseStudy": "Read the case study",
+    "details": "Details",
+    "problem": "Problem",
+    "approach": "Approach",
+    "architecture": "Architecture",
+    "results": "Results",
+    "learned": "What I learned",
+    "stack": "Stack",
+    "status": "Status",
+    "period": "Period",
+    "back": "All projects",
+    "noLink": "Details only"
+  },
+  "cvPage": {
+    "title": "CV",
+    "download": "Download PDF",
+    "summary": "Profile",
+    "education": "Education",
+    "experience": "Experience",
+    "projects": "Projects",
+    "skills": "Technical skills",
+    "certs": "Programs and certifications",
+    "awards": "Awards and languages",
+    "contact": "Contact"
+  },
+  "contactPage": {
+    "title": "Contact",
+    "lead": "The quickest way to reach me is email.",
+    "copy": "Copy email",
+    "copied": "Copied",
+    "form": "A contact form arrives in Phase 4."
+  },
+  "colophon": {
+    "title": "How this site is built",
+    "lead": "A recruiting tool and a proof of skill: here is what it's made of."
   }
 }

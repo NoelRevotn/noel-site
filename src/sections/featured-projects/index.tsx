@@ -1,6 +1,8 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { LineCode, StationMark, Stop } from "@/components/ui/Stop";
-import { projects } from "../../../content/projects";
+import { Text } from "@/components/ui/Text";
+import { Link } from "@/i18n/navigation";
+import { projects } from "@/lib/content";
 import type { Domain } from "../../../content/types";
 import s from "./featured.module.css";
 
@@ -36,13 +38,21 @@ export async function FeaturedProjects({ limit = 3 }: { limit?: number }) {
           >
             <Glyph domains={p.domains} />
             <div>
-              <h3 className={s.title}>{p.title}</h3>
-              <p className={s.summary}>{p.summary[locale]}</p>
-              <p>{p.what[locale]}</p>
-              <p className={s.muted}>{p.context[locale]}</p>
+              <h3 className={s.title}>
+                <Link href={`/projects/${p.slug}`}>{p.title}</Link>
+              </h3>
+              <p className={s.summary}>
+                <Text>{p.summary[locale]}</Text>
+              </p>
+              <p>
+                <Text>{p.what[locale]}</Text>
+              </p>
+              <p className={s.muted}>
+                <Text>{p.context[locale]}</Text>
+              </p>
               {p.role && (
                 <p>
-                  <strong>{t("featured.role")}:</strong> {p.role[locale]}
+                  <strong>{t("featured.role")}:</strong> <Text>{p.role[locale]}</Text>
                 </p>
               )}
               <div className={s.meta}>

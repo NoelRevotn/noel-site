@@ -30,6 +30,20 @@ export const timeline: TimelineEntry[] = [
     end: null,
   },
   {
+    kind: "program",
+    title: { en: "Data science program", es: "Programa de ciencia de datos" },
+    org: "GCI World · Matsuo-Iwasawa Lab, University of Tokyo",
+    start: "2026",
+    end: null,
+  },
+  {
+    kind: "program",
+    title: { en: "MEF talent program", es: "Programa de talento del MEF" },
+    org: "Talent Up Panamá",
+    start: "2026",
+    end: "2026",
+  },
+  {
     kind: "work",
     title: {
       en: "Customer Service Representative, Verizon account",
@@ -55,6 +69,20 @@ export const timeline: TimelineEntry[] = [
     note: {
       en: "Deployed Windows 11 on about 50 workstations with scripts and analyzed the IT inventory in Power BI.",
       es: "Desplegué Windows 11 en unas 50 estaciones con scripts y analicé el inventario de TI en Power BI.",
+    },
+  },
+  {
+    kind: "work",
+    title: {
+      en: "Teaching and Marketing Assistant (internship)",
+      es: "Asistente de enseñanza y marketing (pasantía)",
+    },
+    org: "Kiubitz International Learning Center",
+    start: "2024-06",
+    end: "2024-11",
+    note: {
+      en: "Co-taught intermediate English to small groups of teenagers and promoted courses with Canva-designed content.",
+      es: "Co-impartí inglés intermedio a grupos pequeños de adolescentes y promoví cursos con contenido diseñado en Canva.",
     },
   },
 ];

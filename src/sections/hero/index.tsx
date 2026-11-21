@@ -3,7 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { LineCode, StationMark } from "@/components/ui/Stop";
 import { NetworkMap3D } from "@/islands/network-map/NetworkMap3D";
 import { DisplayControls } from "@/islands/settings/DisplayControls";
-import { profile } from "../../../content/profile";
+import { profile } from "@/lib/content";
 import s from "./hero.module.css";
 
 /** Hero: who, what, proof map, and the three actions (PLAN §4). Always first on the home page. */
@@ -19,6 +19,10 @@ export async function Hero() {
             {profile.name}
           </h1>
           <p className={s.headline}>{t("hero.headline")}</p>
+          <p className={s.status}>
+            <span className={s.pulse} aria-hidden="true" />
+            {t("hero.status")}
+          </p>
           <p className={s.place}>
             <span className="mono">{profile.coords}</span> {profile.location[locale]}
           </p>

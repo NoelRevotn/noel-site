@@ -11,7 +11,9 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "serve": "node scripts/serve-out.mjs"
+    "serve": "node scripts/serve-out.mjs",
+    "check:content": "vitest run tests/content",
+    "cv:pdf": "node scripts/cv-pdf.mjs"
   },
   "dependencies": {
     "motion": "14.14.0",
@@ -19,7 +21,8 @@
     "next-intl": "4.15.3",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "three": "0.187.0"
+    "three": "0.187.0",
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

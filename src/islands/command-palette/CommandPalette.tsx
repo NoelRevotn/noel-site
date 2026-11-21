@@ -13,7 +13,13 @@ type Command = { id: string; group: string; label: string; hint?: string; run: (
  * ⌘K / Ctrl+K command menu (PLAN §7.3). A native <dialog> gives focus trapping, Escape and the
  * top layer for free; CSS handles the open/close motion.
  */
-export function CommandPalette({ links }: { links: { github: string; linkedin: string } }) {
+export function CommandPalette({
+  links,
+  email,
+}: {
+  links: { github: string; linkedin: string };
+  email?: string | null;
+}) {
   const t = useTranslations("palette");
   const tn = useTranslations("nav");
   const locale = useLocale();
@@ -57,6 +63,17 @@ export function CommandPalette({ links }: { links: { github: string; linkedin: s
         label: t("cursor"),
         run: () => settings.setCursor(!settings.get().cursor),
       },
+      ...(email
+        ? [
+            {
+              id: "email",
+              group: t("actions"),
+              label: t("copyEmail"),
+              hint: email,
+              run: () => void navigator.clipboard?.writeText(email),
+            },
+          ]
+        : []),
       {
         id: "github",
         group: t("links"),
@@ -71,7 +88,7 @@ export function CommandPalette({ links }: { links: { github: string; linkedin: s
         run: () => window.open(links.linkedin, "_blank", "noopener"),
       },
     ];
-  }, [t, tn, router, pathname, locale, links]);
+  }, [t, tn, router, pathname, locale, links, email]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();

@@ -28,7 +28,8 @@
     "location": "Ciudad de Panamá, Panamá",
     "viewProjects": "Ver proyectos",
     "viewCv": "Ver CV",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "status": "Disponible para pasantías en ML, IA e ingeniería de software."
   },
   "legend": {
     "label": "Leyenda del mapa",
@@ -48,7 +49,11 @@
   },
   "featured": {
     "role": "Mi rol",
-    "status": { "shipped": "Publicado", "prototype": "Prototipo", "in-progress": "En progreso" }
+    "status": {
+      "shipped": "Publicado",
+      "prototype": "Prototipo",
+      "in-progress": "En progreso"
+    }
   },
   "skills": {
     "intro": "Agrupadas por área. Cada habilidad enlaza a donde la usé.",
@@ -82,7 +87,8 @@
     "theme": "Cambiar tema oscuro",
     "motion": "Pausar o reanudar movimiento",
     "cursor": "Cambiar cursor personalizado",
-    "language": "View in English"
+    "language": "View in English",
+    "copyEmail": "Copiar correo"
   },
   "stub": {
     "soon": "Esta página está en el mapa pero aún no está construida.",
@@ -93,5 +99,44 @@
     "title": "Línea equivocada",
     "body": "Esta parada no existe. Vuelve a una estación que sí exista.",
     "home": "Ir al inicio"
+  },
+  "projects": {
+    "title": "Proyectos",
+    "lead": "Trabajo agrupado por línea. Un proyecto en varias líneas es un intercambio.",
+    "caseStudy": "Leer el caso de estudio",
+    "details": "Detalles",
+    "problem": "Problema",
+    "approach": "Enfoque",
+    "architecture": "Arquitectura",
+    "results": "Resultados",
+    "learned": "Lo que aprendí",
+    "stack": "Tecnologías",
+    "status": "Estado",
+    "period": "Periodo",
+    "back": "Todos los proyectos",
+    "noLink": "Solo detalles"
+  },
+  "cvPage": {
+    "title": "CV",
+    "download": "Descargar PDF",
+    "summary": "Perfil",
+    "education": "Educación",
+    "experience": "Experiencia",
+    "projects": "Proyectos",
+    "skills": "Habilidades técnicas",
+    "certs": "Programas y certificaciones",
+    "awards": "Premios e idiomas",
+    "contact": "Contacto"
+  },
+  "contactPage": {
+    "title": "Contacto",
+    "lead": "La forma más rápida de contactarme es por correo.",
+    "copy": "Copiar correo",
+    "copied": "Copiado",
+    "form": "Un formulario de contacto llega en la fase 4."
+  },
+  "colophon": {
+    "title": "Cómo está hecho este sitio",
+    "lead": "Una herramienta de reclutamiento y una prueba de habilidad: esto es de lo que está hecho."
   }
 }

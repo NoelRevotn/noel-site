@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Stop } from "@/components/ui/Stop";
-import { projects } from "../../../content/projects";
-import { skillGroups } from "../../../content/skills";
+import { projects } from "@/lib/content";
+import { skillGroups } from "@/lib/content";
 import s from "./skills.module.css";
 
 /** Each domain is a line; its skills are stations. Evidence links jump to the project that used it. */

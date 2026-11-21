@@ -106,6 +106,43 @@
   margin: 0;
 }
 
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-2);
+  font-weight: 700;
+}
+
+/* "Open to internships": a live station signal. */
+.pulse {
+  position: relative;
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background: var(--ink);
+}
+
+.pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  animation: pulse 2.4s ease-out infinite;
+}
+
+@keyframes pulse {
+  to {
+    scale: 2.6;
+    opacity: 0;
+  }
+}
+
+:global(html[data-motion="paused"]) .pulse::after {
+  animation-play-state: paused;
+}
+
 .actions {
   list-style: none;
   padding: 0;

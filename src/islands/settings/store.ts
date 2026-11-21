@@ -25,12 +25,15 @@ function load(): State {
     // Private mode or blocked storage: settings just won't persist.
   }
   state = { theme, paused: saved.paused === true, cursor: saved.cursor !== false };
+  document.documentElement.dataset.motion = state.paused ? "paused" : "on";
   return state;
 }
 
 function set(patch: Partial<State>) {
   state = { ...load(), ...patch };
   if (patch.theme) document.documentElement.dataset.theme = patch.theme;
+  // CSS loops (e.g. the status pulse) pause on html[data-motion="paused"].
+  if (patch.paused !== undefined) document.documentElement.dataset.motion = patch.paused ? "paused" : "on";
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
   } catch {
