@@ -1,0 +1,5 @@
+.scenes {
+  max-width: calc(var(--max) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding: 0 var(--gutter) var(--space-7);
+}

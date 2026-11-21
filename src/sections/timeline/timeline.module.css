@@ -1,54 +1,44 @@
 .list {
   list-style: none;
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
-  max-width: 54rem;
+  max-width: 56rem;
+  text-align: start;
 }
 
+/* One line per job: role, place, dates; hairlines between. */
 .row {
   display: grid;
-  grid-template-columns: 11rem auto 1fr;
-  align-items: start;
-  gap: var(--space-4);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-5);
   padding: var(--space-4) 0;
-  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
 }
 
-.row > :nth-child(2) {
-  margin-top: 0.35rem;
-}
-
-.when {
-  color: var(--muted);
-  padding-top: 0.15rem;
-}
-
-.title {
-  display: block;
+.role {
   font-family: var(--font-display);
-  font-variation-settings: "wdth" 100;
-  font-size: var(--step-1);
-  line-height: 1.25;
+  font-weight: 800;
 }
 
 .org {
-  display: block;
-  font-weight: 700;
+  color: var(--muted);
 }
 
-.note {
-  display: block;
+.when {
+  font-size: 0.8125rem;
   color: var(--muted);
-  max-width: var(--measure);
-  margin-top: var(--space-1);
+}
+
+.more {
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 
 @media (max-width: 40rem) {
   .row {
-    grid-template-columns: auto 1fr;
-  }
-
-  .when {
-    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
   }
 }

@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
-import { Stop } from "@/components/ui/Stop";
+import { LineIcon } from "@/components/icons/LineIcon";
+import { Scene } from "@/components/scene/Scene";
 import { Link } from "@/i18n/navigation";
 import { getPosts } from "@/lib/blog";
 import s from "./writing.module.css";
@@ -11,7 +12,7 @@ export async function LatestWriting({ limit = 3 }: { limit?: number }) {
   const posts = (await getPosts()).slice(0, limit);
   const fmt = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeZone: "UTC" });
   return (
-    <Stop id="writing" title={t("sections.writing")}>
+    <Scene id="writing" title={t("home.writing")} icon={<LineIcon name="write" />}>
       {posts.length === 0 ? (
         <p className={s.empty} data-reveal>
           <span className={s.ring} aria-hidden="true" />
@@ -32,6 +33,6 @@ export async function LatestWriting({ limit = 3 }: { limit?: number }) {
           ))}
         </ol>
       )}
-    </Stop>
+    </Scene>
   );
 }

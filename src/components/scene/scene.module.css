@@ -1,0 +1,92 @@
+/* One idea per screen: centred, short, with generous air above and below. */
+.scene {
+  display: grid;
+  justify-items: center;
+  padding-block: clamp(4.5rem, 10vw, 8.5rem);
+  text-align: center;
+  scroll-margin-top: var(--rail-h);
+}
+
+.icon {
+  margin-bottom: var(--space-5);
+}
+
+.title {
+  max-width: 20ch;
+  font-variation-settings: "wdth" 112;
+  font-size: var(--step-3);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.body {
+  width: 100%;
+  margin-top: var(--space-6);
+}
+
+/* Track: two rails with sleepers between them. */
+.track {
+  position: relative;
+  height: 1.5rem;
+  max-width: 56rem;
+  margin-inline: auto;
+  overflow: hidden;
+  background:
+    linear-gradient(var(--rule), var(--rule)) top / 100% 2px no-repeat,
+    linear-gradient(var(--rule), var(--rule)) bottom / 100% 2px no-repeat,
+    repeating-linear-gradient(90deg, var(--rule) 0 3px, transparent 3px 16px) center / 100% 60% no-repeat;
+  mask-image: linear-gradient(to right, transparent, #000 15%, #000 85%, transparent);
+}
+
+.train {
+  position: absolute;
+  top: 0.25rem;
+  left: 0;
+  width: 4.5rem;
+  height: 1rem;
+  border-radius: 4px;
+  background: var(--c);
+  translate: -120% 0;
+}
+
+/* The train crosses once when the track comes into view. */
+@media (prefers-reduced-motion: no-preference) {
+  .track[data-shown] .train {
+    animation: cross 2.6s var(--ease-standard) both;
+  }
+
+  :global(html[data-motion="paused"]) .track[data-shown] .train {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes cross {
+  to {
+    translate: calc(56rem + 120%) 0;
+  }
+}
+
+.chips {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+  max-width: 48rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.5rem;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  background: var(--ground);
+  box-shadow: inset 0 0 0 2px var(--c, var(--ink));
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9375rem;
+}
