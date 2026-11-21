@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { localeHref, usePathname, useRouter } from "@/i18n/navigation";
 import { settings } from "../settings/store";
 import { PALETTE_EVENT } from "./events";
 import s from "./palette.module.css";
@@ -43,7 +43,7 @@ export function CommandPalette({
         id: "language",
         group: t("actions"),
         label: t("language"),
-        run: () => router.replace(pathname, { locale: locale === "en" ? "es" : "en" }),
+        run: () => window.location.assign(localeHref(pathname, locale === "en" ? "es" : "en")),
       },
       {
         id: "theme",
