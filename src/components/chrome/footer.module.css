@@ -1,22 +1,105 @@
 .footer {
-  position: relative;
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-3) var(--space-6);
-  padding: var(--space-7) var(--gutter) var(--space-6);
-  border-top: var(--line-w) solid var(--ink);
+  gap: var(--space-5) var(--space-6);
+  padding: var(--space-7) var(--gutter) var(--space-6) 0;
   margin-top: var(--space-8);
 }
 
-/* The rail ends here: a terminus bar at the left of the footer line. */
-.terminus {
+/* The end of the line: the track arrives from the page edge and stops at a buffer. */
+.terminal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.track {
+  position: relative;
+  flex: none;
+  width: clamp(7rem, 26vw, 22rem);
+  height: 14px;
+  background:
+    linear-gradient(var(--ink), var(--ink)) top / 100% 2px no-repeat,
+    linear-gradient(var(--ink), var(--ink)) bottom / 100% 2px no-repeat,
+    repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--ink) 55%, transparent) 0 2px,
+        transparent 2px 9px
+      )
+      center / 100% 100% no-repeat;
+}
+
+/* The last station: a big filled stop just before the buffer. */
+.stop {
   position: absolute;
-  left: var(--gutter);
-  top: calc(-1 * var(--line-w) - 10px);
-  width: var(--line-w);
-  height: 28px;
+  right: 1.25rem;
+  top: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  translate: 0 -50%;
+  border-radius: 50%;
   background: var(--ink);
+  box-shadow:
+    0 0 0 4px var(--page),
+    0 0 0 7px var(--ink);
+}
+
+/* Buffer stop: where the rails end. */
+.buffer {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 6px;
+  height: 2rem;
+  translate: 0 -50%;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.train {
+  position: absolute;
+  top: 50%;
+  right: 3.75rem;
+  width: 3rem;
+  height: 14px;
+  translate: 0 -50%;
+  border-radius: 4px 7px 7px 4px;
+  background:
+    linear-gradient(90deg, transparent 0 47%, var(--page) 47% 53%, transparent 53%),
+    repeating-linear-gradient(90deg, var(--line-web) 0 4px, var(--ground) 4px 7px) center / 100% 4px no-repeat,
+    var(--line-web);
+}
+
+/* The track draws in and the train pulls in to the platform when the footer comes into view. */
+@media (prefers-reduced-motion: no-preference) {
+  :global(.js) .track {
+    clip-path: inset(-2rem 0 -2rem -1rem);
+    transition: clip-path 900ms var(--ease-emphasized);
+  }
+
+  :global(.js) .terminal:not([data-shown]) .track {
+    clip-path: inset(-2rem 100% -2rem -1rem);
+  }
+
+  :global(.js) .terminal[data-shown] .train {
+    animation: arrive 1.8s var(--ease-emphasized) 300ms both;
+  }
+
+  :global(html[data-motion="paused"]) .track .train {
+    animation: none;
+  }
+}
+
+@keyframes arrive {
+  from {
+    translate: -40vw -50%;
+  }
+}
+
+.station {
+  display: grid;
+  gap: 0.125rem;
 }
 
 .name {
@@ -25,6 +108,13 @@
   font-variation-settings: "wdth" 118;
   font-weight: 800;
   font-size: var(--step-2);
+  line-height: 1.1;
+}
+
+.last {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--step--1);
 }
 
 .links {
@@ -41,16 +131,22 @@
 .built {
   grid-column: 1 / -1;
   margin: 0;
+  padding-left: var(--gutter);
   color: var(--muted);
   font-size: var(--step--1);
 }
 
 @media (max-width: 40rem) {
   .footer {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .links {
     justify-self: start;
+    padding-left: var(--gutter);
+  }
+
+  .track {
+    width: 5.5rem;
   }
 }

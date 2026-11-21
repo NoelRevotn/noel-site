@@ -85,7 +85,8 @@
   "footer": {
     "built": "Hecho con Next.js y three.js, publicado en GitHub Pages.",
     "source": "Código fuente",
-    "colophon": "Cómo está hecho este sitio"
+    "colophon": "Cómo está hecho este sitio",
+    "terminal": "Última estación de la línea"
   },
   "palette": {
     "open": "Abrir menú de comandos",
