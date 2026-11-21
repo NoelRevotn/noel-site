@@ -1,0 +1,45 @@
+.stub {
+  position: relative;
+  padding: var(--space-8) 0 var(--space-8) clamp(3rem, 6vw, 4.5rem);
+  min-height: 50vh;
+}
+
+.title {
+  position: relative;
+  font-variation-settings: "wdth" 118;
+  font-size: var(--step-4);
+  line-height: 0.95;
+}
+
+.title::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * clamp(3rem, 6vw, 4.5rem));
+  top: 50%;
+  width: 1.125rem;
+  height: 1.125rem;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: var(--ground);
+  box-shadow: 0 0 0 var(--stroke) var(--ink);
+}
+
+.text {
+  font-size: var(--step-1);
+  color: var(--muted);
+  max-width: var(--measure);
+  margin: var(--space-5) 0 var(--space-6);
+}
+
+.home {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: var(--space-3) 1.25rem;
+  border-radius: var(--radius-2);
+  background: var(--ink);
+  color: var(--ground);
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-decoration: none;
+}

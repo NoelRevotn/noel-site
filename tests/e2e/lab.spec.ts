@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const labs = ["a", "b", "c"] as const;
+const labs = ["a"] as const;
 
 for (const id of labs) {
   for (const colorScheme of ["light", "dark"] as const) {
@@ -36,13 +36,14 @@ for (const id of labs) {
   });
 }
 
-test("lab c knob works from the keyboard", async ({ page }) => {
-  await page.goto("/noel-site/lab/c/");
-  const knob = page.getByRole("slider", { name: "Screen channel" });
-  await knob.focus();
-  await expect(knob).toHaveAttribute("aria-valuetext", "About");
-  await page.keyboard.press("ArrowRight");
-  await expect(knob).toHaveAttribute("aria-valuetext", "Project");
-  await page.keyboard.press("End");
-  await expect(knob).toHaveAttribute("aria-valuetext", "Stack");
-});
+for (const locale of ["en", "es"] as const) {
+  test(`home (${locale}) has no WCAG A/AA violations`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(`/noel-site/${locale}/`);
+    await expect(page.locator("html")).toHaveAttribute("lang", locale);
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(" | ")}`)).toEqual([]);
+  });
+}

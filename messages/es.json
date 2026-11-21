@@ -1,0 +1,97 @@
+{
+  "meta": {
+    "title": "Noel Echeverría · Estudiante de Ingeniería de Sistemas que construye agentes de IA",
+    "description": "Portafolio de Noel Echeverría, estudiante de Ingeniería de Sistemas y Computación en la UTP, Panamá, que construye agentes de IA y herramientas de datos en Python."
+  },
+  "skip": "Saltar al contenido",
+  "nav": {
+    "label": "Principal",
+    "home": "Inicio",
+    "projects": "Proyectos",
+    "cv": "CV",
+    "blog": "Artículos",
+    "contact": "Contacto",
+    "here": "Estás aquí"
+  },
+  "settings": {
+    "group": "Ajustes de pantalla",
+    "dark": "Oscuro",
+    "pause": "Pausar movimiento",
+    "motionOff": "Movimiento apagado",
+    "motionOffHint": "El movimiento está apagado porque tu sistema pide reducir el movimiento",
+    "cursor": "Cursor personalizado",
+    "language": "Idioma",
+    "switchTo": "English"
+  },
+  "hero": {
+    "headline": "Estudiante de Ingeniería de Sistemas y Computación que construye agentes de IA y herramientas de datos en Python.",
+    "location": "Ciudad de Panamá, Panamá",
+    "viewProjects": "Ver proyectos",
+    "viewCv": "Ver CV",
+    "contact": "Contacto"
+  },
+  "legend": {
+    "label": "Leyenda del mapa",
+    "ml": "ML / IA",
+    "sys": "Sistemas",
+    "web": "Web",
+    "built": "Construido",
+    "inProgress": "En progreso"
+  },
+  "sections": {
+    "featured": "Trabajo seleccionado",
+    "skills": "Habilidades",
+    "developing": "En desarrollo",
+    "timeline": "Experiencia y educación",
+    "writing": "Últimos artículos",
+    "contact": "Contacto"
+  },
+  "featured": {
+    "role": "Mi rol",
+    "status": { "shipped": "Publicado", "prototype": "Prototipo", "in-progress": "En progreso" }
+  },
+  "skills": {
+    "intro": "Agrupadas por área. Cada habilidad enlaza a donde la usé.",
+    "usedIn": "Usada en"
+  },
+  "developing": {
+    "intro": "Lo que estoy aprendiendo ahora, mostrado con honestidad como en progreso."
+  },
+  "writing": {
+    "empty": "Aún no hay artículos. El primero llega con el blog en la fase 4."
+  },
+  "contact": {
+    "text": "Disponible para pasantías en ML, IA e ingeniería de software.",
+    "email": "Correo",
+    "linkedin": "LinkedIn",
+    "github": "GitHub"
+  },
+  "footer": {
+    "built": "Hecho con Next.js y three.js, publicado en GitHub Pages.",
+    "source": "Código fuente",
+    "colophon": "Cómo está hecho este sitio"
+  },
+  "palette": {
+    "open": "Abrir menú de comandos",
+    "title": "Menú de comandos",
+    "placeholder": "Escribe un comando o busca…",
+    "empty": "Ningún comando coincide.",
+    "go": "Ir a",
+    "actions": "Acciones",
+    "links": "Enlaces",
+    "theme": "Cambiar tema oscuro",
+    "motion": "Pausar o reanudar movimiento",
+    "cursor": "Cambiar cursor personalizado",
+    "language": "View in English"
+  },
+  "stub": {
+    "soon": "Esta página está en el mapa pero aún no está construida.",
+    "phase": "Llega en la {phase}.",
+    "home": "Volver al inicio"
+  },
+  "notFound": {
+    "title": "Línea equivocada",
+    "body": "Esta parada no existe. Vuelve a una estación que sí exista.",
+    "home": "Ir al inicio"
+  }
+}

@@ -1,0 +1,92 @@
+/*
+ * Design tokens (Línea). The single source of truth for colour, type, space, shape and motion.
+ * Light is the signage ground; dark ("night service") is opt-in via [data-theme="dark"].
+ * Line colours encode domains only: ML/AI red, systems green, web blue. Never use them for decoration.
+ */
+:root {
+  /* Colour roles */
+  --ground: #ffffff;
+  --ink: #0f1e33;
+  --muted: #4a5a70;
+  --surface: #eef2f6;
+  --rule: #c9d2dd;
+  --line-ml: #c8102e;
+  --line-sys: #00843d;
+  --line-web: #0057b8;
+  --on-line: #ffffff;
+  --focus: var(--line-web);
+
+  /* Type */
+  --font-display: var(--font-archivo), "Arial Narrow", sans-serif;
+  --font-text: var(--font-atkinson), sans-serif;
+  --font-mono: var(--font-azeret), ui-monospace, monospace;
+  --step--1: 0.875rem;
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --step-1: clamp(1.1875rem, 1.1rem + 0.45vw, 1.4375rem);
+  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --step-3: clamp(1.875rem, 1.5rem + 1.9vw, 2.75rem);
+  --step-4: clamp(2.75rem, 1.9rem + 4.2vw, 5.25rem);
+  --measure: 62ch;
+
+  /* Space (8px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2.25rem;
+  --space-7: clamp(3rem, 6vw, 4.5rem);
+  --space-8: clamp(3.5rem, 8vw, 6rem);
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --max: 76rem;
+
+  /* Shape */
+  --radius-1: 4px;
+  --radius-2: 8px;
+  --radius-3: 14px;
+  --stroke: 3.5px;
+  --line-w: 8px;
+
+  /* Motion (src/motion/tokens.ts mirrors these) */
+  --dur-instant: 80ms;
+  --dur-fast: 160ms;
+  --dur-base: 240ms;
+  --dur-slow: 400ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.3, 0, 1, 1);
+
+  /* Chrome */
+  --rail-h: 5.5rem;
+
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --ground: #0b1424;
+  --ink: #e9eff7;
+  --muted: #a6b3c6;
+  --surface: #15223a;
+  --rule: #2a3a55;
+  --line-ml: #ff7a84;
+  --line-sys: #3ad58d;
+  --line-web: #79b0ff;
+  --on-line: #0b1424;
+  color-scheme: dark;
+}
+
+[data-line="ml"] {
+  --c: var(--line-ml);
+}
+
+[data-line="sys"] {
+  --c: var(--line-sys);
+}
+
+[data-line="web"] {
+  --c: var(--line-web);
+}
+
+[data-line="tools"] {
+  --c: var(--ink);
+}

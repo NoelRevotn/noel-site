@@ -6,16 +6,6 @@ const directions = [
     name: "A · Línea",
     line: "Your work as a transit network: domains are lines, projects are stations.",
   },
-  {
-    href: "/lab/b/",
-    name: "B · Sondeo",
-    line: "A survey chart of a loss landscape, with probes running gradient descent.",
-  },
-  {
-    href: "/lab/c/",
-    name: "C · Banco",
-    line: "A bench instrument you operate: amber readout, keycaps, one orange key.",
-  },
 ];
 
 export default function LabIndex() {

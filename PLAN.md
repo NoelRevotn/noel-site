@@ -397,6 +397,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-20 | Phase 0 approved (live at `noelrevotn.github.io/noel-site/`). Merge policy: Claude Code merges after green CI; checkpoints still gate phases. Design work always uses `frontend-design` + `impeccable` + `motion` + `ui-ux-pro-max` | Noel | §0, docs/SKILLS.md |
 | 2026-11-21 | ~~CP1 direction: Línea × Sondeo mix at `/lab/mix`~~ Withdrawn by Noel the same day; mix and HTML/SVG approach discarded | Noel | — |
 | 2026-11-21 | **CP1 direction: Lab A (Línea)**, with the network map in 3D (levels per domain, H2Oeste as the interchange shaft) using three.js | Noel | ADR-0003 |
+| 2026-11-21 | Phase 2 shell: plain CSS tokens + CSS Modules (no Tailwind), next-intl EN/ES, Motion only for layout/inView, light-first theme; labs B, C removed | Claude Code | ADR-0004, docs/DESIGN.md |
 
 ---
 
