@@ -15,6 +15,9 @@
   --line-web: #0057b8;
   --on-line: #ffffff;
   --focus: var(--line-web);
+  /* Text selection: the light cyan from the first Lab A version (Noel, 2026-11-21). */
+  --select: #79b0ff;
+  --on-select: #0b1424;
 
   /* Type */
   --font-display: var(--font-archivo), "Arial Narrow", sans-serif;
@@ -47,7 +50,7 @@
   --stroke: 3.5px;
   --line-w: 8px;
 
-  /* Motion (src/motion/tokens.ts mirrors these) */
+  /* Motion */
   --dur-instant: 80ms;
   --dur-fast: 160ms;
   --dur-base: 240ms;

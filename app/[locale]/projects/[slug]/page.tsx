@@ -41,7 +41,7 @@ export default async function ProjectPage({ params }: Props) {
       <Trunk>
         <PageTitle lead={p.summary[l]}>{p.title}</PageTitle>
 
-        <div className={s.facts} data-reveal>
+        <div className={s.facts}>
           <p className={s.what}>
             <Text>{p.what[l]}</Text>
           </p>
@@ -89,7 +89,9 @@ export default async function ProjectPage({ params }: Props) {
           ))}
 
         <p className={s.back}>
-          <Link href="/projects">{t("projects.back")}</Link>
+          <Link prefetch={false} href="/projects">
+            {t("projects.back")}
+          </Link>
         </p>
       </Trunk>
     </main>

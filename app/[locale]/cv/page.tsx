@@ -84,7 +84,9 @@ export default async function CvPage({ params }: Props) {
           {projects.map((p) => (
             <article key={p.slug} className={s.entry}>
               <h3>
-                <Link href={`/projects/${p.slug}`}>{p.title}</Link>
+                <Link prefetch={false} href={`/projects/${p.slug}`}>
+                  {p.title}
+                </Link>
               </h3>
               <p className={s.sub}>
                 <Text>{p.summary[l]}</Text>

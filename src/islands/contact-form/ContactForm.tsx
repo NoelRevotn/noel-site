@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { z } from "zod";
 import s from "./form.module.css";
 
 export type FormLabels = {
@@ -27,8 +26,8 @@ const ENDPOINT = "https://api.web3forms.com/submit";
 const CAPTCHA_SCRIPT = "https://web3forms.com/client/script.js";
 
 /**
- * Contact form (PLAN §3, ADR-0005): Web3Forms with a honeypot and hCaptcha, Zod validation
- * before sending, errors next to each field, and an aria-live status. The access key is public
+ * Contact form (PLAN §3, ADR-0005): Web3Forms with a honeypot and hCaptcha, validation before
+ * sending (plain checks, not Zod: keeps ~30 KB off the contact page, ADR-0006), errors next to each field, and an aria-live status. The access key is public
  * by design (it only lets the form deliver to Noel's inbox).
  */
 export function ContactForm({ accessKey, labels }: { accessKey: string; labels: FormLabels }) {
@@ -36,11 +35,15 @@ export function ContactForm({ accessKey, labels }: { accessKey: string; labels: 
   const [errors, setErrors] = useState<Partial<Record<Field, string>>>({});
   const [status, setStatus] = useState<Status>("idle");
 
-  const schema = z.object({
-    name: z.string().trim().min(1, labels.required),
-    email: z.string().trim().min(1, labels.required).pipe(z.email(labels.invalidEmail)),
-    message: z.string().trim().min(1, labels.required).min(10, labels.tooShort),
-  });
+  // Same rules the browser's type="email" uses, kept deliberately simple.
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const check = (field: Field, raw: FormDataEntryValue | null): string | undefined => {
+    const v = String(raw ?? "").trim();
+    if (!v) return labels.required;
+    if (field === "email" && !EMAIL.test(v)) return labels.invalidEmail;
+    if (field === "message" && v.length < 10) return labels.tooShort;
+    return undefined;
+  };
 
   // Load the hCaptcha widget only on the page that has the form.
   useEffect(() => {
@@ -53,13 +56,10 @@ export function ContactForm({ accessKey, labels }: { accessKey: string; labels: 
   }, []);
 
   const validate = (data: FormData, only?: Field) => {
-    const result = schema.safeParse(Object.fromEntries(data));
     const next: Partial<Record<Field, string>> = {};
-    if (!result.success) {
-      for (const issue of result.error.issues) {
-        const key = issue.path[0] as Field;
-        next[key] ??= issue.message;
-      }
+    for (const f of ["name", "email", "message"] as const) {
+      const err = check(f, data.get(f));
+      if (err) next[f] = err;
     }
     setErrors((prev) => (only ? { ...prev, [only]: next[only] } : next));
     return next;

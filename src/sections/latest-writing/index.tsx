@@ -24,7 +24,7 @@ export async function LatestWriting({ limit = 3 }: { limit?: number }) {
               <time className="mono" dateTime={p.meta.date}>
                 {fmt.format(new Date(p.meta.date))}
               </time>
-              <Link href={`/blog/${p.slug}`} className={s.title}>
+              <Link prefetch={false} href={`/blog/${p.slug}`} className={s.title}>
                 {p.meta.title}
               </Link>
               <span className={s.desc}>{p.meta.description}</span>

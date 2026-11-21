@@ -39,7 +39,9 @@ export async function FeaturedProjects({ limit = 3 }: { limit?: number }) {
             <Glyph domains={p.domains} />
             <div>
               <h3 className={s.title}>
-                <Link href={`/projects/${p.slug}`}>{p.title}</Link>
+                <Link prefetch={false} href={`/projects/${p.slug}`}>
+                  {p.title}
+                </Link>
               </h3>
               <p className={s.summary}>
                 <Text>{p.summary[locale]}</Text>

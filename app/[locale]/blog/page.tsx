@@ -52,7 +52,9 @@ export default async function BlogPage({ params }: Props) {
                     {fmt.format(new Date(p.meta.date))}
                   </time>
                   <h2 className={s.title}>
-                    <Link href={`/blog/${p.slug}`}>{p.meta.title}</Link>
+                    <Link prefetch={false} href={`/blog/${p.slug}`}>
+                      {p.meta.title}
+                    </Link>
                   </h2>
                   <p className={s.desc}>{p.meta.description}</p>
                   <p className={s.meta}>

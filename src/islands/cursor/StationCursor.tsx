@@ -139,7 +139,9 @@ export function StationCursor({
       let w = 18;
       let h = 18;
       let radius = 9;
-      if (hovered && hovered.isConnected) {
+      // Large surfaces (the 3D map) keep the ring at the pointer and only show the plate.
+      const framed = hovered?.getAttribute("data-cursor-frame") !== "none";
+      if (hovered && framed && hovered.isConnected) {
         const b = hovered.getBoundingClientRect();
         const pad = 6;
         cx = b.left + b.width / 2;

@@ -71,8 +71,8 @@ const SPAN_X = 8;
 const SPAN_Z = 5.6;
 const DWELL = 1.4;
 const SPEED = 0.6;
-const SEGMENTS = 400;
-const RADIAL = 12;
+const SEGMENTS = 180;
+const RADIAL = 8;
 
 function webglAvailable() {
   try {
@@ -83,7 +83,16 @@ function webglAvailable() {
   }
 }
 
-function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onReady: () => void) {
+/** Give the browser a turn between build slices so no single task blocks input (Lighthouse TBT). */
+const yieldToMain = () => new Promise<void>((r) => setTimeout(r, 0));
+
+async function mount(
+  THREE: typeof import("./three-subset"),
+  host: HTMLElement,
+  labelClass: string,
+  onReady: () => void,
+  isCancelled: () => boolean,
+): Promise<(() => void) | null> {
   const reduced = window.matchMedia(REDUCED);
   const dark = window.matchMedia(DARK);
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -207,7 +216,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   type Train = { mesh: Three.Group; u: number; dir: 1 | -1; dwell: number; last: number };
   type StationNode = { group: Three.Group; disc: Three.Mesh; href?: string; name: string; scale: number };
   const stationNodes: StationNode[] = [];
-  const lines = LINES.map((l, i) => {
+  const buildLine = (l: LineDef, i: number) => {
     const curve = roundedCurve(l.path.map((p) => toWorld(p, l.level)));
     const tubeGeo = track(new THREE.TubeGeometry(curve, SEGMENTS, 0.06, RADIAL, false));
     tubeGeo.setAttribute(
@@ -219,7 +228,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     scene.add(tube);
     const length = curve.getLength();
     // Arc-length positions of the stations (H2Oeste included) for dwelling.
-    const samples = 400;
+    const samples = 120;
     const stopU = [...l.stations.map((s) => s.at), H2O].map((at) => {
       const target = toWorld(at, l.level);
       let best = 0;
@@ -272,7 +281,19 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     scene.add(new THREE.Points(flowGeo, flowMat));
     const flowU = Array.from({ length: flowCount }, (_, k) => k / flowCount);
     return { curve, tube, tubeGeo, length, stopU, trains, index: i, flowGeo, flowU };
-  });
+  };
+  const lines: ReturnType<typeof buildLine>[] = [];
+  for (const [i, l] of LINES.entries()) {
+    await yieldToMain();
+    if (isCancelled()) {
+      disposables.forEach((d) => d.dispose());
+      renderer.dispose();
+      renderer.domElement.remove();
+      return null;
+    }
+    lines.push(buildLine(l, i));
+  }
+  await yieldToMain();
 
   applyColors(); // again, now that the per-line flow materials exist
 
@@ -304,7 +325,6 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
 
   // Camera rig: slow idle drift plus pointer tilt; pointer near a tube isolates that line.
   const target = new THREE.Vector3(0.55, 0.7, 0.1);
-  const pointer = new THREE.Vector2(0, 0);
   const ndc = new THREE.Vector2(9, 9);
   let pointerIn = false;
   const ray = new THREE.Raycaster();
@@ -314,7 +334,10 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   let w = 1;
   let h = 1;
   let t = 0;
-  let intro = reduced.matches ? 1 : 0;
+  const orbit = { az: THREE.MathUtils.degToRad(-32), pol: THREE.MathUtils.degToRad(54), vAz: 0, vPol: 0 };
+  const POL_MIN = THREE.MathUtils.degToRad(8);
+  const POL_MAX = THREE.MathUtils.degToRad(165);
+  let drag: { x: number; y: number; moved: number; id: number } | null = null;
   let last = 0;
   let raf = 0;
   let onScreen = true;
@@ -323,12 +346,10 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
 
   const placeCamera = () => {
     const narrow = w / h < 1.1;
-    // Fly in on load (eased), then drift; scrolling tilts the network toward a top-down view.
-    const e = 1 - Math.pow(1 - Math.min(1, intro), 3);
-    const scroll = Math.min(1, window.scrollY / Math.max(h, 1));
-    const radius = (narrow ? 16 : 13.2) * (1 + 0.45 * (1 - e));
-    const az = THREE.MathUtils.degToRad(-32 - 40 * (1 - e) + Math.sin(t * 0.09) * 7 + pointer.x * 9);
-    const pol = THREE.MathUtils.degToRad(54 - pointer.y * 6 - 16 * (1 - e) - 14 * scroll);
+    // Static unless the visitor drags: azimuth wraps a full 360°, elevation stays above/below the deck.
+    const radius = narrow ? 16 : 13.2;
+    const az = orbit.az;
+    const pol = orbit.pol;
     camera.position.set(
       target.x + radius * Math.sin(pol) * Math.sin(az),
       target.y + radius * Math.cos(pol),
@@ -443,7 +464,7 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     lineMats.forEach((m, i) => {
       m.opacity = focus >= 0 && i !== focus ? 1 - 0.8 * focusMix : 1;
     });
-    host.style.cursor = hovered?.href ? "pointer" : "";
+    host.dataset.overStation = String(!!hovered?.href);
   };
 
   const render = () => {
@@ -462,7 +483,14 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
     last = now;
     t += dt;
-    intro += dt / 1.8;
+    // Momentum after a drag (skipped under reduced motion).
+    if (!drag && (orbit.vAz || orbit.vPol)) {
+      orbit.az += orbit.vAz * dt;
+      orbit.pol = Math.min(POL_MAX, Math.max(POL_MIN, orbit.pol + orbit.vPol * dt));
+      const decay = Math.exp(-dt * 4);
+      orbit.vAz = Math.abs(orbit.vAz * decay) < 0.01 ? 0 : orbit.vAz * decay;
+      orbit.vPol = Math.abs(orbit.vPol * decay) < 0.01 ? 0 : orbit.vPol * decay;
+    }
     step(dt);
     render();
     raf = requestAnimationFrame(tick);
@@ -485,17 +513,63 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     camera.updateProjectionMatrix();
     if (!running()) render();
   };
-  const onMove = (e: PointerEvent) => {
-    const r = host.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top) / r.height;
-    pointer.set(Math.max(-1, Math.min(1, x * 2 - 1)), Math.max(-1, Math.min(1, y * 2 - 1)));
-    pointerIn = e.pointerType === "mouse" && x >= 0 && x <= 1 && y >= 0 && y <= 1;
-    ndc.set(x * 2 - 1, -(y * 2 - 1));
+  const redraw = () => {
     if (!running()) {
       step(0);
       render();
     }
+  };
+  const onMove = (e: PointerEvent) => {
+    const r = host.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    const y = (e.clientY - r.top) / r.height;
+    pointerIn = e.pointerType === "mouse" && x >= 0 && x <= 1 && y >= 0 && y <= 1;
+    ndc.set(x * 2 - 1, -(y * 2 - 1));
+    if (drag && e.pointerId === drag.id) {
+      const dx = e.clientX - drag.x;
+      const dy = e.clientY - drag.y;
+      drag.x = e.clientX;
+      drag.y = e.clientY;
+      drag.moved += Math.abs(dx) + Math.abs(dy);
+      const k = (Math.PI * 1.6) / Math.max(w, 1); // ~a full turn across 1.25 map widths
+      orbit.az -= dx * k;
+      orbit.pol = Math.min(POL_MAX, Math.max(POL_MIN, orbit.pol - dy * k));
+      orbit.vAz = reduced.matches ? 0 : (-dx * k) / 0.016;
+      orbit.vPol = reduced.matches ? 0 : (-dy * k) / 0.016;
+      host.dataset.dragging = "true";
+    }
+    redraw();
+  };
+  const onDown = (e: PointerEvent) => {
+    if (e.button !== 0) return;
+    drag = { x: e.clientX, y: e.clientY, moved: 0, id: e.pointerId };
+    orbit.vAz = 0;
+    orbit.vPol = 0;
+    host.setPointerCapture(e.pointerId);
+  };
+  const onUp = (e: PointerEvent) => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const wasClick = drag.moved < 6;
+    drag = null;
+    delete host.dataset.dragging;
+    host.dataset.explored = "true";
+    if (wasClick && hovered?.href) go(hovered.href);
+    if (!running()) sync();
+  };
+  // Keyboard parity: arrow keys orbit; Home resets the view.
+  const onKey = (e: KeyboardEvent) => {
+    const turn = THREE.MathUtils.degToRad(e.shiftKey ? 30 : 10);
+    if (e.key === "ArrowLeft") orbit.az += turn;
+    else if (e.key === "ArrowRight") orbit.az -= turn;
+    else if (e.key === "ArrowUp") orbit.pol = Math.max(POL_MIN, orbit.pol - turn);
+    else if (e.key === "ArrowDown") orbit.pol = Math.min(POL_MAX, orbit.pol + turn);
+    else if (e.key === "Home") {
+      orbit.az = THREE.MathUtils.degToRad(-32);
+      orbit.pol = THREE.MathUtils.degToRad(54);
+    } else return;
+    e.preventDefault();
+    host.dataset.explored = "true";
+    redraw();
   };
   const onTheme = () =>
     requestAnimationFrame(() => {
@@ -503,6 +577,19 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
       if (!running()) render();
     });
 
+  // Compile shaders asynchronously before the first visible frame (avoids one long main-thread task).
+  try {
+    await renderer.compileAsync(scene, camera);
+  } catch {
+    // Older drivers: fall back to compiling on first render.
+  }
+  if (isCancelled()) {
+    disposables.forEach((d) => d.dispose());
+    renderer.dispose();
+    renderer.domElement.remove();
+    labelLayer.remove();
+    return null;
+  }
   const ro = new ResizeObserver(resize);
   const io = new IntersectionObserver(([e]) => {
     onScreen = !!e?.isIntersecting;
@@ -517,8 +604,10 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
   document.addEventListener("visibilitychange", sync);
   reduced.addEventListener("change", sync);
   dark.addEventListener("change", onTheme);
-  const onClick = () => hovered?.href && go(hovered.href);
-  host.addEventListener("click", onClick);
+  host.addEventListener("pointerdown", onDown);
+  host.addEventListener("pointerup", onUp);
+  host.addEventListener("pointercancel", onUp);
+  host.addEventListener("keydown", onKey);
   window.addEventListener("pointermove", onMove, { passive: true });
   resize();
   sync();
@@ -533,7 +622,10 @@ function mount(THREE: typeof Three, host: HTMLElement, labelClass: string, onRea
     reduced.removeEventListener("change", sync);
     dark.removeEventListener("change", onTheme);
     window.removeEventListener("pointermove", onMove);
-    host.removeEventListener("click", onClick);
+    host.removeEventListener("pointerdown", onDown);
+    host.removeEventListener("pointerup", onUp);
+    host.removeEventListener("pointercancel", onUp);
+    host.removeEventListener("keydown", onKey);
     disposables.forEach((d) => d.dispose());
     renderer.dispose();
     renderer.domElement.remove();
@@ -545,10 +637,19 @@ export function NetworkMap3D({
   className,
   labelClassName,
   fallbackClassName,
+  hintClassName,
+  labels = {
+    role: "interactive 3D map",
+    label:
+      "Map of my work: ML/AI, systems and web lines meeting at H2Oeste. Drag or use the arrow keys to rotate.",
+    hint: "Drag to explore",
+  },
 }: {
   className?: string;
   labelClassName?: string;
   fallbackClassName?: string;
+  hintClassName?: string;
+  labels?: { role: string; label: string; hint: string };
 }) {
   const host = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<"loading" | "3d" | "2d">("loading");
@@ -562,10 +663,32 @@ export function NetworkMap3D({
         cancelled = true;
       };
     }
-    import("three").then((THREE) => {
-      if (cancelled || !host.current) return;
-      cleanup = mount(THREE, host.current, labelClassName ?? "", () => setMode("3d"));
+    // Start only after the page has loaded and the browser is idle, so the 3D map never competes
+    // with first paint or input readiness (Lighthouse TBT); the text is usable immediately.
+    const idle = new Promise<void>((resolve) => {
+      const go = () =>
+        "requestIdleCallback" in window
+          ? window.requestIdleCallback(() => resolve(), { timeout: 2500 })
+          : setTimeout(resolve, 300);
+      if (document.readyState === "complete") go();
+      else window.addEventListener("load", go, { once: true });
     });
+    idle
+      .then(() => import("./three-subset"))
+      .then(async (THREE) => {
+        if (cancelled || !host.current) return;
+        const dispose = await mount(
+          THREE,
+          host.current,
+          labelClassName ?? "",
+          () => setMode("3d"),
+          () => cancelled,
+        );
+        if (dispose) {
+          if (cancelled) dispose();
+          else cleanup = dispose;
+        }
+      });
     return () => {
       cancelled = true;
       cleanup();
@@ -573,5 +696,21 @@ export function NetworkMap3D({
   }, [labelClassName]);
 
   if (mode === "2d") return <NetworkMap2D className={fallbackClassName} />;
-  return <div ref={host} className={className} data-ready={mode === "3d"} aria-hidden="true" />;
+  return (
+    <div
+      ref={host}
+      className={className}
+      data-ready={mode === "3d"}
+      role="img"
+      tabIndex={0}
+      aria-roledescription={labels.role}
+      aria-label={labels.label}
+      data-cursor={labels.hint.split(" ")[0]}
+      data-cursor-frame="none"
+    >
+      <span className={hintClassName} aria-hidden="true">
+        {labels.hint}
+      </span>
+    </div>
+  );
 }
