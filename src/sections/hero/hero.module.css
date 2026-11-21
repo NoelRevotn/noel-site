@@ -32,9 +32,9 @@
   pointer-events: none;
   background: linear-gradient(
     to right,
-    var(--ground) 0,
-    color-mix(in oklab, var(--ground) 86%, transparent) 30%,
-    color-mix(in oklab, var(--ground) 30%, transparent) 50%,
+    var(--page) 0,
+    color-mix(in oklab, var(--page) 86%, transparent) 30%,
+    color-mix(in oklab, var(--page) 30%, transparent) 50%,
     transparent 62%
   );
 }

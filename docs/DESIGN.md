@@ -14,7 +14,8 @@ The design system of noel-site, chosen at CP1 (Lab A, with a 3D network map). To
 
 | Role         | Light     | Dark      | Use                                 |
 | ------------ | --------- | --------- | ----------------------------------- |
-| `--ground`   | `#FFFFFF` | `#0B1424` | Page, plate ground                  |
+| `--page`     | `#DDE4EC` | `#070E1A` | Page background (cool steel tone)   |
+| `--ground`   | `#FFFFFF` | `#0B1424` | Panels, cards, plate ground         |
 | `--ink`      | `#0F1E33` | `#E9EFF7` | Text, stations, rail, primary plate |
 | `--muted`    | `#4A5A70` | `#A6B3C6` | Secondary text                      |
 | `--surface`  | `#EEF2F6` | `#15223A` | Plates                              |
