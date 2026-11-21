@@ -3,7 +3,7 @@ import { Archivo, Atkinson_Hyperlegible_Next, Azeret_Mono } from "next/font/goog
 import { SpecSheet, type Spec } from "@/components/lab/SpecSheet";
 import { LabControls } from "@/islands/lab/LabControls";
 import { StationCursor } from "@/islands/lab/transit/StationCursor";
-import { TransitMap } from "@/islands/lab/transit/TransitMap";
+import { TransitMap3D } from "@/islands/lab/transit/TransitMap3D";
 import { lab } from "@/lib/lab-content";
 import s from "./a.module.css";
 
@@ -69,9 +69,9 @@ const spec: Spec = {
     { fg: "Web line", bg: "Ground", use: "Focus ring (3:1 needed)" },
   ],
   ambient:
-    "A live network map. Three lines (ML/AI, systems, web) are routed at 45° and 90° angles and all meet at H2Oeste. Stations are only real work: filled ones are built, hollow ones are in progress (GCI World, Samsung AI program, this site). Ink trains run each line and dwell at stations. Canvas 2D. It pauses off-screen and in background tabs, steps quality down on slow devices, and draws one still frame under reduced motion.",
+    "A live 3D network. Each domain is a level: ML/AI on top, systems in the middle, web at ground. H2Oeste is the interchange shaft joining all three, because it is one project spanning all three domains. Ink trains run each level and dwell at stations; filled stations are built, hollow ones are in progress. The camera drifts slowly and tilts toward your pointer. three.js (WebGL) loads after first paint; without WebGL the 2D map renders instead. It pauses off-screen, in background tabs and on request, and draws one still frame under reduced motion.",
   cursor:
-    "A station mark (ground fill, ink ring). Over a link or button it becomes a small ink plate naming the action: Go, Open, Download, Press. Pointing near a map line isolates that line and names its domain. Fine pointers only; off under reduced motion; switchable.",
+    "A station mark (ground fill, ink ring). Over a link or button it becomes a small ink plate naming the action: Go, Open, Download, Press. Pointing at a line in the 3D map isolates it. Fine pointers only; off under reduced motion; switchable.",
   signature:
     "The navigation is a rail that crosses the top of every page, with a 'you are here' flag on the current station.",
   risk: "Transit-map portfolios exist, so the line metaphor needs real data behind it (here: actual projects and domains) or it turns into decoration. Three saturated line colours have to be used with discipline.",
@@ -127,7 +127,7 @@ export default function LabA() {
 
       <main id="main">
         <section className={s.hero} aria-labelledby="name">
-          <TransitMap className={s.map} />
+          <TransitMap3D className={s.map3d} labelClassName={s.label3d} fallbackClassName={s.map} />
           <div className={s.copy}>
             <h1 id="name" className={s.name}>
               {lab.name}
