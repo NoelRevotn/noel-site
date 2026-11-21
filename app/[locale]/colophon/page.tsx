@@ -93,8 +93,10 @@ export default async function ColophonPage({ params }: Props) {
   return (
     <main id="main">
       <Trunk>
-        <PageTitle lead={t("lead")}>{t("title")}</PageTitle>
-        <Stop id="stack" title={c.stackTitle}>
+        <PageTitle icon="train" lead={t("lead")}>
+          {t("title")}
+        </PageTitle>
+        <Stop id="stack" title={c.stackTitle} icon="terminal">
           <dl className={s.stack}>
             {c.stack.map(([k, v]) => (
               <div key={k} data-reveal>
@@ -104,17 +106,17 @@ export default async function ColophonPage({ params }: Props) {
             ))}
           </dl>
         </Stop>
-        <Stop id="design" title={c.designTitle}>
+        <Stop id="design" title={c.designTitle} icon="route">
           <p className={s.body}>{c.design}</p>
         </Stop>
-        <Stop id="a11y" title={c.a11yTitle}>
+        <Stop id="a11y" title={c.a11yTitle} icon="signal">
           <p className={s.body}>{c.a11y}</p>
         </Stop>
-        <Stop id="tokenizer" title={c.tok.title}>
+        <Stop id="tokenizer" title={c.tok.title} icon="agent">
           <p className={s.body}>{c.tok.intro}</p>
           <Tokenizer labels={c.tok} initial={c.tok.initial} />
         </Stop>
-        <Stop id="perf" title={c.perfTitle}>
+        <Stop id="perf" title={c.perfTitle} icon="data">
           <p className={s.body}>{c.perf}</p>
           <p className={s.body}>
             <a href={profile.links.repo} target="_blank" rel="noreferrer">

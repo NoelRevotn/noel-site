@@ -33,7 +33,9 @@ export default async function BlogPage({ params }: Props) {
   return (
     <main id="main">
       <Trunk>
-        <PageTitle lead={t("lead")}>{t("title")}</PageTitle>
+        <PageTitle icon="write" lead={t("lead")}>
+          {t("title")}
+        </PageTitle>
         <div className={s.index}>
           {posts.length === 0 ? (
             <p className={s.empty}>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { PROJECT_ICON, type IconName } from "@/components/icons/LineIcon";
 import { LineCode, StationMark, Stop, Trunk } from "@/components/ui/Stop";
 import { PageTitle, Text } from "@/components/ui/Text";
 import { Link } from "@/i18n/navigation";
@@ -12,6 +13,13 @@ import s from "./project.module.css";
 type Props = { params: Promise<{ locale: string; slug: string }> };
 const CODE = { ml: "ML", sys: "SY", web: "WB" } as const;
 const SECTIONS = ["problem", "approach", "architecture", "results", "learned"] as const;
+const STEP_ICON = {
+  problem: "query",
+  approach: "route",
+  architecture: "server",
+  results: "data",
+  learned: "learn",
+} as const satisfies Record<(typeof SECTIONS)[number], IconName>;
 
 export const dynamicParams = false;
 
@@ -39,7 +47,9 @@ export default async function ProjectPage({ params }: Props) {
   return (
     <main id="main">
       <Trunk>
-        <PageTitle lead={p.summary[l]}>{p.title}</PageTitle>
+        <PageTitle icon={PROJECT_ICON[p.slug] ?? "train"} lead={p.summary[l]}>
+          {p.title}
+        </PageTitle>
 
         <div className={s.facts}>
           <p className={s.what}>
@@ -81,7 +91,7 @@ export default async function ProjectPage({ params }: Props) {
 
         {p.caseStudy &&
           SECTIONS.map((key) => (
-            <Stop key={key} id={key} title={t(`projects.${key}`)}>
+            <Stop key={key} id={key} title={t(`projects.${key}`)} icon={STEP_ICON[key]}>
               <p className={s.body} data-reveal>
                 <Text>{p.caseStudy![key][l]}</Text>
               </p>
