@@ -176,6 +176,7 @@ async function mount(
     // Light adds up to white on the dark theme; on the light ground glows are plain tints.
     const night = settings.get().theme === "dark";
     const blending = night ? THREE.AdditiveBlending : THREE.NormalBlending;
+    mats.platform.opacity = night ? 0.55 : 0.2;
     LINES.forEach((l, i) => {
       const c = color(l.colorVar);
       lineMats[i]!.color.set(0xffffff); // vertex colours carry the line colour

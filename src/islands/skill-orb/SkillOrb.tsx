@@ -110,6 +110,8 @@ export function SkillOrb({
   const canvas = useRef<HTMLCanvasElement>(null);
   const [active, setActive] = useState<string | null>(null);
   const [pinned, setPinned] = useState<string | null>(null);
+  /** On phones the legend shows one domain at a time (CSS); these tabs pick it. */
+  const [domain, setDomain] = useState(groups[0]?.id ?? "projects");
   const shown = active ?? pinned;
   const shownRef = useRef<string | null>(null);
   const redraw = useRef<() => void>(() => {});
@@ -438,9 +440,26 @@ export function SkillOrb({
     <figure className={s.orb}>
       <canvas ref={canvas} className={s.canvas} role="img" aria-label={labels.title} />
       <div className={s.side}>
+        <div className={s.tabs} role="group" aria-label={labels.title}>
+          {[
+            ...groups.map((g) => ({ id: g.id, label: g.name })),
+            { id: "projects", label: labels.projects },
+          ].map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              className={s.tab}
+              data-line={g.id === "projects" ? "tools" : g.id}
+              aria-pressed={domain === g.id}
+              onClick={() => setDomain(g.id)}
+            >
+              {g.label}
+            </button>
+          ))}
+        </div>
         <div className={s.legend}>
           {groups.map((g) => (
-            <div key={g.id} className={s.group}>
+            <div key={g.id} className={s.group} data-current={domain === g.id}>
               <span className={s.code} data-line={g.id}>
                 {CODE[g.id] ?? g.id}
               </span>
@@ -450,7 +469,7 @@ export function SkillOrb({
               </div>
             </div>
           ))}
-          <div className={s.group}>
+          <div className={s.group} data-current={domain === "projects"}>
             <span className={s.code} data-line="tools">
               {labels.projects}
             </span>

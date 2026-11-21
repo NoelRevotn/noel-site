@@ -174,10 +174,22 @@
 }
 
 @media (max-width: 45rem) {
+  /* On a phone the rail scrolls away with the page: two pinned rows took a fifth of the screen. */
   .rail {
+    position: relative;
     height: auto;
     flex-direction: column;
     gap: 0;
+  }
+
+  .here {
+    display: none;
+  }
+
+  .plate {
+    min-height: 2rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
   }
 
   .stations {

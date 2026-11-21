@@ -87,3 +87,9 @@
   /* The field lives on the sides; the reading column in the middle stays quiet. */
   mask-image: linear-gradient(to right, #000 0, transparent 26%, transparent 74%, #000 100%);
 }
+
+@media (max-width: 45rem) {
+  .backdrop {
+    display: none;
+  }
+}
