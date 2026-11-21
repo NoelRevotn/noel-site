@@ -28,22 +28,14 @@ type Props = {
   initialTheme?: "light" | "dark";
 };
 
-/** Theme, motion and cursor switches. WCAG 2.2.2 requires the pause. */
+/** Motion and cursor switches (the theme toggle lives in the rail). WCAG 2.2.2 requires the pause. */
 export function DisplayControls({ className, buttonClassName, labels = EN }: Props) {
-  const { paused, cursor, theme } = useSettings();
+  const { paused, cursor } = useSettings();
   const reduced = useMedia(REDUCED);
   const fine = useMedia(FINE_POINTER, true);
 
   return (
     <div className={className} role="group" aria-label={labels.group}>
-      <button
-        type="button"
-        className={buttonClassName}
-        aria-pressed={theme === "dark"}
-        onClick={() => settings.setTheme(theme === "dark" ? "light" : "dark")}
-      >
-        {labels.dark}
-      </button>
       <button
         type="button"
         className={buttonClassName}

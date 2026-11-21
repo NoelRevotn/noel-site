@@ -83,3 +83,25 @@ test("dark theme survives a language switch", async ({ page }) => {
   await expect(page).toHaveURL(/\/noel-site\/en\/$/);
   await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 });
+
+test("follows the system's dark mode until the visitor picks a theme", async ({ browser }) => {
+  const ctx = await browser.newContext({ colorScheme: "dark" });
+  const page = await ctx.newPage();
+  await page.goto("/noel-site/en/");
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await expect(page.locator('meta[name="color-scheme"]')).toHaveAttribute("content", "dark");
+  await ctx.close();
+});
+
+test("the rail's theme toggle switches and remembers the theme", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/noel-site/en/");
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "Switch to dark theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  await page.getByRole("button", { name: "Switch to light theme" }).click();
+  await page.reload();
+  await expect(page.locator("html")).not.toHaveAttribute("data-theme", "dark");
+});

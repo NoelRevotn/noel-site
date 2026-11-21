@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, type CSSProperties } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, localeHref, usePathname } from "@/i18n/navigation";
 import { PALETTE_EVENT } from "../command-palette/events";
+import { settings, useSettings } from "../settings/store";
 import s from "./rail.module.css";
 
 const STATIONS = [
@@ -34,6 +35,8 @@ export function Rail() {
   const train = useRef<HTMLSpanElement>(null);
   const lastX = useRef<number | null>(null);
   const other = locale === "en" ? "es" : "en";
+  const { theme } = useSettings();
+  const dark = theme === "dark";
   const current = (href: string) =>
     href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`);
 
@@ -117,6 +120,25 @@ export function Rail() {
           <span className="visually-hidden">{ts("language")}: </span>
           {ts("switchTo")}
         </a>
+        <button
+          type="button"
+          className={`${s.plate} ${s.icon}`}
+          aria-label={dark ? ts("toLight") : ts("toDark")}
+          title={dark ? ts("toLight") : ts("toDark")}
+          onClick={() => settings.setTheme(dark ? "light" : "dark")}
+        >
+          {/* Sun in the dark theme (go light), moon in the light theme (go dark). */}
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            {dark ? (
+              <>
+                <circle cx="12" cy="12" r="4.5" />
+                <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1" />
+              </>
+            ) : (
+              <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" />
+            )}
+          </svg>
+        </button>
         <button
           type="button"
           className={s.plate}
