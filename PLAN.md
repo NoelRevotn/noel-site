@@ -52,7 +52,7 @@ Each requirement has an ID. §13 maps every ID to where it is satisfied and how 
 | ID | Requirement |
 |---|---|
 | R1 | Built mainly with **React**, using **Next.js** (Noel chose Next.js static export). |
-| R2 | Hosted on **GitHub Pages** at a `.github.io` address: `https://noelrevotn.github.io`, from repo `NoelRevotn/NoelRevotn.github.io`. |
+| R2 | Hosted on **GitHub Pages** at a `.github.io` address: `https://noelrevotn.github.io/noel-site/`, from repo `NoelRevotn/noel-site` (project site, served under `basePath: '/noel-site'`). *Amended by Noel 2026-11-20; ADR-0002.* |
 | R3 | **Modular development:** each section of the site can be added, removed, reordered or changed without touching the others. |
 | R4 | Feels **modern**, with a **specialized, professional typography**. It must **not** use Anthropic's typefaces (e.g. Styrene, Tiempos, Copernicus) or the Anthropic/Claude visual style, and must not default to generic fonts (Inter, Roboto, Arial, system-ui as the display face). |
 | R5 | **Not a static, motionless page:** animated background, interactive islands and a **custom cursor**, while staying professional and reading as an **AI/ML engineer's** site. |
@@ -81,7 +81,7 @@ Each requirement has an ID. §13 maps every ID to where it is satisfied and how 
 | Contact form | Static-friendly form backend (evaluate **Web3Forms** vs **Formspree** free tiers) + honeypot + a challenge (Cloudflare Turnstile or hCaptcha) + client-side Zod validation | Use only keys that are designed to be public. Nothing secret goes in the bundle. |
 | Search/command | Built-in command palette (⌘K / Ctrl+K), a small accessible implementation or `cmdk` | Doubles as an interactive island. |
 | Quality | ESLint (next + jsx-a11y) + Prettier (or Biome), `tsc --noEmit`, **Vitest** for utils/schemas, **Playwright** smoke tests + **@axe-core/playwright**, **Lighthouse CI** with budgets | |
-| CI/CD | GitHub Actions: lint → typecheck → test → build → Lighthouse/axe on the build → deploy with `actions/upload-pages-artifact` + `actions/deploy-pages` | Pages source = "GitHub Actions". Add `public/.nojekyll`. Since this is a *user* site, no `basePath` is needed. |
+| CI/CD | GitHub Actions: lint → typecheck → test → build → Lighthouse/axe on the build → deploy with `actions/upload-pages-artifact` + `actions/deploy-pages` | Pages source = "GitHub Actions". It's a *project* site, so `basePath: '/noel-site'` is required; no `.nojekyll` is needed with an Actions artifact (ADR-0002). |
 | Analytics | Not in v1 (Phase 6). | Privacy-respecting option later (e.g. GoatCounter or Cloudflare Web Analytics). |
 
 **Explicitly out of v1:** AI chat, CMS/admin panel, custom domain, analytics, server-side anything.
@@ -290,8 +290,8 @@ Effort is in *working sessions* (~2–3 h of Claude Code time, plus Noel's revie
 
 ### Phase 0 — Bootstrap (1–2 sessions)
 1. **Skill and tool inventory** (Noel has skills installed locally that aren't visible from claude.ai): list `~/.claude/skills/`, `.claude/skills/`, and installed plugins (`/plugin`). Write `docs/SKILLS.md` mapping each relevant skill to the phases where it applies (§12). Flag any skill that conflicts with this plan.
-2. Create the repo `NoelRevotn/NoelRevotn.github.io` (public), the Next.js 16 TypeScript app with pnpm, `output: 'export'`, `trailingSlash: true`, ESLint/Prettier, Vitest, Playwright, `CLAUDE.md`.
-3. GitHub Actions: CI + deploy to Pages. Deploy a hello-world `/en/` + root redirect to `https://noelrevotn.github.io` to prove the pipeline end to end.
+2. Create the repo `NoelRevotn/noel-site` (public), the Next.js 16 TypeScript app with pnpm, `output: 'export'`, `trailingSlash: true`, ESLint/Prettier, Vitest, Playwright, `CLAUDE.md`.
+3. GitHub Actions: CI + deploy to Pages. Deploy a hello-world `/en/` + root redirect to `https://noelrevotn.github.io/noel-site/` to prove the pipeline end to end.
 4. ADR-0001 (stack, citing this plan), ADR-0002 (static export constraints and their consequences).
 
 **Done when:** the live URL serves `/en/`, CI is green, and `docs/SKILLS.md` exists.
@@ -370,7 +370,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | ID | Satisfied by | Verified by |
 |---|---|---|
 | R1 | §3 framework | `package.json`; ADR-0001 |
-| R2 | §3 CI/CD, Phase 0 | Live URL at `noelrevotn.github.io` serves the build |
+| R2 | §3 CI/CD, Phase 0 | Live URL at `noelrevotn.github.io/noel-site/` serves the build |
 | R3 | §5 registry + section/island contracts | Toggling/reordering a section in `site.config.ts` works with no other change (demonstrated at CP2); ESLint `use client` rule |
 | R4 | §8 | `DESIGN.md` font list + licenses; CP1 approval; a grep check in CI for forbidden font names |
 | R5 | §7 | CP2 demo: background, cursor, ≥ 2 islands; reduced-motion test in Playwright |
@@ -390,6 +390,10 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-20 | Replace the Astro + Cloudflare plan with Next.js static export on GitHub Pages (`noelrevotn.github.io`) | Noel | — |
 | 2026-11-20 | v1 scope: core recruiter content + MDX blog + EN/ES + contact form; AI chat, CMS, analytics, custom domain deferred | Noel | — |
 | 2026-11-20 | Visual direction: Claude Code proposes 3; Noel picks at CP1 | Noel | — |
+| 2026-11-20 | **R2 amended:** keep repo `NoelRevotn/noel-site`; the site is a project site at `noelrevotn.github.io/noel-site/` with `basePath: '/noel-site'` | Noel | ADR-0002 |
+| 2026-11-20 | Base stack: Next 16.4.6, React 19.3, pnpm 12, Node 24; libraries arrive in the phase that first uses them | Claude Code | ADR-0001 |
+| 2026-11-20 | Static export config; `cacheComponents`/`partialPrefetching` off; root layout without `<html>`; no `.nojekyll` | Claude Code | ADR-0002 |
+| 2026-11-20 | Hackathon skills (`chequeo-pre-commit`, `revisar-diff`, `plan-rapido`) not used on this project | Claude Code | docs/SKILLS.md |
 
 ---
 
