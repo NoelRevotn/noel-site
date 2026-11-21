@@ -44,6 +44,20 @@
   transition: opacity 200ms;
 }
 
+.label[data-link="true"] {
+  pointer-events: auto;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+}
+
+.label[data-active="true"],
+.label[data-link="true"]:hover {
+  background: var(--ink);
+  color: var(--ground);
+}
+
 .label[data-big="true"] {
   font-family: var(--font-display);
   font-variation-settings: "wdth" 112;
