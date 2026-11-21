@@ -332,7 +332,7 @@ Effort is in *working sessions* (~2–3 h of Claude Code time, plus Noel's revie
 6. **CP4:** Noel signs off on v1.0, and the repo is tagged `v1.0.0`.
 
 ### Phase 6 — Later (backlog, not v1)
-Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `CNAME`; check renewal dates) · privacy-respecting analytics · git-based CMS (e.g. Sveltia/Decap) · **"Ask about Noel" AI chat**, served from a separate serverless backend (e.g. a Cloudflare Worker with RAG over the site's content, cost caps, rate limits, prompt-injection defenses) and called from a static island · extra islands (tokenizer, terminal) · project demo videos.
+Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `CNAME`; check renewal dates) · privacy-respecting analytics · git-based CMS (e.g. Sveltia/Decap) · **"Ask about Noel" AI chat**, served from a separate serverless backend (e.g. a Cloudflare Worker with RAG over the site's content, cost caps, rate limits, prompt-injection defenses) and called from a static island · extra islands (tokenizer, terminal) · project demo videos. · **Background music** (Noel, 2026-11-21): optional ambient track, off by default with a visible mute control, never autoplaying with sound · **Verified certifications via Credly** (Noel, 2026-11-21): link or embed Credly badges for certifications that have them (e.g. Cisco courses) so recruiters can verify them; others stay as listed with their PDFs.
 
 ---
 
@@ -395,6 +395,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-20 | Static export config; `cacheComponents`/`partialPrefetching` off; root layout without `<html>`; no `.nojekyll` | Claude Code | ADR-0002 |
 | 2026-11-20 | Hackathon skills (`chequeo-pre-commit`, `revisar-diff`, `plan-rapido`) not used on this project | Claude Code | docs/SKILLS.md |
 | 2026-11-20 | Phase 0 approved (live at `noelrevotn.github.io/noel-site/`). Merge policy: Claude Code merges after green CI; checkpoints still gate phases. Design work always uses `frontend-design` + `impeccable` + `motion` + `ui-ux-pro-max` | Noel | §0, docs/SKILLS.md |
+| 2026-11-21 | CP1 direction: mix of Lab A's network workflow (rail nav, transit map, trunk) with Lab B's typography (Instrument Serif italic, Hanken Grotesk, Martian Mono); motion built in HTML/SVG + CSS, not canvas. Prototype at `/lab/mix` | Noel | `/lab/mix` |
 
 ---
 

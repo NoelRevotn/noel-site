@@ -1,0 +1,548 @@
+/* Lab B · Sondeo. */
+:global(html):has(.root) {
+  --ground: #f8fafb;
+  --ink: #10202c;
+  --muted: #4b5d6b;
+  --shoal: #cfe4f1;
+  --mid: #e4f0f7;
+  --contour: #7fa7c2;
+  --magenta: #b0126b;
+  --paper: #ffffff;
+  --rule: #c3d3de;
+  --surface: #ffffff;
+  color-scheme: light;
+  background: var(--ground);
+  scrollbar-color: var(--contour) var(--ground);
+}
+
+:global(html[data-theme="dark"]):has(.root) {
+  --ground: #07121c;
+  --ink: #dce6ee;
+  --muted: #93a6b5;
+  --shoal: #14354c;
+  --mid: #0d2436;
+  --contour: #2f6286;
+  --magenta: #e5589f;
+  --paper: #0b1925;
+  --rule: #24394b;
+  --surface: #0b1925;
+  color-scheme: dark;
+}
+
+.root {
+  --font-display: var(--font-instrument), serif;
+  --font-text: var(--font-hanken), sans-serif;
+  --font-mono: var(--font-martian), monospace;
+  --frame: clamp(0.75rem, 2vw, 1.5rem);
+  color: var(--ink);
+  background: var(--ground);
+  font-family: var(--font-text);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+.root ::selection {
+  background: var(--magenta);
+  color: var(--paper);
+}
+
+.root :focus-visible {
+  outline: 2px solid var(--magenta);
+  outline-offset: 3px;
+}
+
+.root a {
+  color: inherit;
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+.skip {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 20;
+  background: var(--paper);
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--ink);
+}
+
+.skip:focus {
+  top: 1rem;
+}
+
+/* Neatline: the chart's frame, with graduated ticks; the nav is set into its top margin. */
+.neatline {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  height: calc(var(--frame) + 2.75rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: var(--frame) calc(var(--frame) + 1rem) 0;
+}
+
+.nav {
+  display: flex;
+  gap: clamp(1rem, 3vw, 2rem);
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0.75rem;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+
+.nav a {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.nav a:hover {
+  color: var(--magenta);
+  text-decoration: underline;
+}
+
+.controls {
+  position: absolute;
+  z-index: 5;
+  top: calc(var(--frame) + 0.75rem);
+  right: calc(var(--frame) + 1rem);
+  display: flex;
+  background: var(--paper);
+  border: 1px solid var(--ink);
+}
+
+.toggle {
+  font: 500 0.8125rem/1 var(--font-text);
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-left: 1px solid var(--rule);
+  padding: 0.625rem 0.75rem;
+  min-height: 2.5rem;
+}
+
+.toggle:first-child {
+  border-left: 0;
+}
+
+.toggle[aria-pressed="true"] {
+  color: var(--magenta);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+}
+
+.toggle:disabled {
+  opacity: 0.6;
+}
+
+.chart {
+  position: relative;
+  height: 100svh;
+  min-height: 40rem;
+  overflow: hidden;
+  border: var(--frame) solid var(--ground);
+  outline: 1px solid var(--ink);
+  outline-offset: calc(var(--frame) * -1);
+}
+
+/* Graduated border ticks on the inner edge, like a chart's latitude and longitude scale. */
+.chart::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) top / 100% 6px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) bottom / 100% 6px no-repeat,
+    repeating-linear-gradient(0deg, var(--ink) 0 1px, transparent 1px 48px) left / 6px 100% no-repeat,
+    repeating-linear-gradient(0deg, var(--ink) 0 1px, transparent 1px 48px) right / 6px 100% no-repeat;
+}
+
+.field {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.note {
+  position: absolute;
+  right: clamp(1rem, 3vw, 2.5rem);
+  top: 5.5rem;
+  max-width: 17rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.note p {
+  margin: 0;
+}
+
+.noteShort {
+  display: none;
+}
+
+/* A plotted waypoint: the work sits on the chart and links to it. */
+.waypoint {
+  position: absolute;
+  left: 61%;
+  top: 44%;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 2.25rem;
+  text-decoration: none;
+}
+
+.fix {
+  position: relative;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  border: 2px solid var(--magenta);
+  background: color-mix(in oklab, var(--paper) 60%, transparent);
+}
+
+.fix::before {
+  content: "";
+  position: absolute;
+  inset: 0.4375rem;
+  border-radius: 50%;
+  background: var(--magenta);
+}
+
+/* Leader line from the fix to the label. */
+.fix::after {
+  content: "";
+  position: absolute;
+  left: calc(100% + 2px);
+  top: 50%;
+  width: 1.75rem;
+  height: 1.5px;
+  background: var(--magenta);
+}
+
+.waypointLabel {
+  display: grid;
+  background: var(--paper);
+  border: 1px solid var(--magenta);
+  padding: 0.375rem 0.625rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.5rem;
+  line-height: 1.05;
+  transition: background-color 160ms;
+}
+
+.waypointCoords {
+  font-family: var(--font-mono);
+  font-style: normal;
+  font-size: 0.6875rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.waypoint:hover .waypointLabel {
+  background: var(--shoal);
+}
+
+/* The title cartouche: double-ruled, bottom left. */
+.cartouche {
+  position: absolute;
+  left: clamp(1rem, 3vw, 2.5rem);
+  bottom: clamp(1rem, 3vw, 2.5rem);
+  max-width: min(40rem, calc(100% - 2rem));
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  outline: 1px solid var(--ink);
+  outline-offset: -6px;
+  padding: clamp(1.5rem, 3vw, 2.5rem);
+  box-shadow: 0 10px 30px -12px rgb(16 32 44 / 0.25);
+}
+
+.name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(3rem, 7vw, 5.75rem);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
+  margin: 0;
+}
+
+.headline {
+  font-size: clamp(1.125rem, 1.6vw, 1.3125rem);
+  line-height: 1.45;
+  max-width: 34ch;
+  margin: 1rem 0 0.5rem;
+}
+
+.position {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+.coords {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.actions {
+  list-style: none;
+  padding: 0;
+  margin: 1.75rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem 1.25rem;
+  align-items: center;
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.875rem;
+  padding: 0.625rem 1.25rem;
+  background: var(--magenta);
+  color: var(--paper) !important;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 160ms;
+}
+
+.primary:hover {
+  background: var(--ink);
+}
+
+.secondary {
+  font-weight: 600;
+  min-height: 2.875rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.secondary:hover {
+  color: var(--magenta);
+}
+
+/* Below the chart: notes in a single column, chart-margin style. */
+.notes {
+  max-width: 62rem;
+  margin: clamp(2rem, 5vw, 4rem) auto 0;
+  border: 1px solid var(--ink);
+  outline: 1px solid var(--ink);
+  outline-offset: -6px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 48px) top / 100% 6px no-repeat,
+    var(--paper);
+  padding: clamp(3rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem) 0;
+  display: grid;
+  gap: clamp(3rem, 7vw, 5rem);
+}
+
+.sectionTitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(2.25rem, 4.5vw, 3.25rem);
+  line-height: 1;
+  margin: 0 0 1.25rem;
+}
+
+.entry {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr;
+  gap: 1.25rem;
+  border-top: 1px solid var(--ink);
+  padding-top: 1.5rem;
+}
+
+.entry p {
+  margin: 0 0 0.75rem;
+  max-width: 64ch;
+}
+
+.mark {
+  width: 2.5rem;
+  height: 2.5rem;
+  fill: none;
+  stroke: var(--magenta);
+  stroke-width: 2;
+}
+
+.mark circle:nth-child(2) {
+  fill: var(--magenta);
+}
+
+.entryTitle {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 2.25rem;
+  line-height: 1;
+  margin: 0.125rem 0 0.25rem;
+}
+
+.summary {
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.stack {
+  font-size: 0.9375rem;
+  color: var(--muted);
+}
+
+.body {
+  font-size: 1.25rem;
+  max-width: 62ch;
+  margin: 0;
+}
+
+.spec {
+  margin-top: clamp(3rem, 8vw, 6rem);
+  border-top: 1px solid var(--ink);
+}
+
+/* Cursor: survey crosshair with readout; becomes a waypoint ring over links. */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 160ms;
+}
+
+.cursor[data-visible="true"] {
+  opacity: 1;
+}
+
+.cursor::before,
+.cursor::after {
+  content: "";
+  position: absolute;
+  background: var(--magenta);
+  transition:
+    rotate 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    scale 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor::before {
+  width: 28px;
+  height: 1.5px;
+  translate: -50% -50%;
+}
+
+.cursor::after {
+  width: 1.5px;
+  height: 28px;
+  translate: -50% -50%;
+}
+
+.cursor[data-state="link"]::before,
+.cursor[data-state="link"]::after {
+  rotate: 45deg;
+  scale: 0.6;
+}
+
+.readout {
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  white-space: nowrap;
+  font: 400 0.6875rem/1 var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 0.3125rem 0.4375rem;
+}
+
+.cursor[data-state="link"] .readout {
+  color: var(--paper);
+  background: var(--magenta);
+  border-color: var(--magenta);
+  font-family: var(--font-text);
+  font-weight: 700;
+  font-size: 0.8125rem;
+}
+
+@media (max-width: 45rem) {
+  .neatline {
+    position: relative;
+    height: auto;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
+  }
+
+  .nav {
+    justify-content: space-between;
+  }
+
+  .controls {
+    position: relative;
+    top: auto;
+    right: auto;
+    order: 3;
+    margin: 0 0.5rem 0.5rem;
+    justify-content: space-between;
+  }
+
+  .noteLong {
+    display: none;
+  }
+
+  .noteShort {
+    display: block;
+  }
+
+  .waypoint {
+    left: 45%;
+    top: 7.5rem;
+  }
+
+  .waypointLabel {
+    font-size: 1.25rem;
+  }
+
+  .chart {
+    height: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-top: 22rem;
+  }
+
+  .note {
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+  }
+
+  .cartouche {
+    order: 2;
+    position: relative;
+    left: auto;
+    bottom: auto;
+    margin: 0 0.5rem 0.5rem;
+    max-width: none;
+  }
+}

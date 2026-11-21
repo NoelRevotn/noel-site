@@ -47,5 +47,5 @@ next-env.d.ts
 # Noel's private source materials (CV, certificates); never published raw. PLAN §6.1
 /docs/noel/
 
-# local tool caches (impeccable plugin hook)
-/.impeccable/
+# impeccable: commit surfaces/ and config; runtime dirs ignore themselves
+/.impeccable/hook.cache.json
