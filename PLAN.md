@@ -407,6 +407,7 @@ Custom domain (.tech or .me as the canonical one, the other redirecting; DNS + `
 | 2026-11-21 | Less text on the home page (Noel): Selected work becomes a horizontal slider (velocity tilt with a ripple, project tabs; summary only, detail on the project page); the skill graph becomes a 3D particle orb on canvas with a legend as the keyboard path. Built without Motion (its gallery/orb examples are Motion+ and the budget rules it out) | Noel / Claude Code | ADR-0006 |
 | 2026-11-21 | Hero map is the headline's living background (Noel): full bleed with faded edges and a ground-colour wash behind the copy; glowing lines with halos, two-car trains in line colours with headlights, pulsing project stations, drifting motes, floors without hard edges. Language switch is now a full page load so the saved theme survives | Noel | ADR-0006 |
 | 2026-11-21 | Light theme less stark (Noel): new `--page` token, a cool steel `#DDE4EC` page under white panels (dark: `#070E1A` under `#0B1424`); muted text stays 5.5:1 on it | Noel | docs/DESIGN.md |
+| 2026-11-21 | Airy home (Noel, after jules.google as reference; timetable and three-column layouts rejected): one idea per screen (centred Scene, one short sentence, icon), no panels on home, Línea icon set that draws in, track dividers with a crossing train, chips instead of lists; backdrop on the sides only. Rail becomes a track with a train riding between stations; footer is the terminal (buffer stop, name as last station). Hero map framed closer to centre | Noel | ADR-0006 |
 
 ---
 
