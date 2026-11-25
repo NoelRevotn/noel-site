@@ -26,7 +26,16 @@ export function pageMetadata(locale: string, path: string, title: string, descri
       siteName: "Noel Echeverría",
       locale: locale === "es" ? "es_PA" : "en_US",
       type: "website",
-      images: [{ url: withBase("/og.png"), width: 1200, height: 630, alt: "Noel Echeverría" }],
+      // Night-platform artwork (ChatGPT, text-free) with the name set in Archivo (PLAN decision log).
+      images: [
+        {
+          url: withBase("/og.jpg"),
+          width: 1200,
+          height: 630,
+          type: "image/jpeg",
+          alt: "Noel Echeverría: Systems & Computer Engineering student building AI agents and data tools",
+        },
+      ],
     },
     twitter: { card: "summary_large_image", title, description },
   };
