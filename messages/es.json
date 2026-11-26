@@ -128,7 +128,12 @@
     "status": "Estado",
     "period": "Periodo",
     "back": "Todos los proyectos",
-    "noLink": "Solo detalles"
+    "noLink": "Solo detalles",
+    "openApp": "Abrir la app",
+    "repo": "Código en GitHub",
+    "repoInProgress": "Repositorio (en desarrollo)",
+    "newTab": "se abre en otra pestaña",
+    "screens": "Capturas"
   },
   "cvPage": {
     "title": "CV",

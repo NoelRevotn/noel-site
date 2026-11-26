@@ -7,6 +7,7 @@ import { PageTitle, Text } from "@/components/ui/Text";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 import { projectBySlug, projects } from "@/lib/content";
+import { withBase } from "@/lib/paths";
 import { pageMetadata } from "@/lib/seo";
 import s from "./project.module.css";
 
@@ -87,7 +88,49 @@ export default async function ProjectPage({ params }: Props) {
               </dd>
             </div>
           </dl>
+          {(p.links.demo || p.links.repo) && (
+            <ul className={s.links}>
+              {p.links.demo && (
+                <li>
+                  <a className={s.primary} href={p.links.demo} target="_blank" rel="noreferrer">
+                    {t("projects.openApp")}
+                    <span className="visually-hidden"> ({t("projects.newTab")})</span>
+                  </a>
+                </li>
+              )}
+              {p.links.repo && (
+                <li>
+                  <a className={s.secondary} href={p.links.repo} target="_blank" rel="noreferrer">
+                    {p.status === "in-progress" ? t("projects.repoInProgress") : t("projects.repo")}
+                    <span className="visually-hidden"> ({t("projects.newTab")})</span>
+                  </a>
+                </li>
+              )}
+            </ul>
+          )}
         </div>
+
+        {p.screens.length > 0 && (
+          <Stop id="screens" title={t("projects.screens")} icon="browser">
+            <div className={s.screens}>
+              {p.screens.map((sc) => (
+                // eslint-disable-next-line @next/next/no-img-element -- static export: next/image can't optimise; files are pre-sized WebP
+                <img
+                  key={sc.src}
+                  className={s.screen}
+                  data-portrait={sc.height > sc.width || undefined}
+                  src={withBase(sc.src)}
+                  width={sc.width}
+                  height={sc.height}
+                  alt={sc.alt[l]}
+                  loading="lazy"
+                  decoding="async"
+                  data-reveal
+                />
+              ))}
+            </div>
+          </Stop>
+        )}
 
         {p.caseStudy &&
           SECTIONS.map((key) => (
