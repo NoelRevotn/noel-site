@@ -56,6 +56,8 @@ export const projects: z.input<typeof Project>[] = [
   },
   {
     slug: "datalizer",
+    // Repository shared by Noel; still empty while the project is in development.
+    links: { repo: "https://github.com/profesor003-fundesteam/pyzero" },
     title: "DataLizer",
     summary: {
       en: "Dataset preparation and analysis assistant with domain profiles and AI",
@@ -106,6 +108,37 @@ export const projects: z.input<typeof Project>[] = [
   },
   {
     slug: "h2oeste",
+    links: { repo: "https://github.com/HackathonFISC/equipo-03" },
+    // Taken from the repo's own panel with its built-in example data (labelled as such on screen).
+    screens: [
+      {
+        src: "/projects/h2oeste/reportes.webp",
+        alt: {
+          en: "H2Oeste coordination panel, Reports page: messages from the community, shown with example data",
+          es: "Panel de coordinación de H2Oeste, página Reportes: mensajes de la comunidad, con datos de ejemplo",
+        },
+        width: 1200,
+        height: 750,
+      },
+      {
+        src: "/projects/h2oeste/necesidades.webp",
+        alt: {
+          en: "H2Oeste Needs page: water points ranked by urgency with the reasons for each score, example data",
+          es: "Página Necesidades de H2Oeste: puntos ordenados por urgencia con el porqué de cada puntaje, datos de ejemplo",
+        },
+        width: 1200,
+        height: 750,
+      },
+      {
+        src: "/projects/h2oeste/plan.webp",
+        alt: {
+          en: "H2Oeste distribution plan: routes for two water tankers and the constraint check, example data",
+          es: "Plan de distribución de H2Oeste: rutas para dos cisternas y la verificación de restricciones, datos de ejemplo",
+        },
+        width: 1200,
+        height: 750,
+      },
+    ],
     title: "H2Oeste",
     summary: {
       en: "Multi-agent water-tanker coordination system",
@@ -156,6 +189,18 @@ export const projects: z.input<typeof Project>[] = [
   },
   {
     slug: "itinera",
+    links: { demo: "https://viaje-seguro-itinera.netlify.app/" },
+    screens: [
+      {
+        src: "/projects/itinera/inicio.webp",
+        alt: {
+          en: "ITINERA on a phone: the start screen, where you create an account to plan a trip",
+          es: "ITINERA en un teléfono: la pantalla de inicio, donde creas una cuenta para planear un viaje",
+        },
+        width: 780,
+        height: 1688,
+      },
+    ],
     title: "ITINERA",
     summary: { en: "All-in-one travel itinerary app", es: "App todo en uno para itinerarios de viaje" },
     what: {

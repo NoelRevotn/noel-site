@@ -28,6 +28,17 @@ export const Project = z.object({
   status: z.enum(["shipped", "prototype", "in-progress"]),
   featured: z.boolean(),
   links: z.object({ repo: z.url().optional(), demo: z.url().optional() }).default({}),
+  /** Screenshots of the real interface, files in public/projects/<slug>/; alt says what they show. */
+  screens: z
+    .array(
+      z.object({
+        src: z.string().regex(/^\/projects\/[a-z0-9-]+\/[a-z0-9-]+\.(webp|png|jpg)$/),
+        alt: L10n,
+        width: z.number().int().positive(),
+        height: z.number().int().positive(),
+      }),
+    )
+    .default([]),
   caseStudy: CaseStudy.optional(),
 });
 
